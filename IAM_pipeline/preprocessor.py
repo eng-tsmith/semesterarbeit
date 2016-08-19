@@ -1,13 +1,27 @@
 from validation_task import PreprocessorTask
 import numpy as np
+from scipy import misc
+import matplotlib.pyplot as plt
+import cv2 as cv
 
-def greyscale(img):
+
+def show_img(img):
+    plt.imshow(img)
+    plt.show()
+
+
+def greyscale(tupel_filenames):
     """
 
     :param img:
     :return:
     """
-    return img
+    # img = np.random.random((5,5))
+    # img = misc.imread(tupel_filenames[0])
+    img = cv.imread(tupel_filenames[0], cv.IMREAD_GRAYSCALE)
+
+    label = "cat"
+    return img, label
 
 
 def thresholding(img):
@@ -65,12 +79,12 @@ class IAM_Preprocessor(PreprocessorTask):
             4. Slant
             5. Positioning
             6. Scaling
-        :param input_tuple: unedited full Image of text line
-        :return: normalized image of text line
+        :param input_tuple: [path to img_file, path to xml]
+        :return output_tuple: [normalized image of text line, label]
         """
         print "Inputs: ", input_tuple
         # 1. Greyscale
-        img_grey = greyscale(input_tuple)
+        img_grey, label = greyscale(input_tuple)
         # 2. Thresholding
         img_thresh = thresholding(img_grey)
         # 3. Skew
@@ -82,7 +96,7 @@ class IAM_Preprocessor(PreprocessorTask):
         # 6. Scaling
         img_norm = scaling(img_pos)
 
-        return [img_norm,img_norm,img_norm]
+        return [img_norm, label]
 
     def save(self, directory):
         print "Saving myPreprocessor to ", directory

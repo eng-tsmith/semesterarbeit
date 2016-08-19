@@ -2,13 +2,43 @@ from validation_task import PredictorTask
 import numpy as np
 
 
+def FeatureExtractor(img):
+    """
+
+    :param img:
+    :return:
+    """
+    features =[1,2,3]
+    return features
+
+def NeuralNet(features, labels):
+    """
+
+    :param features:
+    :param labels:
+    :return:
+    """
+    prediction = np.random.random((5, 5))
+    return prediction
+
 class IAM_Predictor(PredictorTask):
-    def run(self, volumes):
-        print "Length: ", len(volumes)
-        print "Shape: ", volumes[0].shape
-        print "Shape: ", volumes[1].shape
-        print "Shape: ", volumes[2].shape
-        return [np.random.random((5, 5)), np.random.random((6, 6))]
+    def run(self, input_tuple):
+        """ TODO:
+        This function takes a normalized image as Input. During predicting following steps are computed:
+         1. Feature Extractor
+         2. Neural Net
+
+        :param input_tuple:
+        :return:
+        """
+        print "Inputs: ", input_tuple
+        print "Length: ", len(input_tuple)
+        # 1. Feature Extractor
+        feature_vec = FeatureExtractor(input_tuple)
+        # 2. Neural Net
+        pred = NeuralNet(feature_vec, input_tuple)
+
+        return [pred, pred]
 
 
     def save(self, directory):

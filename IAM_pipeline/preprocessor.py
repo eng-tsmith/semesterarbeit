@@ -3,6 +3,7 @@ import numpy as np
 from scipy import misc
 import matplotlib.pyplot as plt
 import cv2 as cv
+import xml.etree.ElementTree as ET
 
 
 def show_img(img):
@@ -10,27 +11,51 @@ def show_img(img):
     plt.show()
 
 
-def greyscale(tupel_filenames):
-    """
+def XML_load(filepath, filename):  # TODO: think about this again
+    tree = ET.parse(filepath)
+    root = tree.getroot()
+    for line in root.findall('./handwritten-part/'):
+        if line.get('id') == filename:
+            #  print line.get('text')
+            return line.get('text')
 
-    :param img:
-    :return:
-    """
-    # img = np.random.random((5,5))
-    # img = misc.imread(tupel_filenames[0])
-    img = cv.imread(tupel_filenames[0], cv.IMREAD_GRAYSCALE)
 
-    label = "cat"
+def load(tupel_filenames):
+    img = cv.imread(tupel_filenames[0], cv.IMREAD_GRAYSCALE)  # TODO: np float 32 ? img.astype(float)
+    label = XML_load(tupel_filenames[1], tupel_filenames[2])
+
     return img, label
 
 
-def thresholding(img):
+
+def greyscale(img):
     """
 
     :param img:
     :return:
     """
+    # img_grey = cv.cvtColor(img, cv.COLOR_RGB2GRAY)# TODO: np float 32 ? img.astype(float)
+
     return img
+
+
+def thresholding(img_grey):
+    """
+
+    :param img:
+    :return:
+    """
+    # # Adaptive Gaussian
+    # img_binary = cv.adaptiveThreshold(img_grey, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 11, 2)
+
+    # Otsu's thresholding after Gaussian filtering
+    blur = cv.GaussianBlur(img_grey, (5, 5), 0)
+    ret3, img_binary = cv.threshold(blur, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
+
+    show_img(img_grey)
+    show_img(img_binary)
+
+    return img_binary
 
 
 def skew(img):
@@ -39,7 +64,31 @@ def skew(img):
     :param img:
     :return:
     """
-    return img
+    black_pix = np.zeros((2, 1))
+
+    for columns in range(img.shape[1]):
+        for pixel in np.arange(img.shape[0]-1, -1, -1):
+        # for pixel in np.arange(img.shape[0]):
+            if img[pixel][columns] == 255:
+                black_pix = np.concatenate((black_pix, np.array([[pixel], [columns]])), axis=1)
+                break
+
+    mean_x = np.mean(black_pix[1][:])
+    mean_y = np.mean(black_pix[0][:])
+    k = black_pix.shape[1]
+
+    a = (np.sum(black_pix[1][:] * black_pix[0][:]) - k * mean_x * mean_y) / (np.sum(black_pix[1][:] * black_pix[1][:]) - k * mean_x * mean_x)
+
+    angle = np.arctan(a) * 180 / np.pi
+
+    rows, cols = img.shape
+
+    M = cv.getRotationMatrix2D((cols / 2, rows / 2), angle, 1)
+    img_rot = cv.warpAffine(img, M, (cols, rows))
+
+    # show_img(img)
+    # show_img(img_rot)
+    return img_rot
 
 
 def slant(img):
@@ -83,14 +132,15 @@ class IAM_Preprocessor(PreprocessorTask):
         :return output_tuple: [normalized image of text line, label]
         """
         print "Inputs: ", input_tuple
-        # 1. Greyscale
-        img_grey, label = greyscale(input_tuple)
+        img_raw, label = load(input_tuple)
         # 2. Thresholding
-        img_thresh = thresholding(img_grey)
+        img_thresh = thresholding(img_raw)
         # 3. Skew
         img_skew = skew(img_thresh)
+        # 2. Thresholding
+        img_thresh2 = thresholding(img_skew)
         # 4. Slant
-        img_slant = slant(img_skew)
+        img_slant = slant(img_thresh2)
         # 5. Positioning
         img_pos = positioning(img_slant)
         # 6. Scaling

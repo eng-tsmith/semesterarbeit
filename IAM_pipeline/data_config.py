@@ -14,13 +14,17 @@ apply_histeq = False
 apply_liver_crf = True
 use_net2 = True #for CFCN
 net1_n_classes = 2
-# Path
+
+# Path TODO: think about good ways
 IAM_BASE_PATH = "../../Datasets/IAM/"
 IAM_img_path = IAM_BASE_PATH + "lines/"
-IAM_label_path = IAM_BASE_PATH + "xml/"
+IAM_label_path =IAM_BASE_PATH + "xml/"
+
+# Line Name
+IAM_name_1 = "a01-000u-00"
 
 IAM_validation_set = [
-    IAM_img_path+"a01/a01-000u/a01-000u-00.png", IAM_label_path+"a01-000u.xml"]
+    IAM_img_path+"a01/a01-000u/"+IAM_name_1+".png", IAM_label_path+"a01-000u.xml", IAM_name_1]
 
 IAM_dataset = [IAM_validation_set]  # TODO
 IAM_bs = "IAM_bs" # TODO

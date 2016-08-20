@@ -31,8 +31,8 @@ class IAM_Predictor(PredictorTask):
         :param input_tuple:
         :return:
         """
-        print "Inputs: ", input_tuple
-        print "Length: ", len(input_tuple)
+        # print "Input: ", input_tuple[0]
+        print "Image size: ", input_tuple[0].shape
         # 1. Feature Extractor
         feature_vec = FeatureExtractor(input_tuple)
         # 2. Neural Net

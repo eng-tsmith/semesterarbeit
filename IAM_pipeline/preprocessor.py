@@ -7,11 +7,21 @@ import xml.etree.ElementTree as ET
 
 
 def show_img(img):
+    """
+    This function takes an image as input and displays it
+    :param img:
+    """
     plt.imshow(img)
     plt.show()
 
 
 def XML_load(filepath, filename):  # TODO: think about this again
+    """
+    This funtion is used for loading labels out of corresponding xml file
+    :param filepath:
+    :param filename:
+    :return:
+    """
     tree = ET.parse(filepath)
     root = tree.getroot()
     for line in root.findall('./handwritten-part/'):
@@ -21,6 +31,11 @@ def XML_load(filepath, filename):  # TODO: think about this again
 
 
 def load(tupel_filenames):
+    """
+    This function ist used for loading images
+    :param tupel_filenames:
+    :return:
+    """
     img = cv.imread(tupel_filenames[0], cv.IMREAD_GRAYSCALE)  # TODO: np float 32 ? img.astype(float)
     label = XML_load(tupel_filenames[1], tupel_filenames[2])
 
@@ -30,7 +45,7 @@ def load(tupel_filenames):
 
 def greyscale(img):
     """
-
+    Makes a greyscale image out of a normal images
     :param img:
     :return:
     """
@@ -52,8 +67,8 @@ def thresholding(img_grey):
     blur = cv.GaussianBlur(img_grey, (5, 5), 0)
     ret3, img_binary = cv.threshold(blur, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
 
-    show_img(img_grey)
-    show_img(img_binary)
+    # show_img(img_grey)
+    # show_img(img_binary)
 
     return img_binary
 
@@ -80,14 +95,16 @@ def skew(img):
     a = (np.sum(black_pix[1][:] * black_pix[0][:]) - k * mean_x * mean_y) / (np.sum(black_pix[1][:] * black_pix[1][:]) - k * mean_x * mean_x)
 
     angle = np.arctan(a) * 180 / np.pi
+    print angle
 
     rows, cols = img.shape
 
     M = cv.getRotationMatrix2D((cols / 2, rows / 2), angle, 1)
-    img_rot = cv.warpAffine(img, M, (cols, rows))
+    img_rot = cv.warpAffine(img, M, (cols, rows), flags=cv.INTER_NEAREST)
 
     # show_img(img)
     # show_img(img_rot)
+
     return img_rot
 
 
@@ -133,14 +150,14 @@ class IAM_Preprocessor(PreprocessorTask):
         """
         print "Inputs: ", input_tuple
         img_raw, label = load(input_tuple)
+        # 1. Greyscale
+        img_grey = greyscale(img_raw)
         # 2. Thresholding
-        img_thresh = thresholding(img_raw)
+        img_thresh = thresholding(img_grey)
         # 3. Skew
         img_skew = skew(img_thresh)
-        # 2. Thresholding
-        img_thresh2 = thresholding(img_skew)
         # 4. Slant
-        img_slant = slant(img_thresh2)
+        img_slant = slant(img_skew)
         # 5. Positioning
         img_pos = positioning(img_slant)
         # 6. Scaling

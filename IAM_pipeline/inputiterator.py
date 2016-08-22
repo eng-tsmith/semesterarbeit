@@ -1,13 +1,13 @@
 from validation_task import InputIteratorTask
-import data_config
+import IAM_pipeline.data_config as data
 import numpy as np
 
 
 class IAM_InputIterator(InputIteratorTask):
     def run(self):
-        print "====== IAM  Pipeline ======"
+        print ("====== IAM  Pipeline ======")
 
-        for img_label in data_config.dataset:
+        for img_label in data.dataset:
             yield img_label
 
     def __len__(self):

@@ -1,3 +1,16 @@
 Validation-Pipeline --> Saratan	
 Ocropus --> git: https://github.com/tmbdev/ocropy
 rnn_ctc --> git: https://github.com/rakeshvar/rnn_ctc.git
+
+
+
+
+
+Theano
+OpenCV3
+
+conda create -n semesterarbeit numpy scipy scikit-learn matplotlib python=3.4
+source activate semesterarbeit 
+conda install -c https://conda.binstar.org/menpo opencv3
+pip install Theano   ..
+test--> nosetests theano

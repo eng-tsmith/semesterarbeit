@@ -131,7 +131,7 @@ class IAM_Predictor(PredictorTask):
         :return:
         """
         # print "Input: ", input_tuple[0]
-        print "Image size: ", input_tuple[0].shape
+        print ("Image size: ", input_tuple[0].shape)
         # 1. Feature Extractor
         feature_vec = FeatureExtractor(input_tuple)
         # 2. Neural Net
@@ -141,4 +141,4 @@ class IAM_Predictor(PredictorTask):
 
 
     def save(self, directory):
-        print "Saving myPredictor to ", directory
+        print ("Saving myPredictor to ", directory)

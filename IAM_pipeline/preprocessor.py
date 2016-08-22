@@ -95,7 +95,7 @@ def skew(img):
     a = (np.sum(black_pix[1][:] * black_pix[0][:]) - k * mean_x * mean_y) / (np.sum(black_pix[1][:] * black_pix[1][:]) - k * mean_x * mean_x)
 
     angle = np.arctan(a) * 180 / np.pi
-    print angle
+    print (angle)
 
     rows, cols = img.shape
 
@@ -148,7 +148,7 @@ class IAM_Preprocessor(PreprocessorTask):
         :param input_tuple: [path to img_file, path to xml]
         :return output_tuple: [normalized image of text line, label]
         """
-        print "Inputs: ", input_tuple
+        print ("Inputs: ", input_tuple)
         img_raw, label = load(input_tuple)
         # 1. Greyscale
         img_grey = greyscale(img_raw)
@@ -166,5 +166,5 @@ class IAM_Preprocessor(PreprocessorTask):
         return [img_norm, label]
 
     def save(self, directory):
-        print "Saving myPreprocessor to ", directory
+        print ("Saving myPreprocessor to ", directory)
 

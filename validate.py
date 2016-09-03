@@ -44,6 +44,7 @@ def check_pipeline_config():
         "Pipeline.Reporter must be a subclass of validation_task.ReporterTask"
 
 if __name__ == '__main__':
+    print("Welcome to Hand")
     logging.basicConfig(level=logging.DEBUG)
     # Perform some sanity checks
     check_pipeline_config()

@@ -2,9 +2,9 @@ from validation_task import PredictorTask
 # import pickle
 # import sys
 import numpy as np
-# import theano as th
-# from rnn_ctc.nnet.neuralnet import NeuralNet
-# import rnn_ctc.utils as utils
+import theano as th
+from rnn_ctc.nnet.neuralnet import NeuralNet
+import rnn_ctc.utils as utils
 
 
 def FeatureExtractor(img):
@@ -20,56 +20,57 @@ def FeatureExtractor(img):
 
 class IAM_Predictor(PredictorTask):
 
-    # def __init__(self):
-    #     # th.config.optimizer = 'fast_compile'
-    #     # th.config.exception_verbosity='high'
-    #
-    #     ################################### Main Script ###########################
-    #     print('Loading the dataset.')
-    #     with open('../rnn_ctc/configs/default', 'rb') as pkl_file:  # TODO which file?
-    #         data = pickle.load(pkl_file)
-    #
-    #     args = utils.read_args(sys.argv[2:])` # TODO config fiels
-    #     num_epochs, train_on_fraction = args['num_epochs'], args['train_on_fraction']
-    #     scribe_args, nnet_args, = args['scribe_args'], args['nnet_args'],
-    #
-    #     chars = data['chars']
-    #     num_classes = len(chars)
-    #     img_ht = len(data['x'][0])
-    #     num_samples = len(data['x'])
-    #     nTrainSamples = int(num_samples * train_on_fraction)
-    #     printer = utils.Printer(chars)
+    def __init__(self):
+        # th.config.optimizer = 'fast_compile'
+        # th.config.exception_verbosity='high'
 
-    #     print('\nInput Dim: {}'
-    #           '\nNum Classes: {}'
-    #           '\nNum Samples: {}'
-    #           '\nNum Epochs: {}'
-    #           '\nFloatX: {}'
-    #           '\n'.format(img_ht, num_classes, num_samples, num_epochs, th.config.floatX))
-    #
-    #     ################################
-    #     print('Building the Network')
-    #     self.net = NeuralNet(img_ht, num_classes, **nnet_args)
-    #     print(self.net)
-    #     ################################
-    #     print('Preparing the Data')
-    #     try:
-    #         conv_sz = nnet_args['midlayerargs']['conv_sz']
-    #     except KeyError:
-    #         conv_sz = 1
-    #
-    #     data_x, data_y = [], []
-    #     bad_data = False
-    #
-    #     for x, y in zip(data['x'], data['y']):
-    #         # Insert blanks at alternate locations in the labelling (blank is num_classes)
-    #         y1 = utils.insert_blanks(y, num_classes)
-    #         data_y.append(np.asarray(y1, dtype=np.int32))
-    #         data_x.append(np.asarray(x, dtype=th.config.floatX))
-    #
-    #         if printer.ylen(y1) > (1 + len(x[0])) // conv_sz:
-    #             bad_data = True
-    #             printer.show_all(y1, x, None, (x[:, ::conv_sz], 'Squissed'))
+        ################################### Main Script ###########################
+        print('Initializing IAM Predictor. Loading   net_config.ast:')
+        # with open('../rnn_ctc/configs/default', 'rb') as pkl_file:  # TODO which file?
+        #     data = pickle.load(pkl_file)
+
+        args = utils.read_args(['net_config.ast']) # TODO reads ast file
+        num_epochs, train_on_fraction = args['num_epochs'], args['train_on_fraction']
+        scribe_args, nnet_args, = args['scribe_args'], args['nnet_args'],
+
+        chars = [' ', '!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', ';', '<', '=', '>', '?', '@', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '[', '\\', ']', '^', '_', '`', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '{', '|', '}', '~'] # data['chars']
+        num_classes = len(chars)
+        img_ht = 20 # TODO
+        num_samples = 1 # TODO
+        nTrainSamples = int(num_samples * train_on_fraction)
+        printer = utils.Printer(chars)
+
+        print('\nNetwork Info:'
+              '\nInput Dim: {}'
+              '\nNum Classes: {}'
+              '\nNum Samples: {}'
+              '\nNum Epochs: {}'
+              '\nFloatX: {}'
+              '\n'.format(img_ht, num_classes, num_samples, num_epochs, th.config.floatX))
+
+        ################################
+        print('Building the Network')
+        self.net = NeuralNet(img_ht, num_classes, **nnet_args)
+        print(self.net)
+        ################################
+        print('Preparing the Data')
+        try:
+            conv_sz = nnet_args['midlayerargs']['conv_sz']
+        except KeyError:
+            conv_sz = 1
+
+        data_x, data_y = [], []
+        bad_data = False
+
+        for x, y in zip(data['x'], data['y']):
+            # Insert blanks at alternate locations in the labelling (blank is num_classes)
+            y1 = utils.insert_blanks(y, num_classes)
+            data_y.append(np.asarray(y1, dtype=np.int32))
+            data_x.append(np.asarray(x, dtype=th.config.floatX))
+
+            if printer.ylen(y1) > (1 + len(x[0])) // conv_sz:
+                bad_data = True
+                printer.show_all(y1, x, None, (x[:, ::conv_sz], 'Squissed'))
 
 
     def train_rnn(self, features, labels):

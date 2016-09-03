@@ -9,8 +9,15 @@ rnn_ctc --> git: https://github.com/rakeshvar/rnn_ctc.git
 Theano
 OpenCV3
 
-conda create -n semesterarbeit numpy scipy scikit-learn matplotlib python=3.4
-source activate semesterarbeit 
+(conda create -n semesterarbeit numpy scipy scikit-learn matplotlib python=3.4)
+conda create -n semester34 python=3.4 anaconda
+source activate semester34 
+conda update python
 conda install -c https://conda.binstar.org/menpo opencv3
 pip install Theano   ..
 test--> nosetests theano
+
+
+
+Windows
+http://simranmetric.com/installing-theano-on-windows-10-python-3-5/

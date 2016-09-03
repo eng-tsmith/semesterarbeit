@@ -7,6 +7,7 @@ class IAM_InputIterator(InputIteratorTask):
     def run(self):
         print ("====== IAM  Pipeline ======")
 
+
         for img_label in data.dataset:
             yield img_label
 

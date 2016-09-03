@@ -62,15 +62,15 @@ class IAM_Predictor(PredictorTask):
         data_x, data_y = [], []
         bad_data = False
 
-        for x, y in zip(data['x'], data['y']):
-            # Insert blanks at alternate locations in the labelling (blank is num_classes)
-            y1 = utils.insert_blanks(y, num_classes)
-            data_y.append(np.asarray(y1, dtype=np.int32))
-            data_x.append(np.asarray(x, dtype=th.config.floatX))
-
-            if printer.ylen(y1) > (1 + len(x[0])) // conv_sz:
-                bad_data = True
-                printer.show_all(y1, x, None, (x[:, ::conv_sz], 'Squissed'))
+        # for x, y in zip(data['x'], data['y']):
+        #     # Insert blanks at alternate locations in the labelling (blank is num_classes)
+        #     y1 = utils.insert_blanks(y, num_classes)
+        #     data_y.append(np.asarray(y1, dtype=np.int32))
+        #     data_x.append(np.asarray(x, dtype=th.config.floatX))
+        #
+        #     if printer.ylen(y1) > (1 + len(x[0])) // conv_sz:
+        #         bad_data = True
+        #         printer.show_all(y1, x, None, (x[:, ::conv_sz], 'Squissed'))
 
 
     def train_rnn(self, features, labels):

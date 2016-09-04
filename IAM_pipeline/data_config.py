@@ -16,7 +16,8 @@ use_net2 = True #for CFCN
 net1_n_classes = 2
 
 # Path TODO: think about good ways
-IAM_BASE_PATH = "../../Datasets/IAM/"
+# IAM_BASE_PATH = "../../Datasets/IAM/"
+IAM_BASE_PATH = "../media/nas/01_Datasets/IAM/"
 IAM_img_path = IAM_BASE_PATH + "lines/"
 IAM_label_path =IAM_BASE_PATH + "xml/"
 

@@ -21,24 +21,28 @@ def FeatureExtractor(img):
 class IAM_Predictor(PredictorTask):
 
     def __init__(self):
+        """
+        When this funtion is first called it initalizes the net.
+        """
         # th.config.optimizer = 'fast_compile'
         # th.config.exception_verbosity='high'
 
         ################################### Main Script ###########################
+
         print('Initializing IAM Predictor. Loading   net_config.ast:')
         # with open('../rnn_ctc/configs/default', 'rb') as pkl_file:  # TODO which file?
         #     data = pickle.load(pkl_file)
 
-        args = utils.read_args(['net_config.ast']) # TODO reads ast file
-        num_epochs, train_on_fraction = args['num_epochs'], args['train_on_fraction']
-        scribe_args, nnet_args, = args['scribe_args'], args['nnet_args'],
+        self.args = utils.read_args(['net_config.ast'])  # TODO reads ast file
+        self.num_epochs, self.train_on_fraction = self.args['num_epochs'], self.args['train_on_fraction']
+        self.scribe_args, self.nnet_args, = self.args['scribe_args'], self.args['nnet_args'],
 
-        chars = [' ', '!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', ';', '<', '=', '>', '?', '@', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '[', '\\', ']', '^', '_', '`', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '{', '|', '}', '~'] # data['chars']
-        num_classes = len(chars)
-        img_ht = 20 # TODO
-        num_samples = 1 # TODO
-        nTrainSamples = int(num_samples * train_on_fraction)
-        printer = utils.Printer(chars)
+        self.chars = [' ', '!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', ';', '<', '=', '>', '?', '@', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '[', '\\', ']', '^', '_', '`', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '{', '|', '}', '~'] # data['chars']
+        self.num_classes = len(self.chars)
+        self.img_ht = 20 # TODO
+        self.num_samples = 1 # TODO
+        self.nTrainSamples = int(self.num_samples * self.train_on_fraction)
+        printer = utils.Printer(self.chars)
 
         print('\nNetwork Info:'
               '\nInput Dim: {}'
@@ -46,21 +50,21 @@ class IAM_Predictor(PredictorTask):
               '\nNum Samples: {}'
               '\nNum Epochs: {}'
               '\nFloatX: {}'
-              '\n'.format(img_ht, num_classes, num_samples, num_epochs, th.config.floatX))
+              '\n'.format(self.img_ht, self.num_classes, self.num_samples, self.num_epochs, th.config.floatX))
 
         ################################
         print('Building the Network')
-        self.net = NeuralNet(img_ht, num_classes, **nnet_args)
+        self.net = NeuralNet(self.img_ht, self.num_classes, **self.nnet_args)
         print(self.net)
         ################################
-        print('Preparing the Data')
+        print('Preparing the Data')  # TODO blanks in labelk
         try:
-            conv_sz = nnet_args['midlayerargs']['conv_sz']
+            self.conv_sz = self.nnet_args['midlayerargs']['conv_sz']
         except KeyError:
-            conv_sz = 1
+            self.conv_sz = 1
 
-        data_x, data_y = [], []
-        bad_data = False
+        # data_x, data_y = [], []
+        # bad_data = False
 
         # for x, y in zip(data['x'], data['y']):
         #     # Insert blanks at alternate locations in the labelling (blank is num_classes)
@@ -73,22 +77,35 @@ class IAM_Predictor(PredictorTask):
         #         printer.show_all(y1, x, None, (x[:, ::conv_sz], 'Squissed'))
 
 
-    def train_rnn(self, features, labels):
-        # """
-        #
-        # :param features:
-        # :param labels:
-        # :return:
-        # """
+    def train_rnn(self, img_feat_vec, label):
+        """
+
+        :param features:
+        :param labels:
+        :return:
+        """
+        print('Training the Network')
+
+        x = img_feat_vec  # data_x[samp]
+        y = label    # data_y[samp]
+        # if not samp % 500:            print(samp)
+
+        cst, pred, aux = self.net.trainer(x, y)
+
+        print(self.net)
+
+        return cst, pred, aux
+
+        # OLD:
         # print('Training the Network')
-        # for epoch in range(num_epochs):
+        # for epoch in range(self.num_epochs):
         #     print('Epoch : ', epoch)
-        #     for samp in range(num_samples):
+        #     for samp in range(self.num_samples):
         #         x = features  # data_x[samp]
         #         y = labels    # data_y[samp]
         #         # if not samp % 500:            print(samp)
         #
-        #         if samp < nTrainSamples:
+        #         if samp < self.nTrainSamples:
         #             if len(y) < 2:
         #                 continue
         #
@@ -102,8 +119,8 @@ class IAM_Predictor(PredictorTask):
         #                 print('Exiting on account of Inf Cost...')
         #                 sys.exit()
         #
-        #         elif (epoch % 10 == 0 and samp - nTrainSamples < 3) \
-        #                 or epoch == num_epochs - 1:
+        #         elif (epoch % 10 == 0 and samp - self.nTrainSamples < 3) \
+        #                 or epoch == self.num_epochs - 1:
         #             # Print some test images
         #             pred, aux = self.net.tester(x)
         #             aux = (aux + 1) / 2.0
@@ -111,9 +128,9 @@ class IAM_Predictor(PredictorTask):
         #             utils.printer.show_all(y, x, pred, (aux, 'Hidden Layer:'))
         #
         # print(self.net)
-
-        prediction = np.random.random((5, 5))
-        return prediction
+        #
+        # prediction = np.random.random((5, 5))
+        # return prediction
 
 
     def classify_rnn(self):
@@ -134,11 +151,11 @@ class IAM_Predictor(PredictorTask):
         # print "Input: ", input_tuple[0]
         print ("Image size: ", input_tuple[0].shape)
         # 1. Feature Extractor
-        feature_vec = FeatureExtractor(input_tuple)
+        feature_vec = FeatureExtractor(input_tuple[0])
         # 2. Neural Net
-        pred = self.train_rnn(feature_vec, input_tuple)
+        cst, pred, aux = self.train_rnn(feature_vec, input_tuple[1])
 
-        return [pred, pred]
+        return [cst, pred, aux]
 
 
     def save(self, directory):

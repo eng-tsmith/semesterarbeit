@@ -159,7 +159,7 @@ class IAM_Predictor(PredictorTask):
 
         #self.printer.show_all(input_tuple[1], feature_vec, pred, (aux > 1e-20, 'Forward probabilities:'))
 
-        return [cst, pred, aux]
+        return [input_tuple[1], pred, cst,  aux]
 
 
     def save(self, directory):

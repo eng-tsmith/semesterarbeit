@@ -4,6 +4,8 @@ from scipy import misc
 import matplotlib.pyplot as plt
 import cv2 as cv
 import xml.etree.ElementTree as ET
+import rnn_ctc.utils as utils
+import rnn_ctc.scribe.scribe as Scribe
 
 
 def label_preproc(label_string):
@@ -15,9 +17,18 @@ def label_preproc(label_string):
     :param label_string:
     :return:
     """
-    print("True Label: ",label_string)
+    print("True Label: ", label_string)
 
-    label_int = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    args = utils.read_args(['net_config.ast'])
+    scriber = Scribe.Scribe(**args['scribe_args'])
+    alphabet_chars = scriber.alphabet.chars
+
+    label_int = []
+    for letter in label_string:
+        label_int.append(alphabet_chars.index(letter))
+
+    print("Int Label: ", label_int)
+
     return label_int
 
 def show_img(img):

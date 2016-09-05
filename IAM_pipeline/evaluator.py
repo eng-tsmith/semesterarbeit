@@ -3,14 +3,14 @@ import numpy as np
 
 
 class IAM_Evaluator(EvaluatorTask):
-    def run(self, input_tuple):
+    def run(self, input_tuple, evaluator_output):
         """
 
         :param input_tuple: Predictions, Cost, Shown String, Seen String
         :return:
         """
 
-        if input_tuple[2] == input_tuple[3]:
+        if evaluator_output[2] == evaluator_output[3]:
             print("Gleich")
             match = 1
         else:

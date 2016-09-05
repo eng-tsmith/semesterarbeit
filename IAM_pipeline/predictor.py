@@ -95,7 +95,7 @@ class IAM_Predictor(PredictorTask):
         print('Training the Network')
 
         x = img_feat_vec  # data_x[samp]
-        y = label    # data_y[samp]
+        y = utils.insert_blanks(label, self.num_classes)    # data_y[samp]
         # if not samp % 500:            print(samp)
 
         cst, pred, aux = self.net.trainer(x, y)

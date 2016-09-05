@@ -6,6 +6,20 @@ import cv2 as cv
 import xml.etree.ElementTree as ET
 
 
+def label_preproc(label_string):
+    """
+    This function is supposed to prepare the label so that it fits the standard of the rnn_ctc network.
+    It computes following steps:
+    1. make list of integers out of string    e.g. [hallo] --> [8,1,12,12,15]
+    2. insert empty class between every int   [8,1,12,12,15] --> [95,8,95,1,95,12,95,12,95,15]
+    :param label_string:
+    :return:
+    """
+    print("True Label: ",label_string)
+
+    label_int = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    return label_int
+
 def show_img(img):
     """
     This function takes an image as input and displays it
@@ -149,6 +163,7 @@ class IAM_Preprocessor(PreprocessorTask):
         :return output_tuple: [normalized image of text line, label]
         """
         print ("Inputs: ", input_tuple)
+        # 0. Load img and label
         img_raw, label = load(input_tuple)
         # 1. Greyscale
         img_grey = greyscale(img_raw)
@@ -162,6 +177,7 @@ class IAM_Preprocessor(PreprocessorTask):
         img_pos = positioning(img_slant)
         # 6. Scaling
         img_norm = scaling(img_pos)
+        # 7. Preprocessing of label
 
         return [img_norm, label]
 

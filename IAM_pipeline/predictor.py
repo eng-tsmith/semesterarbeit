@@ -13,15 +13,7 @@ def FeatureExtractor(img):
     :param img:
     :return:
     """
-    features =[[1 ,2, 3, 4, 5, 6, 7, 8, 9],
-               [1, 2, 3, 4, 5, 6, 7, 8, 9],
-               [1, 2, 3, 4, 5, 6, 7, 8, 9],
-               [1, 2, 3, 4, 5, 6, 7, 8, 9],
-               [1, 2, 3, 4, 5, 6, 7, 8, 9],
-               [1, 2, 3, 4, 5, 6, 7, 8, 9],
-               [1, 2, 3, 4, 5, 6, 7, 8, 9],
-               [1, 2, 3, 4, 5, 6, 7, 8, 9],
-               [1, 2, 3, 4, 5, 6, 7, 8, 9]]
+    features = np.random.rand(9,1661)
     return features
 
 
@@ -64,6 +56,7 @@ class IAM_Predictor(PredictorTask):
         print('Building the Network')
         self.net = NeuralNet(self.img_ht, self.num_classes, **self.nnet_args)
         print(self.net)
+        self.printer = utils.Printer(self.chars)
         ################################
         # print('Preparing the Data')  # TODO blanks in labelk
         # try:
@@ -163,6 +156,8 @@ class IAM_Predictor(PredictorTask):
         feature_vec = FeatureExtractor(input_tuple[0])
         # 2. Neural Net
         cst, pred, aux = self.train_rnn(feature_vec, input_tuple[1])
+
+        self.printer.show_all(input_tuple[1], feature_vec, pred, (aux > 1e-20, 'Forward probabilities:'))
 
         return [cst, pred, aux]
 

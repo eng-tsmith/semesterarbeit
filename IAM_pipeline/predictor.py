@@ -65,15 +65,15 @@ class IAM_Predictor(PredictorTask):
         self.net = NeuralNet(self.img_ht, self.num_classes, **self.nnet_args)
         print(self.net)
         ################################
-        print('Preparing the Data')  # TODO blanks in labelk
-        try:
-            self.conv_sz = self.nnet_args['midlayerargs']['conv_sz']
-        except KeyError:
-            self.conv_sz = 1
-
+        # print('Preparing the Data')  # TODO blanks in labelk
+        # try:
+        #     self.conv_sz = self.nnet_args['midlayerargs']['conv_sz']
+        # except KeyError:
+        #     self.conv_sz = 1
+        #
         # data_x, data_y = [], []
         # bad_data = False
-
+        #
         # for x, y in zip(data['x'], data['y']):
         #     # Insert blanks at alternate locations in the labelling (blank is num_classes)
         #     y1 = utils.insert_blanks(y, num_classes)
@@ -98,10 +98,10 @@ class IAM_Predictor(PredictorTask):
         y = utils.insert_blanks(label, self.num_classes)    # data_y[samp]
         # if not samp % 500:            print(samp)
 
-        print("x: ", x, "   y: ", y)
+        # print("x: ", x, "   y: ", y)
         cst, pred, aux = self.net.trainer(x, y)
 
-        print(self.net)
+        # print(self.net)
 
         return cst, pred, aux
 

@@ -32,7 +32,11 @@ class Printer():
 class IAM_Postprocessor(PostprocessorTask):
     def run(self, input_tuple):
 
-        print("True: ", input_tuple[0])
+        """
+
+        :param input_tuple:
+        :return:
+        """
         print("Pred: ", input_tuple[1].shape)
         print("Cost: ", input_tuple[2])
         print("Aux: ", input_tuple[3].shape)
@@ -47,7 +51,8 @@ class IAM_Postprocessor(PostprocessorTask):
         print('Shown String: ', labels_list_true)
         print('Seen String: ', labels_list_pred)
 
-        return [np.random.random((6, 6))]
+        # Predictions, Cost, Shown String, Seen String
+        return [maxes, input_tuple[2], labels_list_true, labels_list_pred]
 
 
     def save(self, directory):

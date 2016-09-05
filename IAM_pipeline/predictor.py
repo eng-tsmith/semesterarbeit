@@ -98,6 +98,7 @@ class IAM_Predictor(PredictorTask):
         y = utils.insert_blanks(label, self.num_classes)    # data_y[samp]
         # if not samp % 500:            print(samp)
 
+        print("x: ", x, "   y: ", y)
         cst, pred, aux = self.net.trainer(x, y)
 
         print(self.net)

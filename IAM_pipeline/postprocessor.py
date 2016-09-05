@@ -5,8 +5,8 @@ import numpy as np
 class IAM_Postprocessor(PostprocessorTask):
     def run(self, input_tuple):
         print ("Cost: ", input_tuple[0])
-        print ("Pred: ", input_tuple[1].size)
-        print ("Aux: ", input_tuple[2].size)
+        print ("Pred: ", input_tuple[1].shape)
+        print ("Aux: ", input_tuple[2].shape)
 
         return [np.random.random((6, 6))]
 

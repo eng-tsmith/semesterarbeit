@@ -25,8 +25,8 @@ class IAM_Postprocessor(PostprocessorTask):
         maxes = np.argmax(input_tuple[1], 0)
         labels_out_pred, labels_list_pred = printer.yprint(maxes)
 
-        print('True String: ', labels_out_true)
-        print('Pred String: ', labels_out_pred)
+        print('True String: ', labels_list_true)
+        print('Pred String: ', labels_list_pred)
 
         return [np.random.random((6, 6))]
 

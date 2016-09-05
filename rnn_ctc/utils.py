@@ -10,6 +10,7 @@ def slab_print(slab, col_names=None):
     :param slab: A matrix of floats from [0, 1]
     """
     for ir, r in enumerate(slab):
+        print(ir)
         print('{:2d}¦'.format(ir), end='')
         for val in r:
             # if   val < 0.0:  print('-'.encode('utf-8', 'ignore'), end='')

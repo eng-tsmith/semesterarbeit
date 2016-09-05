@@ -164,7 +164,7 @@ class IAM_Preprocessor(PreprocessorTask):
         """
         print ("Inputs: ", input_tuple)
         # 0. Load img and label
-        img_raw, label = load(input_tuple)
+        img_raw, label_raw = load(input_tuple)
         # 1. Greyscale
         img_grey = greyscale(img_raw)
         # 2. Thresholding
@@ -178,6 +178,7 @@ class IAM_Preprocessor(PreprocessorTask):
         # 6. Scaling
         img_norm = scaling(img_pos)
         # 7. Preprocessing of label
+        label = label_preproc(label_raw)
 
         return [img_norm, label]
 

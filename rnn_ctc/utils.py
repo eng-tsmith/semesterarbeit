@@ -11,7 +11,7 @@ def slab_print(slab, col_names=None):
     """
     for ir, r in enumerate(slab):
         print(ir)
-        print('{:4d}¦'.format(ir), end='')
+        print('{:4d}|'.format(ir), end='')
         for val in r:
             # if   val < 0.0:  print('-'.encode('utf-8', 'ignore'), end='')
             # elif val < .15:  print(' '.encode('utf-8', 'ignore'), end=''),

@@ -157,7 +157,7 @@ class IAM_Predictor(PredictorTask):
         # 2. Neural Net
         cst, pred, aux = self.train_rnn(feature_vec, input_tuple[1])
 
-        self.printer.show_all(input_tuple[1], feature_vec, pred, (aux > 1e-20, 'Forward probabilities:'))
+        #self.printer.show_all(input_tuple[1], feature_vec, pred, (aux > 1e-20, 'Forward probabilities:'))
 
         return [cst, pred, aux]
 

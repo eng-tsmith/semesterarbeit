@@ -67,7 +67,6 @@ def load(tupel_filenames):
     return img, label
 
 
-
 def greyscale(img):
     """
     Makes a greyscale image out of a normal images

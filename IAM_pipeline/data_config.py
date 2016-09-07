@@ -29,7 +29,8 @@ testset_path = '../media/nas/01_Datasets/IAM/testset.txt'
 timset_path = '../media/nas/01_Datasets/IAM/tim_set.txt'
 
 # This determins which sets are used for training
-files_training = [timset_path]
+# files_training = [timset_path]
+files_training = [trainset_path]
 
 IAM_dataset = []
 

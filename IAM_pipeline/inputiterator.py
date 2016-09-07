@@ -1,5 +1,6 @@
 from validation_task import InputIteratorTask
 import IAM_pipeline.data_config as data
+
 import numpy as np
 
 
@@ -14,5 +15,5 @@ class IAM_InputIterator(InputIteratorTask):
                 yield input
 
     def __len__(self):
-        fold_lens = 3  # TODO: old --> map(lambda fold: len(fold), IAM_config.dataset)
+        fold_lens = map(lambda fold: len(fold), data.dataset)
         return fold_lens

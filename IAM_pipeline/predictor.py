@@ -8,54 +8,54 @@ import rnn_ctc.utils as utils
 
 
 def FeatureExtractor(img):
-"""
+    """
 
-:param img:
-:return:
-"""
-feature_vec = np.zeros((9, img.shape[1]))
+    :param img:
+    :return:
+    """
+    feature_vec = np.zeros((9, img.shape[1]))
 
-# needed values
-m = img.shape[0]
+    # needed values
+    m = img.shape[0]
 
-for col in range(img.shape[1]):
-    # 1 Number of black Pixel
-    feature_vec[0, col] = np.sum(img[:, col]) / 255.0  # TODO /255 oder nicht?
+    for col in range(img.shape[1]):
+        # 1 Number of black Pixel
+        feature_vec[0, col] = np.sum(img[:, col]) / 255.0  # TODO /255 oder nicht?
 
-    # 2 Center of Gravity
-    feature_vec[1, col] = np.sum(np.arange(1, m + 1) * img[:, col]) / m
+        # 2 Center of Gravity
+        feature_vec[1, col] = np.sum(np.arange(1, m + 1) * img[:, col]) / m
 
-    # 3 Second order Center of Gravitiy "Second order moment"
-    feature_vec[2, col] = np.sum(np.square(np.arange(1, m + 1)) * img[:, col]) / np.square(m)
+        # 3 Second order Center of Gravitiy "Second order moment"
+        feature_vec[2, col] = np.sum(np.square(np.arange(1, m + 1)) * img[:, col]) / np.square(m)
 
-    # 4/5 Position top / bottom black
-    black_pixels = np.nonzero(img[:, col])
-    if np.sum(img[:, col]) == 0:
-        feature_vec[3, col] = 1
-        feature_vec[4, col] = m
-    else:
-        feature_vec[3, col] = black_pixels[0][0] + 1
-        feature_vec[4, col] = black_pixels[0][-1] + 1
+        # 4/5 Position top / bottom black
+        black_pixels = np.nonzero(img[:, col])
+        if np.sum(img[:, col]) == 0:
+            feature_vec[3, col] = 1
+            feature_vec[4, col] = m
+        else:
+            feature_vec[3, col] = black_pixels[0][0] + 1
+            feature_vec[4, col] = black_pixels[0][-1] + 1
 
-    # 6/ 7 grad top/bottom
-    if col == 0:
-        feature_vec[5, col] = 0
-        feature_vec[6, col] = 0
-    else:
-        feature_vec[5, col] = feature_vec[3, col] - feature_vec[3, col - 1]
-        feature_vec[6, col] = feature_vec[4, col] - feature_vec[4, col - 1]
+        # 6/ 7 grad top/bottom
+        if col == 0:
+            feature_vec[5, col] = 0
+            feature_vec[6, col] = 0
+        else:
+            feature_vec[5, col] = feature_vec[3, col] - feature_vec[3, col - 1]
+            feature_vec[6, col] = feature_vec[4, col] - feature_vec[4, col - 1]
 
-    # 8 Number of transitions between black and white
-    feature_vec[7, col] = np.sum(np.absolute(np.diff(np.asarray(img[:, col])))) / 255
+        # 8 Number of transitions between black and white
+        feature_vec[7, col] = np.sum(np.absolute(np.diff(np.asarray(img[:, col])))) / 255
 
-    # 9 How many black between top and black
-    if np.sum(img[:, col]) == 0:
-        feature_vec[8, col] = 0
-    else:
-        feature_vec[8, col] = np.sum(
-            img[:, col][black_pixels[0][0]:black_pixels[0][-1] + 1]) / 255.0  # TODO /255 oder nicht?
+        # 9 How many black between top and black
+        if np.sum(img[:, col]) == 0:
+            feature_vec[8, col] = 0
+        else:
+            feature_vec[8, col] = np.sum(
+                img[:, col][black_pixels[0][0]:black_pixels[0][-1] + 1]) / 255.0  # TODO /255 oder nicht?
 
-return feature_vec
+    return feature_vec
 
 
 class IAM_Predictor(PredictorTask):

@@ -5,10 +5,10 @@ import numpy as np
 
 class IAM_InputIterator(InputIteratorTask):
     def run(self):
-        print ("====== IAM  Pipeline ======")
-
+        print("====== IAM  Pipeline ======")
 
         for img_label in data.dataset:
+            print("test:", img_label)
             yield img_label
 
     def __len__(self):

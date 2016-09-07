@@ -7,9 +7,10 @@ class IAM_InputIterator(InputIteratorTask):
     def run(self):
         print("====== IAM  Pipeline ======")
 
-        for img_label in data.dataset:
-            print("test:", img_label)
-            yield img_label
+        for fold in data.dataset:
+            for input in fold:
+                print("test:", input)
+                yield input
 
     def __len__(self):
         fold_lens = 3  # TODO: old --> map(lambda fold: len(fold), IAM_config.dataset)

@@ -28,7 +28,7 @@ def end_timer(timer_name="default"):
 def check_pipeline_config():
     """ Make sure pipeline config does not contain invalid settings. Not all errors can be
     detected by this method """
-
+    print("Checking Pipeline Configuration")
     # Check task types
     assert isinstance(Pipeline.InputIterator(), validation_task.InputIteratorTask), \
         "Pipeline.InputIterator must be a subclass of validation_task.InputIteratorTask"
@@ -44,7 +44,6 @@ def check_pipeline_config():
         "Pipeline.Reporter must be a subclass of validation_task.ReporterTask"
 
 if __name__ == '__main__':
-    print("Welcome to Hand")
     logging.basicConfig(level=logging.DEBUG)
     # Perform some sanity checks
     check_pipeline_config()

@@ -21,16 +21,33 @@ IAM_BASE_PATH = "../media/nas/01_Datasets/IAM/"
 IAM_img_path = IAM_BASE_PATH + "lines/"
 IAM_label_path =IAM_BASE_PATH + "xml/"
 
-# Line Name
-IAM_name_1 = "a01-000u-00"
-IAM_name_2 = "a01-000u-01"
+# Divide datset into sets given by IAM
+trainset_path = '../media/nas/01_Datasets/IAM/trainset.txt'
+valset1_path = '../media/nas/01_Datasets/IAM/validationset1.txt'
+valset2_path = '../media/nas/01_Datasets/IAM/validationset2.txt'
+testset_path = '../media/nas/01_Datasets/IAM/testset.txt'
+timset_path = '../media/nas/01_Datasets/IAM/tim_set.txt'
 
-IAM_validation_set = [
-    (IAM_img_path+"a01/a01-000u/"+IAM_name_1+".png", IAM_label_path+"a01-000u.xml", IAM_name_1),
-    (IAM_img_path+"a01/a01-000u/"+IAM_name_2+".png", IAM_label_path+"a01-000u.xml", IAM_name_2)]
+# This determins which sets are used for training
+files_training = [timset_path]
 
+IAM_dataset = []
 
-IAM_dataset = [IAM_validation_set]  # TODO
+for path in files_training:
+    with open(path, 'r') as txtfile:
+        content = txtfile.readlines()
+
+    set =[]
+
+    for row in content:
+        part1 = row.split('-')[0]
+        part2 = row.split('-')[1]
+        name = row.split('\n')[0]
+        image = IAM_img_path + part1 + "/" + part1 + "-" + part2 + "/" + name + ".png"
+        label = IAM_label_path + part1 + "-" + part2 + ".xml"
+        set.append((image, label, name))
+    IAM_dataset.append(set)
+
 IAM_bs = "IAM_bs" # TODO
 IAM_models = [IAM_bs + "_model"]  # TODO
 

@@ -5,6 +5,7 @@ import numpy as np
 
 class IAM_InputIterator(InputIteratorTask):
     def run(self):
+        print("Welcome to Handwriting Recognizer")
         print("====== IAM  Pipeline ======")
 
         for fold in data.dataset:

@@ -179,9 +179,11 @@ class IAM_Preprocessor(PreprocessorTask):
         :return output_tuple: [normalized image of text line, label]
         """
         print ("Inputs: ", input_tuple)
+        print ("imagesize",)
         # 0. Load img and label
         img_raw, label_raw = load(input_tuple)
         # 1. Greyscale
+        print("imagesize", img_raw.shape)
         img_grey = greyscale(img_raw)
         # 2. Thresholding
         img_thresh = thresholding(img_grey)

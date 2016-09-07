@@ -6,7 +6,8 @@ class IAM_Evaluator(EvaluatorTask):
     def run(self, input_tuple, evaluator_output):
         """
 
-        :param input_tuple: Predictions, Cost, Shown String, Seen String
+        :param input_tuple: Original Data
+               evaluator_output: Predictions, Cost, Shown String, Seen String
         :return:
         """
 

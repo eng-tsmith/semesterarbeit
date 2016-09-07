@@ -156,7 +156,12 @@ def scaling(img):
     :param img:
     :return:
     """
-    return img
+    baseheight = 40
+    hpercent = (baseheight / float(img.shape[0]))
+
+    img_scaled = cv.resize(img, fx=hpercent, fy=hpercent, interpolation=cv.INTER_NEAREST)
+
+    return img_scaled
 
 
 class IAM_Preprocessor(PreprocessorTask):

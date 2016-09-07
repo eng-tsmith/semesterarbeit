@@ -10,9 +10,9 @@
     'noise': .05,
     'vbuffer': 3,
     'hbuffer': 5,
-    'avg_seq_len': 0,
-    'varying_len': False,
-    'nchars_per_sample': 6,
+    'avg_seq_len': 1000,
+    'varying_len': True,
+    'nchars_per_sample': 50,
     },
 
 # Online and offline training

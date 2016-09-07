@@ -158,8 +158,9 @@ def scaling(img):
     """
     baseheight = 40
     hpercent = (baseheight / float(img.shape[0]))
+    dim = (int(hpercent), int(img.shape[1] * hpercent))
 
-    img_scaled = cv.resize(img, fx=hpercent, fy=hpercent, interpolation=cv.INTER_NEAREST)
+    img_scaled = cv.resize(img, dim, interpolation=cv.INTER_NEAREST)
 
     return img_scaled
 

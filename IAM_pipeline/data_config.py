@@ -23,9 +23,12 @@ IAM_label_path =IAM_BASE_PATH + "xml/"
 
 # Line Name
 IAM_name_1 = "a01-000u-00"
+IAM_name_2 = "a01-000u-01"
 
 IAM_validation_set = [
-    IAM_img_path+"a01/a01-000u/"+IAM_name_1+".png", IAM_label_path+"a01-000u.xml", IAM_name_1]
+    (IAM_img_path+"a01/a01-000u/"+IAM_name_1+".png", IAM_label_path+"a01-000u.xml", IAM_name_1),
+    (IAM_img_path+"a01/a01-000u/"+IAM_name_2+".png", IAM_label_path+"a01-000u.xml", IAM_name_2)]
+
 
 IAM_dataset = [IAM_validation_set]  # TODO
 IAM_bs = "IAM_bs" # TODO

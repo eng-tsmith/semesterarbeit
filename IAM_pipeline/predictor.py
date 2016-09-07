@@ -54,7 +54,7 @@ def FeatureExtractor(img):
         else:
             feature_vec[8, col] = np.sum(
                 img[:, col][black_pixels[0][0]:black_pixels[0][-1] + 1]) / 255.0  # TODO /255 oder nicht?
-
+    print(feature_vec)
     return feature_vec
 
 

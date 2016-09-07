@@ -156,9 +156,9 @@ def scaling(img):
     :param img:
     :return:
     """
-    baseheight = 40
+    baseheight = 40.0
     hpercent = (baseheight / float(img.shape[0]))
-    dim = (int(hpercent), int(img.shape[1] * hpercent))
+    dim = (40, int(img.shape[1] * hpercent))
 
     img_scaled = cv.resize(img, dim, interpolation=cv.INTER_NEAREST)
 

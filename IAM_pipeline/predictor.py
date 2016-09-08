@@ -185,47 +185,20 @@ class IAM_Predictor(PredictorTask):
 
         return cst, pred, aux
 
-        # OLD:
-        # print('Training the Network')
-        # for epoch in range(self.num_epochs):
-        #     print('Epoch : ', epoch)
-        #     for samp in range(self.num_samples):
-        #         x = features  # data_x[samp]
-        #         y = labels    # data_y[samp]
-        #         # if not samp % 500:            print(samp)
-        #
-        #         if samp < self.nTrainSamples:
-        #             if len(y) < 2:
-        #                 continue
-        #
-        #             cst, pred, aux = self.net.trainer(x, y)
-        #
-        #             if (epoch % 10 == 0 and samp < 3) or np.isinf(cst):
-        #                 print('\n## TRAIN cost: ', np.round(cst, 3))
-        #                 utils.printer.show_all(y, x, pred, (aux > 1e-20, 'Forward probabilities:'))
-        #
-        #             if np.isinf(cst):
-        #                 print('Exiting on account of Inf Cost...')
-        #                 sys.exit()
-        #
-        #         elif (epoch % 10 == 0 and samp - self.nTrainSamples < 3) \
-        #                 or epoch == self.num_epochs - 1:
-        #             # Print some test images
-        #             pred, aux = self.net.tester(x)
-        #             aux = (aux + 1) / 2.0
-        #             print('\n## TEST')
-        #             utils.printer.show_all(y, x, pred, (aux, 'Hidden Layer:'))
-        #
-        # print(self.net)
-        #
-        # prediction = np.random.random((5, 5))
-        # return prediction
 
+    def classify_rnn(self, img_feat_vec):
+        """
 
-    def classify_rnn(self):
+        :param features:
+        :return:
         """
-        """
-        pass
+        print('Classification')
+
+        x = np.asarray(img_feat_vec, dtype=th.config.floatX)  # data_x[samp]
+
+        pred, aux = self.net.tester(x)
+
+        return pred, aux
 
 
     def run(self, input_tuple):
@@ -242,7 +215,11 @@ class IAM_Predictor(PredictorTask):
         # 1. Feature Extractor
         feature_vec = FeatureExtractor(input_tuple[0])
         # 2. Neural Net
-        cst, pred, aux = self.train_rnn(feature_vec, input_tuple[1])
+        if input_tuple[2] == 0:
+            cst, pred, aux = self.train_rnn(feature_vec, input_tuple[1])
+        else:
+            pred, aux = self.classify_rnn(feature_vec)
+            cst = 0
 
         self.show_all_tim(input_tuple[1], feature_vec, pred, (aux > 1e-20, 'Forward probabilities:'))
 

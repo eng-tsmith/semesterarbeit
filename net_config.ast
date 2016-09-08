@@ -2,7 +2,7 @@
 # Training
 'num_epochs': 100,
 'num_samples': 6161,     # Online: Number of samples per epoch
-'train_on_fraction': 1, # Offline use only
+'train_on_fraction': 0.8, # Offline use only
 
 # Online training and Offline data generation
 'scribe_args': {
@@ -20,13 +20,13 @@
     'use_log_space': True,
 
 	'mid_layer':'BDLSTM',
-    'mid_layer_args': {'nunits': 25, 'actvn_pre': 'relu10'},
+    'mid_layer_args': {'nunits': 10},
 
-    'optimizer':'adagrad',
+    'optimizer':'sgd',
     'optimizer_args': {},
 
     'learning_rate_args': {
-        'initial_rate': .0005,
+        'initial_rate': .0001,
         'anneal': 'constant',
         'epochs_to_half': 1,
         },

@@ -70,7 +70,8 @@ IAM_bs = "IAM_bs" # TODO
 IAM_models = [IAM_bs + "_model"]  # TODO
 
 
-IAM = [IAM_dataset_train, IAM_dataset_validate, IAM_models]
+# IAM = [IAM_dataset_train, IAM_dataset_validate, IAM_models]
+IAM = [IAM_dataset_train, IAM_models]
 
 # ____________________________
 # ______ SELECT DATASET ______

@@ -91,10 +91,12 @@ def thresholding(img_grey):
     blur = cv.GaussianBlur(img_grey, (5, 5), 0)
     ret3, img_binary = cv.threshold(blur, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
 
+    ret, thresh1 = cv.threshold(img_binary, 127, 255, cv.THRESH_BINARY_INV)
+
     # show_img(img_grey)
     # show_img(img_binary)
 
-    return img_binary
+    return thresh1
 
 
 def skew(img):
@@ -198,6 +200,8 @@ class IAM_Preprocessor(PreprocessorTask):
         # 7. Preprocessing of label
         label = label_preproc(label_raw)
 
+        # show_img(img_norm)
+        # print(img_norm)
         return [img_norm, label]
 
     def save(self, directory):

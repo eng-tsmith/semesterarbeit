@@ -21,5 +21,5 @@ class IAM_InputIterator(InputIteratorTask):
             #         yield [input,1]
 
     def __len__(self):
-        fold_lens = map(lambda fold: len(fold), data.dataset)
+        fold_lens = map(lambda fold: len(fold), data.dataset_train)
         return functools.reduce(lambda a, b: a + b, fold_lens)

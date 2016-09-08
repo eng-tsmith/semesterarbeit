@@ -9,17 +9,13 @@ def slab_print(slab, col_names=None):
     Prints a 'slab' of printed 'text' using ascii.
     :param slab: A matrix of floats from [0, 1]
     """
+    """
+    Prints a 'slab' of printed 'text' using ascii.
+    :param slab: A matrix of floats from [0, 1]
+    """
     for ir, r in enumerate(slab):
-        print(ir)
-        print('{:4d}¦'.format(ir), end='')
+        print('{:2d}¦'.format(ir), end='')
         for val in r:
-            # if   val < 0.0:  print('-'.encode('utf-8', 'ignore'), end='')
-            # elif val < .15:  print(' '.encode('utf-8', 'ignore'), end=''),
-            # elif val < .35:  print('░'.encode('utf-8', 'ignore'), end=''),
-            # elif val < .65:  print('▒'.encode('utf-8', 'ignore'), end=''),
-            # elif val < .85:  print('▓'.encode('utf-8', 'ignore'), end=''),
-            # elif val <= 1.:  print('█'.encode('utf-8', 'ignore'), end=''),
-            # else:            print('+', end='')
             if val < 0.0:
                 print('-', end='')
             elif val < .15:
@@ -34,7 +30,7 @@ def slab_print(slab, col_names=None):
                 print('█', end=''),
             else:
                 print('+', end='')
-        print('¦ {}'.format(col_names[ir] if col_names else ''))
+        print('¦')
 
 
 class Printer():

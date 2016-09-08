@@ -21,9 +21,10 @@ class IAM_Evaluator(EvaluatorTask):
             print("Nicht")
             match = 0
 
-        self.accuracy.append(match)
+        # self.accuracy.append(match)
 
-        return [self.accuracy, postprocessor_output[1]]
+        # return [self.accuracy, postprocessor_output[1]]
+        return [match, postprocessor_output[1]]
 
     def save(self, directory):
         print ("Saving myEvaluator to ", directory)

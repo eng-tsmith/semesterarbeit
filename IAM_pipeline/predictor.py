@@ -117,6 +117,37 @@ class IAM_Predictor(PredictorTask):
         #         printer.show_all(y1, x, None, (x[:, ::conv_sz], 'Squissed'))
 
 
+    def show_all_tim(self, shown_seq, shown_img,
+                     softmax_firings=None,
+                     *aux_imgs):
+        """
+        Utility function to show the input and output and debug
+        :param shown_seq: Labelings of the input
+        :param shown_img: Input Image
+        :param softmax_firings: Seen Probabilities (Excitations of Softmax)
+        :param aux_imgs: List of pairs of images and names
+        :return:
+        """
+        print('Shown : ', end='')
+        self.labels_print(shown_seq)
+
+        if softmax_firings is not None:
+            print('Seen  : ', end='')
+            maxes = np.argmax(softmax_firings, 0)
+            self.labels_print(maxes)
+
+        print('Image Shown:')
+        utils.slab_print(shown_img)
+
+        if softmax_firings is not None:
+            print('SoftMax Firings:')
+            utils.slab_print(softmax_firings)
+
+        for aux_img, aux_name in aux_imgs:
+            print(aux_name)
+            utils.slab_print(aux_img)
+
+
     def train_rnn(self, img_feat_vec, label):
         """
 

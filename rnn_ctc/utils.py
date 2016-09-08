@@ -96,35 +96,6 @@ class Printer():
             print(aux_name)
             slab_print(aux_img)
 
-    def show_all_tim(self, shown_seq, shown_img,
-                 softmax_firings=None,
-                 *aux_imgs):
-        """
-        Utility function to show the input and output and debug
-        :param shown_seq: Labelings of the input
-        :param shown_img: Input Image
-        :param softmax_firings: Seen Probabilities (Excitations of Softmax)
-        :param aux_imgs: List of pairs of images and names
-        :return:
-        """
-        print('Shown : ', end='')
-        labels_print(shown_seq)
-
-        if softmax_firings is not None:
-            print('Seen  : ', end='')
-            maxes = np.argmax(softmax_firings, 0)
-            labels_print(maxes)
-
-        print('Image Shown:')
-        slab_print(shown_img)
-
-        if softmax_firings is not None:
-            print('SoftMax Firings:')
-            slab_print(softmax_firings)
-
-        for aux_img, aux_name in aux_imgs:
-            print(aux_name)
-            slab_print(aux_img)
 
 
     def prediction_printer(self, chars):  #TODO VON htr-CTC!!!!

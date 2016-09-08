@@ -1,6 +1,6 @@
 from validation_task import PredictorTask
 # import pickle
-# import sys
+import sys
 import numpy as np
 import theano as th
 from rnn_ctc.nnet.neuralnet import NeuralNet
@@ -81,7 +81,7 @@ class IAM_Predictor(PredictorTask):
         self.img_ht = 9  # TODO
         self.num_samples = 1  # TODO
         self.nTrainSamples = int(self.num_samples * self.train_on_fraction)
-        printer = utils.Printer(self.chars)
+        self.labels_print, self.labels_len = self.prediction_printer(self.chars)
 
         print('\nNetwork Info:'
               '\nInput Dim: {}'
@@ -133,6 +133,9 @@ class IAM_Predictor(PredictorTask):
         # print("x: ", x, "   y: ", y)
         cst, pred, aux = self.net.trainer(x, y)
 
+        if np.isinf(cst):
+            print('Cost is infinite')
+            sys.exit()
         # print(self.net)
 
         return cst, pred, aux
@@ -196,7 +199,7 @@ class IAM_Predictor(PredictorTask):
         # 2. Neural Net
         cst, pred, aux = self.train_rnn(feature_vec, input_tuple[1])
 
-        #self.printer.show_all(input_tuple[1], feature_vec, pred, (aux > 1e-20, 'Forward probabilities:'))
+        self.printer.show_all_tim(input_tuple[1], feature_vec, pred, (aux > 1e-20, 'Forward probabilities:'))
 
         return [input_tuple[1], pred, cst,  aux]
 

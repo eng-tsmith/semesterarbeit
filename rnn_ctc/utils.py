@@ -96,6 +96,63 @@ class Printer():
             print(aux_name)
             slab_print(aux_img)
 
+    def show_all_tim(self, shown_seq, shown_img,
+                 softmax_firings=None,
+                 *aux_imgs):
+        """
+        Utility function to show the input and output and debug
+        :param shown_seq: Labelings of the input
+        :param shown_img: Input Image
+        :param softmax_firings: Seen Probabilities (Excitations of Softmax)
+        :param aux_imgs: List of pairs of images and names
+        :return:
+        """
+        print('Shown : ', end='')
+        labels_print(shown_seq)
+
+        if softmax_firings is not None:
+            print('Seen  : ', end='')
+            maxes = np.argmax(softmax_firings, 0)
+            labels_print(maxes)
+
+        print('Image Shown:')
+        slab_print(shown_img)
+
+        if softmax_firings is not None:
+            print('SoftMax Firings:')
+            slab_print(softmax_firings)
+
+        for aux_img, aux_name in aux_imgs:
+            print(aux_name)
+            slab_print(aux_img)
+
+
+    def prediction_printer(self, chars):  #TODO VON htr-CTC!!!!
+        """
+        Returns a function that can print a predicted output of the CTC RNN
+        It removes the blank characters (need to be set to n_classes),
+        It also removes duplicates
+        :param list chars: list of characters
+        :return: the printing functions
+        """
+        n_classes = len(chars)
+
+        def yprint(labels):
+            labels_out = []
+            for il, l in enumerate(labels):
+                if (l != n_classes) and (il == 0 or l != labels[il - 1]):
+                    labels_out.append(l)
+            print(labels_out, " ".join(chars[l] for l in labels_out))
+
+        def ylen(labels):
+            length = 0
+            for il, l in enumerate(labels):
+                if (l != n_classes) and (il == 0 or l != labels[il - 1]):
+                    length += 1
+            return length
+
+        return yprint, ylen
+
 
 def insert_blanks(y, blank):
     # Insert blanks at alternate locations in the labelling (blank is blank)

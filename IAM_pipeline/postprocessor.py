@@ -48,8 +48,8 @@ class IAM_Postprocessor(PostprocessorTask):
         maxes = np.argmax(input_tuple[1], 0)
         labels_out_pred, labels_list_pred = printer.yprint(maxes)
 
-        print('Shown String: ', labels_list_true)
-        print('Seen String: ', labels_list_pred)
+        # print('Shown String: ', labels_list_true)
+        # print('Seen String: ', labels_list_pred)
 
         # Predictions, Cost, Shown String, Seen String
         return [maxes, input_tuple[2], labels_list_true, labels_list_pred]

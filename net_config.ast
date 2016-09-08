@@ -17,12 +17,11 @@
 
 # Online and offline training
 'nnet_args': {
-    'use_log_space': False,
+    'use_log_space': True,
 
 	'mid_layer':'BDLSTM',
-    'mid_layer_args': {'nunits': 256, 'forget': True, 'actvn_post': 'relu50', 'actvn_pre': 'relu10'},
+    'mid_layer_args': {'nunits': 25, 'actvn_pre': 'relu10'},
 
-    'optimizer':'sgd',
     'optimizer':'adagrad',
     'optimizer_args': {},
 

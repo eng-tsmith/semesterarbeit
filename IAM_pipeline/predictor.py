@@ -116,7 +116,6 @@ class IAM_Predictor(PredictorTask):
         #         bad_data = True
         #         printer.show_all(y1, x, None, (x[:, ::conv_sz], 'Squissed'))
 
-
     def show_all_tim(self, shown_seq, shown_img,
                      softmax_firings=None,
                      *aux_imgs):
@@ -147,6 +146,31 @@ class IAM_Predictor(PredictorTask):
             print(aux_name)
             utils.slab_print(aux_img)
 
+    def prediction_printer(self, chars):  #TODO VON htr-CTC!!!!
+        """
+        Returns a function that can print a predicted output of the CTC RNN
+        It removes the blank characters (need to be set to n_classes),
+        It also removes duplicates
+        :param list chars: list of characters
+        :return: the printing functions
+        """
+        n_classes = len(chars)
+
+        def yprint(labels):
+            labels_out = []
+            for il, l in enumerate(labels):
+                if (l != n_classes) and (il == 0 or l != labels[il - 1]):
+                    labels_out.append(l)
+            print(labels_out, " ".join(chars[l] for l in labels_out))
+
+        def ylen(labels):
+            length = 0
+            for il, l in enumerate(labels):
+                if (l != n_classes) and (il == 0 or l != labels[il - 1]):
+                    length += 1
+            return length
+
+        return yprint, ylen
 
     def train_rnn(self, img_feat_vec, label):
         """

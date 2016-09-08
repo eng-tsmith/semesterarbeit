@@ -97,34 +97,6 @@ class Printer():
             slab_print(aux_img)
 
 
-
-    def prediction_printer(self, chars):  #TODO VON htr-CTC!!!!
-        """
-        Returns a function that can print a predicted output of the CTC RNN
-        It removes the blank characters (need to be set to n_classes),
-        It also removes duplicates
-        :param list chars: list of characters
-        :return: the printing functions
-        """
-        n_classes = len(chars)
-
-        def yprint(labels):
-            labels_out = []
-            for il, l in enumerate(labels):
-                if (l != n_classes) and (il == 0 or l != labels[il - 1]):
-                    labels_out.append(l)
-            print(labels_out, " ".join(chars[l] for l in labels_out))
-
-        def ylen(labels):
-            length = 0
-            for il, l in enumerate(labels):
-                if (l != n_classes) and (il == 0 or l != labels[il - 1]):
-                    length += 1
-            return length
-
-        return yprint, ylen
-
-
 def insert_blanks(y, blank):
     # Insert blanks at alternate locations in the labelling (blank is blank)
     y1 = [blank]

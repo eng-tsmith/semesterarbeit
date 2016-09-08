@@ -76,7 +76,8 @@ IAM = [IAM_dataset_train, IAM_dataset_validate, IAM_models]
 # ______ SELECT DATASET ______
 # ____________________________
 
-dataset_train, dataset_val, models = IAM
+# dataset_train, dataset_val, models = IAM
+dataset_train, models = IAM
 
 
 

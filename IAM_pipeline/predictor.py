@@ -127,24 +127,14 @@ class IAM_Predictor(PredictorTask):
         :param aux_imgs: List of pairs of images and names
         :return:
         """
-        print('Shown : ', end='')
+        print('True Label : ', end='')
         self.labels_print(shown_seq)
 
         if softmax_firings is not None:
-            print('Seen  : ', end='')
+            print('Predicted Label  : ', end='')
             maxes = np.argmax(softmax_firings, 0)
             self.labels_print(maxes)
 
-        print('Image Shown:')
-        utils.slab_print(shown_img)
-
-        if softmax_firings is not None:
-            print('SoftMax Firings:')
-            utils.slab_print(softmax_firings)
-
-        for aux_img, aux_name in aux_imgs:
-            print(aux_name)
-            utils.slab_print(aux_img)
 
     def prediction_printer(self, chars):  #TODO VON htr-CTC!!!!
         """

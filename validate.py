@@ -100,7 +100,7 @@ if __name__ == '__main__':
 
             print("==== Evaluator.run ====" + progress_str)
             start_timer()
-            evaluator_output     = evaluator.run(input_tuple, postprocessor_output)
+            evaluator_output     = evaluator.run(postprocessor_output)
             end_timer()
             if Pipeline.Evaluator_save_to_disk:
                 print("==== Evaluator.save ====" + progress_str)

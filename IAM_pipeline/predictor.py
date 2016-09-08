@@ -215,11 +215,11 @@ class IAM_Predictor(PredictorTask):
         # 1. Feature Extractor
         feature_vec = FeatureExtractor(input_tuple[0])
         # 2. Neural Net
-        if input_tuple[2] == 0:
-            cst, pred, aux = self.train_rnn(feature_vec, input_tuple[1])
-        else:
-            pred, aux = self.classify_rnn(feature_vec)
-            cst = 0
+        # if input_tuple[2] == 0:
+        cst, pred, aux = self.train_rnn(feature_vec, input_tuple[1])
+        # else:
+        #     pred, aux = self.classify_rnn(feature_vec)
+        #     cst = 0
 
         self.show_all_tim(input_tuple[1], feature_vec, pred, (aux > 1e-20, 'Forward probabilities:'))
 

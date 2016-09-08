@@ -202,7 +202,7 @@ class IAM_Preprocessor(PreprocessorTask):
 
         # show_img(img_norm)
         # print(img_norm)
-        return [img_norm, label, input_tuple[2]]
+        return [img_norm, label, ] # TODO input_tuple[2]]
 
     def save(self, directory):
         print ("Saving myPreprocessor to ", directory)

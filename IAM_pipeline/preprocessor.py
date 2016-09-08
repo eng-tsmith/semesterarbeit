@@ -181,28 +181,33 @@ class IAM_Preprocessor(PreprocessorTask):
         :return output_tuple: [normalized image of text line, label]
         """
         print ("Inputs: ", input_tuple)
-        print ("imagesize",)
         # 0. Load img and label
         img_raw, label_raw = load(input_tuple)
+
         # 1. Greyscale
-        print("imagesize", img_raw.shape)
         img_grey = greyscale(img_raw)
+
         # 2. Thresholding
         img_thresh = thresholding(img_grey)
+
         # 3. Skew
         img_skew = skew(img_thresh)
+
         # 4. Slant
         img_slant = slant(img_skew)
+
         # 5. Positioning
         img_pos = positioning(img_slant)
+
         # 6. Scaling
         img_norm = scaling(img_pos)
+
         # 7. Preprocessing of label
         label = label_preproc(label_raw)
 
         # show_img(img_norm)
         # print(img_norm)
-        return [img_norm, label, ] # TODO input_tuple[2]]
+        return [img_norm, label]  # TODO input_tuple[2]]
 
     def save(self, directory):
         print ("Saving myPreprocessor to ", directory)

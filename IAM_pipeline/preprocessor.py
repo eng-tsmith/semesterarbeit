@@ -27,7 +27,7 @@ def label_preproc(label_string):
     for letter in label_string:
         label_int.append(alphabet_chars.index(letter))
 
-    print("Int Label: ", label_int)
+    # print("Int Label: ", label_int)
 
     return label_int
 

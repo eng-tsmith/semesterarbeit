@@ -17,7 +17,7 @@ def label_preproc(label_string):
     :param label_string:
     :return:
     """
-    print("True Label: ", label_string)
+    # print("True Label: ", label_string)
 
     args = utils.read_args(['net_config.ast'])
     scriber = Scribe.Scribe(**args['scribe_args'])
@@ -121,7 +121,7 @@ def skew(img):
     a = (np.sum(black_pix[1][:] * black_pix[0][:]) - k * mean_x * mean_y) / (np.sum(black_pix[1][:] * black_pix[1][:]) - k * mean_x * mean_x)
 
     angle = np.arctan(a) * 180 / np.pi
-    print (angle)
+    # print (angle)
 
     rows, cols = img.shape
 
@@ -206,7 +206,7 @@ class IAM_Preprocessor(PreprocessorTask):
         label = label_preproc(label_raw)
 
         # show_img(img_norm)
-        # print(img_norm)
+        print("Preprocessing done!")
         return [img_norm, label]  # TODO input_tuple[2]]
 
     def save(self, directory):

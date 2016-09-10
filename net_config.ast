@@ -20,13 +20,13 @@
     'use_log_space': True,
 
 	'mid_layer':'BDLSTM',
-    'mid_layer_args': {'nunits': 10},
+    'mid_layer_args': {'nunits': 50},
 
     'optimizer':'sgd',
     'optimizer_args': {},
 
     'learning_rate_args': {
-        'initial_rate': .0001,
+        'initial_rate': .00001,
         'anneal': 'constant',
         'epochs_to_half': 1,
         },

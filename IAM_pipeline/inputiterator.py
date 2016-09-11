@@ -19,7 +19,7 @@ class IAM_InputIterator(InputIteratorTask):
             for fold in data.dataset_val:  #TODO
                 for input in fold:
                     print("Test:", input)
-                    yield input + [1]
+                    yield input, 1
 
     def __len__(self):
         fold_lens = map(lambda fold: len(fold), data.dataset_train)

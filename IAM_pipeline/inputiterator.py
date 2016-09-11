@@ -14,7 +14,7 @@ class IAM_InputIterator(InputIteratorTask):
             for fold in data.dataset_train:
                 for input in fold:
                     print("Train with: ", input)
-                    yield input + ['0']
+                    yield input, 0
 
             # for fold in data.dataset_train:  #TODO
             #     for input in fold:

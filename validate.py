@@ -64,7 +64,7 @@ if __name__ == '__main__':
 
     index = 0
     total = len(input_iterator)
-    for input_tuple in input_iterator.run():
+    for input_tuple, train in input_iterator.run():
         index += 1
 
         start_timer("global")

@@ -26,7 +26,7 @@
     'optimizer_args': {},
 
     'learning_rate_args': {
-        'initial_rate': .000001,
+        'initial_rate': .0001,
         'anneal': 'constant',
         'epochs_to_half': 1,
         },

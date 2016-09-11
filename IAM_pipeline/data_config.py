@@ -39,9 +39,7 @@ IAM_dataset_validate = []
 for path in files_training:
     with open(path, 'r') as txtfile:
         content = txtfile.readlines()
-
     set =[]
-
     for row in content:
         part1 = row.split('-')[0]
         part2 = row.split('-')[1]
@@ -50,19 +48,17 @@ for path in files_training:
         label = IAM_label_path + part1 + "-" + part2 + ".xml"
         set.append((image, label, name))
     IAM_dataset_train.append(set)
-	
+
 for path in files_validate:
     with open(path, 'r') as txtfile:
         content = txtfile.readlines()
-
     set =[]
-
     for row in content:
         part1 = row.split('-')[0]
         part2 = row.split('-')[1]
         name = row.split('\n')[0]
         image = IAM_img_path + part1 + "/" + part1 + "-" + part2 + "/" + name + ".png"
-        label = IAM_label_path + part1 + "-" + part2 + ".xml"
+        label = IAM_label_path + part1 + "-" + part2 + ".xml"  # TODO  exclude label
         set.append((image, label, name))
     IAM_dataset_validate.append(set)
 
@@ -70,15 +66,15 @@ IAM_bs = "IAM_bs" # TODO
 IAM_models = [IAM_bs + "_model"]  # TODO
 
 
-# IAM = [IAM_dataset_train, IAM_dataset_validate, IAM_models]
-IAM = [IAM_dataset_train, IAM_models]
+IAM = [IAM_dataset_train, IAM_dataset_validate, IAM_models]
+# IAM = [IAM_dataset_train, IAM_models]
 
 # ____________________________
 # ______ SELECT DATASET ______
 # ____________________________
 
 # dataset_train, dataset_val, models = IAM
-dataset_train, models = IAM
+dataset_train, dataset_val, models = IAM
 
 
 

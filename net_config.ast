@@ -19,14 +19,14 @@
 'nnet_args': {
     'use_log_space': True,
 
-	'mid_layer':'BDLSTM',
-    'mid_layer_args': {'nunits': 50},
+    'mid_layer':'BDLSTM',
+    'mid_layer_args': {'nunits': 25},
 
-    'optimizer':'sgd',
+    'optimizer':'adagrad',
     'optimizer_args': {},
 
     'learning_rate_args': {
-        'initial_rate': .00001,
+        'initial_rate': .000001,
         'anneal': 'constant',
         'epochs_to_half': 1,
         },

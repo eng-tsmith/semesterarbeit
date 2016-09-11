@@ -64,7 +64,7 @@ if __name__ == '__main__':
 
     index = 0
     total = len(input_iterator)
-    for input_tuple, train in input_iterator.run():
+    for input_tuple, test_set in input_iterator.run():
         index += 1
 
         start_timer("global")
@@ -84,7 +84,7 @@ if __name__ == '__main__':
 
             print("==== Predictor.run ====" + progress_str)
             start_timer()
-            predictor_output     = predictor.run(preprocessor_output)
+            predictor_output     = predictor.run(preprocessor_output, test_set)
             end_timer()
             if Pipeline.Predictor_save_to_disk:
                 print("==== Predictor.save ====" + progress_str)
@@ -100,7 +100,7 @@ if __name__ == '__main__':
 
             print("==== Evaluator.run ====" + progress_str)
             start_timer()
-            evaluator_output     = evaluator.run(postprocessor_output)
+            evaluator_output     = evaluator.run(postprocessor_output, test_set)
             end_timer()
             if Pipeline.Evaluator_save_to_disk:
                 print("==== Evaluator.save ====" + progress_str)
@@ -109,7 +109,7 @@ if __name__ == '__main__':
             print("==== Reporter.run ====" + progress_str)
             # Reporter should now save the metrics in evaluator_output
             start_timer()
-            reporter_output = reporter.run(input_tuple, postprocessor_output, evaluator_output)
+            reporter_output = reporter.run(input_tuple, postprocessor_output, evaluator_output, test_set)
             end_timer()
 
             end_timer("global")

@@ -40,7 +40,7 @@ def show_img(img):
     plt.show()
 
 
-def XML_load(filepath, filename):  # TODO: think about this again
+def XML_load(filepath, filename):
     """
     This funtion is used for loading labels out of corresponding xml file
     :param filepath:
@@ -61,7 +61,8 @@ def load(tupel_filenames):
     :param tupel_filenames:
     :return:
     """
-    img = cv.imread(tupel_filenames[0], cv.IMREAD_GRAYSCALE)  # TODO: np float 32 ? img.astype(float)
+    img = cv.imread(tupel_filenames[0], cv.IMREAD_GRAYSCALE)
+
     label = XML_load(tupel_filenames[1], tupel_filenames[2])
 
     return img, label
@@ -73,7 +74,7 @@ def greyscale(img):
     :param img:
     :return:
     """
-    # img_grey = cv.cvtColor(img, cv.COLOR_RGB2GRAY)# TODO: np float 32 ? img.astype(float)
+    # img_grey = cv.cvtColor(img, cv.COLOR_RGB2GRAY)
 
     return img
 
@@ -207,7 +208,8 @@ class IAM_Preprocessor(PreprocessorTask):
 
         # show_img(img_norm)
         print("Preprocessing done!")
-        return [img_norm, label]  # TODO input_tuple[2]]
+
+        return [img_norm, label]
 
     def save(self, directory):
         print ("Saving myPreprocessor to ", directory)

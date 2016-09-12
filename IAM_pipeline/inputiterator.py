@@ -24,5 +24,6 @@ class IAM_InputIterator(InputIteratorTask):
     def __len__(self):
         fold_lens1 = map(lambda fold: len(fold), data.dataset_train)
         fold_lens2 = map(lambda fold: len(fold), data.dataset_val)
-        fold_lens = (fold_lens1 + fold_lens2) * data.nr_epochs
-        return functools.reduce(lambda a, b: a + b, fold_lens)
+
+        return (functools.reduce(lambda a, b: a + b, fold_lens1) + functools.reduce(lambda a, b: a + b,
+                                                                                    fold_lens2)) * data.nr_epochs

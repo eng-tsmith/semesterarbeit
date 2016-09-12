@@ -21,8 +21,12 @@ class IAM_Reporter(ReporterTask):
         :param evaluator_output: match, accuracy
         :return:
         """
-        print("Match?", evaluator_output[0], "Shown: ", ''.join(postprocessor_output[2]), "Seen: ", ''.join(postprocessor_output[3]),
-              "Cost: ", postprocessor_output[1], "Total Accuracy: ", evaluator_output[1], "Test Set: ", test_set)
+        print("Match?", evaluator_output[0], "\n",
+              "Shown: ", ''.join(postprocessor_output[2]), "\n",
+              "Seen: ", ''.join(postprocessor_output[3]), "\n",
+              "Cost: ", postprocessor_output[1], "\n",
+              "Total Accuracy: ", evaluator_output[1], "\n",
+              "Test Set: ", test_set, "\n")
 
         fields = [evaluator_output[0], postprocessor_output[2], postprocessor_output[3], postprocessor_output[1],
                   evaluator_output[1], test_set]

@@ -10,6 +10,8 @@ class IAM_Evaluator(EvaluatorTask):
         self.accuracy_sum_test = 0.0
         self.accuracy_length_test = 0.0
 
+        self.start_testing = 0
+
     def run(self, postprocessor_output, test_set):
         """
 
@@ -17,6 +19,15 @@ class IAM_Evaluator(EvaluatorTask):
                postprocessor_output: Predictions, Cost, Shown String, Seen String
         :return:
         """
+        # Check if new testing starts
+        if self.start_testing == 0 and test_set == 1:
+            self.start_testing = 1
+            self.accuracy_sum_test = 0.0
+            self.accuracy_length_test = 0.0
+        # Check if testing ends
+        if self.start_testing == 1 and test_set == 0:
+            self.start_testing = 0
+
         if test_set == 0:
             if postprocessor_output[2] == postprocessor_output[3]:
                 print("Gleich")
@@ -25,10 +36,9 @@ class IAM_Evaluator(EvaluatorTask):
             else:
                 print("Nicht")
                 match = 0
-
             self.accuracy_length =+1
-
             accuracy = self.accuracy_sum/self.accuracy_length
+
         else:
             if postprocessor_output[2] == postprocessor_output[3]:
                 print("Gleich")
@@ -37,12 +47,9 @@ class IAM_Evaluator(EvaluatorTask):
             else:
                 print("Nicht")
                 match = 0
-
             self.accuracy_length_test = +1
-            accuracy = self.accuracy_sum_test / self.accuracy_length_test  #TODO delete after testset finished
+            accuracy = self.accuracy_sum_test / self.accuracy_length_test 
 
-
-        # return [self.accuracy, postprocessor_output[1]]
         return [match, accuracy]
 
     def save(self, directory):

@@ -79,6 +79,7 @@ class IAM_Predictor(PredictorTask):
         self.chars = [' ', '!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', ';', '<', '=', '>', '?', '@', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '[', '\\', ']', '^', '_', '`', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '{', '|', '}', '~'] # data['chars']
         self.num_classes = len(self.chars)
         self.img_ht = 40  # TODO
+        self.img_ht = 9  # TODO
         self.num_samples = 6161  # TODO
         self.nTrainSamples = int(self.num_samples * self.train_on_fraction)
         self.labels_print, self.labels_len = self.prediction_printer(self.chars)
@@ -213,14 +214,14 @@ class IAM_Predictor(PredictorTask):
         # print "Input: ", input_tuple[0]
         print ("Image size: ", input_tuple[0].shape)
         # 1. Feature Extractor
-        # feature_vec = FeatureExtractor(input_tuple[0])
+        feature_vec = FeatureExtractor(input_tuple[0])
         # 2. Neural Net
         if test_set == 0:
-            for i in range(100):
-                cst, pred, aux = self.train_rnn(input_tuple[0], input_tuple[1])
-        # cst, pred, aux = self.train_rnn(feature_vec, input_tuple[1])
+            # cst, pred, aux = self.train_rnn(input_tuple[0], input_tuple[1])
+            cst, pred, aux = self.train_rnn(feature_vec, input_tuple[1])
         else:
-            pred, aux = self.classify_rnn(input_tuple[0])
+            # pred, aux = self.classify_rnn(input_tuple[0])
+            pred, aux = self.classify_rnn(feature_vec)
             cst = 0
 
         # self.show_all_tim(input_tuple[1], input_tuple[0], pred, (aux > 1e-20, 'Forward probabilities:'))

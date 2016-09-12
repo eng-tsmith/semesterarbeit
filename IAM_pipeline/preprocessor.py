@@ -142,11 +142,10 @@ def slant(img):
     :return:
     """
     # Create Afine transform
-    afine_tf = tf.AffineTransform(shear=0.2)  #TODO which factor???
+    afine_tf = tf.AffineTransform(shear=0.1)  #TODO which factor???
 
     # Apply transform to image data
-    img_slanted = tf.warp(img, afine_tf)
-
+    img_slanted = tf.warp(img, afine_tf, order=0)
     return img_slanted
 
 

@@ -9,7 +9,7 @@ class IAM_InputIterator(InputIteratorTask):
         print("Welcome to Handwriting Recognizer")
         print("====== IAM  Pipeline ======")
 
-        for epoch in range(100):
+        for epoch in range(data.nr_epochs):
             print("Epoche: ", epoch)
             for fold in data.dataset_train:
                 for input in fold:
@@ -22,5 +22,7 @@ class IAM_InputIterator(InputIteratorTask):
                     yield input, 1
 
     def __len__(self):
-        fold_lens = map(lambda fold: len(fold), data.dataset_train)
+        fold_lens1 = map(lambda fold: len(fold), data.dataset_train)
+        fold_lens2 = map(lambda fold: len(fold), data.dataset_val)
+        fold_lens = (fold_lens1 + fold_lens2) * data.nr_epochs
         return functools.reduce(lambda a, b: a + b, fold_lens)

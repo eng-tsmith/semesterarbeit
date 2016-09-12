@@ -48,7 +48,7 @@ class IAM_Evaluator(EvaluatorTask):
                 print("Nicht")
                 match = 0
             self.accuracy_length_test = +1
-            accuracy = self.accuracy_sum_test / self.accuracy_length_test 
+            accuracy = self.accuracy_sum_test / self.accuracy_length_test
 
         return [match, accuracy]
 

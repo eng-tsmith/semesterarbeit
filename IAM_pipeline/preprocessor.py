@@ -14,15 +14,17 @@ def label_preproc(label_string):
     It computes following steps:
     1. make list of integers out of string    e.g. [hallo] --> [8,1,12,12,15]
     2. insert empty class between every int   [8,1,12,12,15] --> [95,8,95,1,95,12,95,12,95,15]
-    :param label_string:
-    :return:
+    :param label_string: a string of the label
+    :return: label_int: the string represented in integers
     """
     # print("True Label: ", label_string)
 
+    # Use built in scriber from RNN-CTC
     args = utils.read_args(['net_config.ast'])
     scriber = Scribe.Scribe(**args['scribe_args'])
     alphabet_chars = scriber.alphabet.chars
 
+    # Iterate through string to find integers
     label_int = []
     for letter in label_string:
         label_int.append(alphabet_chars.index(letter))
@@ -33,8 +35,8 @@ def label_preproc(label_string):
 
 def show_img(img):
     """
-    This function takes an image as input and displays it
-    :param img:
+    This function takes an image as input and displays it. It is used for testing stages of preprocessing
+    :param img: an image import via opencv2
     """
     plt.imshow(img)
     plt.show()
@@ -43,26 +45,25 @@ def show_img(img):
 def XML_load(filepath, filename):
     """
     This funtion is used for loading labels out of corresponding xml file
-    :param filepath:
-    :param filename:
-    :return:
+    :param filepath: location of xml file
+    :param filename: the name of the current image
+    :return: the label of the image
     """
     tree = ET.parse(filepath)
     root = tree.getroot()
     for line in root.findall('./handwritten-part/'):
         if line.get('id') == filename:
-            #  print line.get('text')
             return line.get('text')
 
 
 def load(tupel_filenames):
     """
-    This function ist used for loading images
+    This function returns the raw image and the corresponding label
     :param tupel_filenames:
-    :return:
+    :return: img: raw image loaded out of file, label: corresponding label as string
     """
-    img = cv.imread(tupel_filenames[0], cv.IMREAD_GRAYSCALE)
-
+    # img = cv.imread(tupel_filenames[0], cv.IMREAD_GRAYSCALE)
+    img = cv.imread(tupel_filenames[0])
     label = XML_load(tupel_filenames[1], tupel_filenames[2])
 
     return img, label
@@ -70,20 +71,20 @@ def load(tupel_filenames):
 
 def greyscale(img):
     """
-    Makes a greyscale image out of a normal images
-    :param img:
-    :return:
+    Makes a greyscale image out of a normal image
+    :param img: colored image
+    :return: img_grey: greyscale image
     """
-    # img_grey = cv.cvtColor(img, cv.COLOR_RGB2GRAY)
+    img_grey = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
 
-    return img
+    return img_grey
 
 
 def thresholding(img_grey):
     """
-
-    :param img:
-    :return:
+    This functions creates binary images using thresholding
+    :param img_grey: greyscale image
+    :return: binary image
     """
     # # Adaptive Gaussian
     # img_binary = cv.adaptiveThreshold(img_grey, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 11, 2)
@@ -92,45 +93,42 @@ def thresholding(img_grey):
     blur = cv.GaussianBlur(img_grey, (5, 5), 0)
     ret3, img_binary = cv.threshold(blur, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
 
+    # invert black = 255
     ret, thresh1 = cv.threshold(img_binary, 127, 255, cv.THRESH_BINARY_INV)
-
-    # show_img(img_grey)
-    # show_img(img_binary)
 
     return thresh1
 
 
 def skew(img):
     """
-
-    :param img:
-    :return:
+    This function detects skew in images. It turn the image so that the baseline of image is straight.
+    :param img: the image
+    :return: rotated image
     """
+    # coordinates of bottom black pixel in every column
     black_pix = np.zeros((2, 1))
 
+    # Look at image column wise and in every column from bottom to top pixel. It stores the location of the first black
+    # pixel in every column
     for columns in range(img.shape[1]):
         for pixel in np.arange(img.shape[0]-1, -1, -1):
-        # for pixel in np.arange(img.shape[0]):
             if img[pixel][columns] == 255:
                 black_pix = np.concatenate((black_pix, np.array([[pixel], [columns]])), axis=1)
                 break
 
+    # Calculate linear regression to detect baseline
     mean_x = np.mean(black_pix[1][:])
     mean_y = np.mean(black_pix[0][:])
     k = black_pix.shape[1]
-
     a = (np.sum(black_pix[1][:] * black_pix[0][:]) - k * mean_x * mean_y) / (np.sum(black_pix[1][:] * black_pix[1][:]) - k * mean_x * mean_x)
 
+    # Calculate angle by looking at gradient of linear function
     angle = np.arctan(a) * 180 / np.pi
-    # print (angle)
 
+    # Rotate image and use Nearest Neighbour for interpolation of pixel
     rows, cols = img.shape
-
     M = cv.getRotationMatrix2D((cols / 2, rows / 2), angle, 1)
     img_rot = cv.warpAffine(img, M, (cols, rows), flags=cv.INTER_NEAREST)
-
-    # show_img(img)
-    # show_img(img_rot)
 
     return img_rot
 
@@ -155,9 +153,9 @@ def positioning(img):
 
 def scaling(img):
     """
-
+    This function scale the image down so that height is exactly 40 pixel. Th width of every image may vary.
     :param img:
-    :return:
+    :return: resized image
     """
     baseheight = 40.0
     hpercent = (baseheight / float(img.shape[0]))
@@ -172,43 +170,44 @@ class IAM_Preprocessor(PreprocessorTask):
     def run(self, input_tuple):
         """ TODO:
         This function takes an image as Input. During Pre-Processing following steps are computed:
-            1. Greyscale
-            2. Thresholding
-            3. Skew
-            4. Slant
-            5. Positioning
-            6. Scaling
+            1. Load image and label
+            2. Greyscale
+            3. Thresholding
+            4. Skew
+            5. Slant
+            6. Positioning
+            7. Scaling
+            8. Preprocessing of label
         :param input_tuple: [path to img_file, path to xml]
         :return output_tuple: [normalized image of text line, label]
         """
         print ("Inputs: ", input_tuple)
-        # 0. Load img and label
+        # 1. Load img and label
         img_raw, label_raw = load(input_tuple)
 
-        # 1. Greyscale
+        # 2. Greyscale
         img_grey = greyscale(img_raw)
 
-        # 2. Thresholding
+        # 3. Thresholding
         img_thresh = thresholding(img_grey)
 
-        # 3. Skew
+        # 4. Skew
         img_skew = skew(img_thresh)
 
-        # 4. Slant
+        # 5. Slant
         img_slant = slant(img_skew)
 
-        # 5. Positioning
+        # 6. Positioning
         img_pos = positioning(img_slant)
 
-        # 6. Scaling
+        # 7. Scaling
         img_norm = scaling(img_pos)
 
-        # 7. Preprocessing of label
+        # 8. Preprocessing of label
         label = label_preproc(label_raw)
 
+        print("Preprocessing successful!")
         # show_img(img_norm)
-        print("Preprocessing done!")
-
         return [img_norm, label]
 
     def save(self, directory):

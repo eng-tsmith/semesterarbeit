@@ -222,7 +222,7 @@ class IAM_Predictor(PredictorTask):
             pred, aux = self.classify_rnn(input_tuple[0])
             cst = 0
 
-        self.show_all_tim(input_tuple[1], input_tuple[0], pred, (aux > 1e-20, 'Forward probabilities:'))
+        # self.show_all_tim(input_tuple[1], input_tuple[0], pred, (aux > 1e-20, 'Forward probabilities:'))
         # self.show_all_tim(input_tuple[1], feature_vec, pred, (aux > 1e-20, 'Forward probabilities:'))
 
         return [input_tuple[1], pred, cst,  aux]

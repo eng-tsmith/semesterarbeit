@@ -6,6 +6,7 @@ import cv2 as cv
 import xml.etree.ElementTree as ET
 import rnn_ctc.utils as utils
 import rnn_ctc.scribe.scribe as Scribe
+from skimage import transform as tf
 
 
 def label_preproc(label_string):
@@ -134,12 +135,19 @@ def skew(img):
 
 
 def slant(img):
+    # Load the image as a matrix
     """
 
     :param img:
     :return:
     """
-    return img
+    # Create Afine transform
+    afine_tf = tf.AffineTransform(shear=0.2)  #TODO which factor???
+
+    # Apply transform to image data
+    img_slanted = tf.warp(img, afine_tf)
+
+    return img_slanted
 
 
 def positioning(img):

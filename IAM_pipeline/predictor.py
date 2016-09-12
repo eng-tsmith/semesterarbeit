@@ -216,7 +216,8 @@ class IAM_Predictor(PredictorTask):
         # feature_vec = FeatureExtractor(input_tuple[0])
         # 2. Neural Net
         if test_set == 0:
-            cst, pred, aux = self.train_rnn(input_tuple[0], input_tuple[1])
+            for i in range(100):
+                cst, pred, aux = self.train_rnn(input_tuple[0], input_tuple[1])
         # cst, pred, aux = self.train_rnn(feature_vec, input_tuple[1])
         else:
             pred, aux = self.classify_rnn(input_tuple[0])

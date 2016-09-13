@@ -1,6 +1,6 @@
 {
 # Training
-'img_ht': = 40,
+'img_ht': 40,
 'num_epochs': 100,
 'num_samples': 6161,     # Online: Number of samples per epoch
 'train_on_fraction': 0.8, # Offline use only

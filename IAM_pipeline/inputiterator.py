@@ -9,7 +9,7 @@ class IAM_InputIterator(InputIteratorTask):
         print("Welcome to Handwriting Recognizer")
         print("====== IAM  Pipeline ======")
 
-        for epoch in range(data.nr_epochs):
+        for epoch in range(100):  # TODO fix in config
             print("Epoche: ", epoch)
             for fold in data.dataset_train:
                 for input in fold:

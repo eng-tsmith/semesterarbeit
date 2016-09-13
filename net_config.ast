@@ -20,7 +20,7 @@
     'use_log_space': True,
 
     'mid_layer':'BDLSTM',
-    'mid_layer_args': {'nunits': 25},
+    'mid_layer_args': {'nunits': 40, 'forget': True},
 
     'optimizer':'adagrad',
     'optimizer_args': {},

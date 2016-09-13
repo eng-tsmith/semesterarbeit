@@ -7,6 +7,7 @@ import xml.etree.ElementTree as ET
 import rnn_ctc.utils as utils
 import rnn_ctc.scribe.scribe as Scribe
 from skimage import transform as tf
+import IAM_pipeline.data_config as data_config
 
 
 def label_preproc(label_string):
@@ -52,9 +53,12 @@ def XML_load(filepath, filename):
     """
     tree = ET.parse(filepath)
     root = tree.getroot()
-    for line in root.findall('./handwritten-part/'):
-        if line.get('id') == filename:
-            return line.get('text')
+    # for child in root.findall('./handwritten-part/'):
+    #     if child.get('id') == filename:
+    #         return child.get('text')
+    for child in root.iter('line'):
+        if child.get('id') == filename:
+            return child.get('text')
 
 
 def load(tupel_filenames):
@@ -164,7 +168,7 @@ def scaling(img):
     :param img:
     :return: resized image
     """
-    baseheight = 40.0
+    baseheight = data_config.img_ht
     hpercent = (baseheight / float(img.shape[0]))
     dim = (int(img.shape[1] * hpercent), 40)
 

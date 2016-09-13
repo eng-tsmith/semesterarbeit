@@ -5,6 +5,7 @@ import numpy as np
 import theano as th
 from rnn_ctc.nnet.neuralnet import NeuralNet
 import rnn_ctc.utils as utils
+import IAM_pipeline.data_config as data_config
 
 
 def FeatureExtractor(img):
@@ -63,23 +64,16 @@ class IAM_Predictor(PredictorTask):
         """
         When this funtion is first called it initalizes the net.
         """
-        # th.config.optimizer = 'fast_compile'
-        # th.config.exception_verbosity='high'
-
-        ################################### Main Script ###########################
-
         print('Initializing IAM Predictor. Loading   net_config.ast:')
-        # with open('../rnn_ctc/configs/default', 'rb') as pkl_file:  # TODO which file?
-        #     data = pickle.load(pkl_file)
 
-        self.args = utils.read_args(['net_config.ast'])  # TODO reads ast file
+        self.args = utils.read_args(['net_config.ast'])
         self.num_epochs, self.train_on_fraction = self.args['num_epochs'], self.args['train_on_fraction']
         self.scribe_args, self.nnet_args, = self.args['scribe_args'], self.args['nnet_args'],
 
         self.chars = [' ', '!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', ';', '<', '=', '>', '?', '@', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '[', '\\', ']', '^', '_', '`', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '{', '|', '}', '~'] # data['chars']
         self.num_classes = len(self.chars)
-        self.img_ht = 40  # TODO
-        self.img_ht = 9  # TODO
+        self.img_ht = data_config.img_ht
+        # self.img_ht = 9
         self.num_samples = 6161  # TODO
         self.nTrainSamples = int(self.num_samples * self.train_on_fraction)
         self.labels_print, self.labels_len = self.prediction_printer(self.chars)
@@ -87,35 +81,16 @@ class IAM_Predictor(PredictorTask):
         print('\nNetwork Info:'
               '\nInput Dim: {}'
               '\nNum Classes: {}'
-              '\nNum Samples: {}'
               '\nNum Epochs: {}'
               '\nFloatX: {}'
-              '\n'.format(self.img_ht, self.num_classes, self.num_samples, self.num_epochs, th.config.floatX))
+              '\n'.format(self.img_ht, self.num_classes, self.num_epochs, th.config.floatX))
 
-        ################################
         print('Building the Network')
         self.net = NeuralNet(self.img_ht, self.num_classes, **self.nnet_args)
         print(self.net)
         self.printer = utils.Printer(self.chars)
-        ################################
-        # print('Preparing the Data')
-        # try:
-        #     self.conv_sz = self.nnet_args['midlayerargs']['conv_sz']
-        # except KeyError:
-        #     self.conv_sz = 1
-        #
-        # data_x, data_y = [], []
-        # bad_data = False
-        #
-        # for x, y in zip(data['x'], data['y']):
-        #     # Insert blanks at alternate locations in the labelling (blank is num_classes)
-        #     y1 = utils.insert_blanks(y, num_classes)
-        #     data_y.append(np.asarray(y1, dtype=np.int32))
-        #     data_x.append(np.asarray(x, dtype=th.config.floatX))
-        #
-        #     if printer.ylen(y1) > (1 + len(x[0])) // conv_sz:
-        #         bad_data = True
-        #         printer.show_all(y1, x, None, (x[:, ::conv_sz], 'Squissed'))
+
+
 
     def show_all_tim(self, shown_seq, shown_img,
                      softmax_firings=None,
@@ -214,14 +189,14 @@ class IAM_Predictor(PredictorTask):
         # print "Input: ", input_tuple[0]
         print ("Image size: ", input_tuple[0].shape)
         # 1. Feature Extractor
-        feature_vec = FeatureExtractor(input_tuple[0])
+        # feature_vec = FeatureExtractor(input_tuple[0])
         # 2. Neural Net
         if test_set == 0:
-            # cst, pred, aux = self.train_rnn(input_tuple[0], input_tuple[1])
-            cst, pred, aux = self.train_rnn(feature_vec, input_tuple[1])
+            cst, pred, aux = self.train_rnn(input_tuple[0], input_tuple[1])
+            # cst, pred, aux = self.train_rnn(feature_vec, input_tuple[1])
         else:
-            # pred, aux = self.classify_rnn(input_tuple[0])
-            pred, aux = self.classify_rnn(feature_vec)
+            pred, aux = self.classify_rnn(input_tuple[0])
+            # pred, aux = self.classify_rnn(feature_vec)
             cst = 0
 
         # self.show_all_tim(input_tuple[1], input_tuple[0], pred, (aux > 1e-20, 'Forward probabilities:'))

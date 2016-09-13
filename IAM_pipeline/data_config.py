@@ -80,7 +80,7 @@ for path in files_words:
             # if child.get('id') == filename:
             image = IAM_word_path + part1 + "/" + part1 + "-" + part2 + "/" + child.get('id') + ".png"
             label = IAM_label_path + part1 + "-" + part2 + ".xml"
-            set.append((image, label, filename))
+            set.append((image, label, child.get('id')))
         IAM_dataset_words.append(set)
 
 IAM = [IAM_dataset_train, IAM_dataset_validate, IAM_dataset_words]

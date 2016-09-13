@@ -56,7 +56,7 @@ def XML_load(filepath, filename):
     # for child in root.findall('./handwritten-part/'):
     #     if child.get('id') == filename:
     #         return child.get('text')
-    for child in root.iter('line'):
+    for child in root.iter('word'):  #TODO WORD IN CONFIG!!!
         if child.get('id') == filename:
             return child.get('text')
 

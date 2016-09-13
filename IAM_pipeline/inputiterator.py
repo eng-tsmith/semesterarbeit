@@ -11,15 +11,15 @@ class IAM_InputIterator(InputIteratorTask):
 
         for epoch in range(100):  # TODO fix in config
             print("Epoche: ", epoch)
-            for fold in data.dataset_train:
+            for fold in data.dataset_words: # TODO WORD!!!
                 for input in fold:
                     print("Train with: ", input)
                     yield input, 0
 
-            for fold in data.dataset_val:  #TODO
-                for input in fold:
-                    print("Test:", input)
-                    yield input, 1
+            # for fold in data.dataset_val:  #TODO
+            #     for input in fold:
+            #         print("Test:", input)
+            #         yield input, 1
 
     def __len__(self):
         fold_lens1 = map(lambda fold: len(fold), data.dataset_train)

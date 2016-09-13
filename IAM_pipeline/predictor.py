@@ -67,15 +67,12 @@ class IAM_Predictor(PredictorTask):
         print('Initializing IAM Predictor. Loading   net_config.ast:')
 
         self.args = utils.read_args(['net_config.ast'])
-        self.num_epochs, self.train_on_fraction = self.args['num_epochs'], self.args['train_on_fraction']
+        self.num_epochs, self.img_ht, self.train_on_fraction = self.args['num_epochs'], self.args['img_ht'], self.args['train_on_fraction']
         self.scribe_args, self.nnet_args, = self.args['scribe_args'], self.args['nnet_args'],
 
         self.chars = [' ', '!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', ';', '<', '=', '>', '?', '@', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '[', '\\', ']', '^', '_', '`', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '{', '|', '}', '~'] # data['chars']
         self.num_classes = len(self.chars)
-        self.img_ht = data_config.img_ht
-        # self.img_ht = 9
-        self.num_samples = 6161  # TODO
-        self.nTrainSamples = int(self.num_samples * self.train_on_fraction)
+
         self.labels_print, self.labels_len = self.prediction_printer(self.chars)
 
         print('\nNetwork Info:'

@@ -6,11 +6,6 @@ import xml.etree.ElementTree as ET
 outdir = "/results/"
 outfile = 'IAM_output_NN.txt'
 
-# ___________________________
-# ___________ RNN ___________
-# ___________________________
-nr_epochs = 100
-img_ht = 40
 
 # ___________________________
 # ___________ IAM ___________

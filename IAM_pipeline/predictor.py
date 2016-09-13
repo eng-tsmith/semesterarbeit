@@ -151,6 +151,9 @@ class IAM_Predictor(PredictorTask):
 
         x = np.asarray(img_feat_vec, dtype=th.config.floatX)  # data_x[samp]
         y = np.asarray(utils.insert_blanks(label, self.num_classes), dtype=np.int32)    # data_y[samp]
+
+        print(x)
+        print(y)
         # if not samp % 500:            print(samp)
 
         # print("x: ", x, "   y: ", y)

@@ -219,7 +219,7 @@ class IAM_Preprocessor(PreprocessorTask):
 
         print("Preprocessing successful!")
         # show_img(img_norm)
-        return [img_norm, label]
+        return [np.transpose(img_norm), label]  # TODO tranpose?
 
     def save(self, directory):
         print ("Saving myPreprocessor to ", directory)

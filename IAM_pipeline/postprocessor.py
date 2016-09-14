@@ -34,25 +34,25 @@ class IAM_Postprocessor(PostprocessorTask):
 
         """
 
-        :param input_tuple:
+        :param input_tuple:  [label, loss, acc]
         :return:
         """
-        print("Pred: ", input_tuple[1].shape)
-        print("Cost: ", input_tuple[2])
-        print("Aux: ", input_tuple[3].shape)
+        print("label: ", input_tuple[0])
+        print("loss: ", input_tuple[1])
+        print("acc: ", input_tuple[2])
 
-        printer = Printer()
-
-        labels_out_true, labels_list_true = printer.yprint(input_tuple[0])
-
-        maxes = np.argmax(input_tuple[1], 0)
-        labels_out_pred, labels_list_pred = printer.yprint(maxes)
+        # printer = Printer()
+        #
+        # labels_out_true, labels_list_true = printer.yprint(input_tuple[0])
+        #
+        # maxes = np.argmax(input_tuple[1], 0)
+        # labels_out_pred, labels_list_pred = printer.yprint(maxes)
 
         # print('Shown String: ', labels_list_true)
         # print('Seen String: ', labels_list_pred)
 
         # Predictions, Cost, Shown String, Seen String
-        return [maxes, input_tuple[2], labels_list_true, labels_list_pred]
+        return input_tuple
 
 
     def save(self, directory):

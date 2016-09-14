@@ -15,25 +15,23 @@ def label_preproc(label_string):
     This function is supposed to prepare the label so that it fits the standard of the rnn_ctc network.
     It computes following steps:
     1. make list of integers out of string    e.g. [hallo] --> [8,1,12,12,15]
-    2. insert empty class between every int   [8,1,12,12,15] --> [95,8,95,1,95,12,95,12,95,15]
     :param label_string: a string of the label
     :return: label_int: the string represented in integers
     """
-    # print("True Label: ", label_string)
+    chars = [' ', '!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', '0', '1', '2',
+             '3', '4', '5', '6', '7', '8', '9', ':', ';', '<', '=', '>', '?', '@', 'A', 'B', 'C', 'D', 'E',
+             'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+             'Y', 'Z', '[', '\\', ']', '^', '_', '`', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
+             'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '{', '|', '}',
+             '~']
 
-    # Use built in scriber from RNN-CTC
-    args = utils.read_args(['net_config.ast'])
-    scriber = Scribe.Scribe(**args['scribe_args'])
-    alphabet_chars = scriber.alphabet.chars
-
-    # Iterate through string to find integers
     label_int = []
     for letter in label_string:
-        label_int.append(alphabet_chars.index(letter))
+        label_int.append(chars.index(letter))
 
-    # print("Int Label: ", label_int)
+    label_int_arr = np.resize(np.asarray(label_int), (1, len(label_int)))
 
-    return label_int
+    return label_int_arr
 
 def show_img(img):
     """
@@ -194,6 +192,7 @@ class IAM_Preprocessor(PreprocessorTask):
         """
         print ("Inputs: ", input_tuple)
         # 1. Load img and label
+        # img_raw, label_raw = load(input_tuple)
         img_raw, label_raw = load(input_tuple)
 
         # 2. Greyscale
@@ -214,7 +213,7 @@ class IAM_Preprocessor(PreprocessorTask):
         # 7. Scaling
         img_norm = scaling(img_pos)
 
-        # 8. Preprocessing of label
+        # # 8. Preprocessing of label
         label = label_preproc(label_raw)
 
         print("Preprocessing successful!")

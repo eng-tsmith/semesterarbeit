@@ -1,30 +1,92 @@
 from validation_task import PredictorTask
 import sys
-import numpy as np
-import IAM_pipeline.data_config as data_config
-from keras.preprocessing import sequence
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Embedding, LSTM, Input, Bidirectional
+import os
+from keras.models import Model, Graph
+from keras.layers import LSTM, TimeDistributed, Dense, Dropout, Input, Convolution2D, MaxPooling2D, Reshape, Permute, \
+                         Merge, Activation, BatchNormalization
+import numpy as np, time
+import gzip, pickle, theano
+from CTC_utils import CTC
+from theano import tensor
+
+def _change_input_shape(floatx='float32'):
+    x = tensor.tensor3('input', dtype=floatx)
+    y = x.dimshuffle((0, 'x', 2, 1))
+    f = theano.function([x], y, allow_input_downcast=True)
+    return f
+
+def pad_sequence_into_array(image, maxlen):
+    """
+    Padding sequence (list of numpy arrays) into an numpy array
+    :param Xs: list of numpy arrays. The arrays must have the same shape except the first dimension.
+    :param maxlen: the allowed maximum of the first dimension of Xs's arrays. Any array longer than maxlen is truncated to maxlen
+    :return: Xout, the padded sequence (now an augmented array with shape (Narrays, N1stdim, N2nddim, ...)
+    :return: mask, the corresponding mask, binary array, with shape (Narray, N1stdim)
+    """
+    value = 0.
+    image_ht = image.shape[0]
+
+    Xout = np.ones (shape=[image_ht, maxlen], dtype=image[0].dtype) * np.asarray(value, dtype=image[0].dtype)
+    Mask = np.zeros(shape=[image_ht, maxlen], dtype=image.dtype)
+
+    trunc = image[:, :maxlen]
+
+    Xout[:, :trunc.shape[1]] = trunc
+    Mask[:, :trunc.shape[1]] = 1
+
+    return Xout, Mask
 
 
 class IAM_Predictor(PredictorTask):
 
     def __init__(self):
         """
-        When this funtion is first called it initalizes the net.
-        """
-        self.max_features = 9
-        self.maxlen = 150  # cut texts after this number of words (among top max_features most common words)
-        self.batch_size = 1
+    Input shape: X.shape=(B, 1, rows, cols), GT.shape=(B, L)
+    :param feadim: input feature dimension
+    :param Nclass: class number
+    :param loss:
+    :param optimizer:
+    :return:
+    """
+        feadim = 40
+        chars = [' ', '!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', '0', '1', '2',
+                      '3', '4', '5', '6', '7', '8', '9', ':', ';', '<', '=', '>', '?', '@', 'A', 'B', 'C', 'D', 'E',
+                      'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+                      'Y', 'Z', '[', '\\', ']', '^', '_', '`', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
+                      'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '{', '|', '}',
+                      '~']  # data['chars']
+        Nclass = len(chars)
+        loss = 'ctc_cost_for_train'
+        optimizer = 'Adadelta'
+        border_mode = 'same'
 
-        self.model = Sequential()
-        self.model.add(Embedding(self.max_features, 128, input_length=self.maxlen))
-        self.model.add(Bidirectional(LSTM(64)))
-        self.model.add(Dense(1, activation='sigmoid'))
+        self.minNcharPerseq, self.maxNcharPerseq = 2, 10
 
-        # try using different optimizers and different optimizer configs
-        self.model.compile('adam', 'binary_crossentropy', metrics=['accuracy'])
+        net_input = Input(shape=(1, feadim, None))
+        cnn0   = Convolution2D( 64, 3, 3, border_mode=border_mode, activation='relu', name='cnn0')(net_input)
+        pool0  = MaxPooling2D(pool_size=(2, 2), name='pool0')(cnn0)
+        cnn1   = Convolution2D(128, 3, 3, border_mode=border_mode, activation='relu', name='cnn1')(pool0)
+        pool1  = MaxPooling2D(pool_size=(2, 2), name='pool1')(cnn1)
+        cnn2   = Convolution2D(256, 3, 3, border_mode=border_mode, activation='relu', name='cnn2')(pool1)
+        BN0    = BatchNormalization(mode=0, axis=1, name='BN0')(cnn2)
+        cnn3   = Convolution2D(256, 3, 3, border_mode=border_mode, activation='relu', name='cnn3')(BN0)
+        pool2  = MaxPooling2D(pool_size=(2, 1), name='pool2')(cnn3)
+        cnn4   = Convolution2D(512, 3, 3, border_mode=border_mode, activation='relu', name='cnn4')(pool2)
+        BN1    = BatchNormalization(mode=0, axis=1, name='BN1')(cnn4)
+        cnn5   = Convolution2D(512, 3, 3, border_mode=border_mode, activation='relu', name='cnn5')(BN1)
+        pool3  = MaxPooling2D(pool_size=(2, 1), name='pool3')(cnn5)
+        cnn6   = Convolution2D(1,   3, 3, border_mode=border_mode, activation='relu', name='cnn6')(pool3)
+        BN2    = BatchNormalization(mode=0, axis=1, name='BN2')(cnn6)
+        net_reshape = Permute((3, 2), name='net_reshape')(BN2)
+        lstm0  = LSTM(100, return_sequences=True, activation='tanh', name='lstm0')(net_reshape)
+        lstm1  = LSTM(100, return_sequences=True, activation='tanh', go_backwards=True, keep_time_order=True, name='lstm1')(lstm0)
+        dense0 = TimeDistributed(Dense(Nclass + 1, activation='softmax', name='dense0'))(lstm1)
+        self.model  = Model(net_input, dense0)
+        self.model.compile(loss=loss, optimizer=optimizer, sample_weight_mode='temporal')
+        print("Compiled Keras model successfully.")
 
+        self.reshape_func = _change_input_shape()
+        print('reshape_func compiled')
 
     def FeatureExtractor(self, img):
         """
@@ -121,14 +183,42 @@ class IAM_Predictor(PredictorTask):
         :param input_tuple:
         :return:
         """
-        # print "Input: ", input_tuple[0]
-        print ("Image size: ", input_tuple[0].shape)
-        # 1. Feature Extractor
-        feature_vec = self.FeatureExtractor(input_tuple[0])
+        x_padded, x_mask = pad_sequence_into_array(input_tuple[0], 150)  #TODO MAXLENGTH!!!
+        y_padded, y_mask = pad_sequence_into_array(input_tuple[1], 150)  # TODO MAXLENGTH!!!
+
+        print('Image shape:', x_padded.shape)  # (B, T, D)
+        print('Label shape:', y_padded.shape)  # (B, L)
+
+        B, T, D = x_padded.shape  # D = 28
+        L = y_padded.shape[1]
+
+        total_seqlen, total_ed = 0.0, 0.0
+
+        time0 = time.time()
+
+        traindata = self.reshape_func(x_padded)
+        traindata_mask = x_mask
+
+        gt = y_padded
+        gt_mask = y_mask
+
+        ctcloss, score_matrix = self.model.train_on_batch(x=traindata, y=gt, sample_weight=gt_mask,
+                                                     sm_mask=traindata_mask, return_sm=True)
+        print('ctcloss = ', ctcloss)
+        resultseqs = CTC.best_path_decode_batch(score_matrix, traindata_mask)
+        targetseqs = convert_gt_from_array_to_list(gt, gt_mask)
+        CER_batch, ed_batch, seqlen_batch = CTC.calc_CER(resultseqs, targetseqs)
+        total_seqlen += seqlen_batch
+        total_ed += ed_batch
+        CER = total_ed / total_seqlen * 100.0
+        time1 = time.time()
+
+        print('CER = %0.2f, CER_batch = %0.2f, time = %0.2fs' % (
+        CER, CER_batch, (time1 - time0)))
 
         # 2. Neural Net
         if test_set == 0:
-            loss, acc = self.train_rnn(feature_vec, input_tuple[1])
+            loss, acc = self.train_rnn(feature_vec, y_train)
             # cst, pred = self.train_rnn(feature_vec, input_tuple[1])
         else:
             loss, acc = self.test_rnn(feature_vec, input_tuple[1])

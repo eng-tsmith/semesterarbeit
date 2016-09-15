@@ -9,6 +9,23 @@ import gzip, pickle, theano
 from CTC_utils import CTC
 from theano import tensor
 
+def dim_shuffle(x, x_mask, y, y_mask):
+    """
+
+    :param x:
+    :param x_mask:
+    :param y:
+    :param y_mask:
+    :return:
+    """
+    x_dim = x[np.newaxis, :, :]
+    x_mask_dim = x_mask[np.newaxis, :, :]
+    y_dim = y[np.newaxis, :, :]
+    y_mask_dim = y_mask[np.newaxis, :, :]
+
+    return x_dim, x_mask_dim, y_dim, y_mask_dim
+
+
 def _change_input_shape(floatx='float32'):
     x = tensor.tensor3('input', dtype=floatx)
     y = x.dimshuffle((0, 'x', 2, 1))
@@ -186,11 +203,13 @@ class IAM_Predictor(PredictorTask):
         x_padded, x_mask = pad_sequence_into_array(input_tuple[0], 150)  #TODO MAXLENGTH!!!
         y_padded, y_mask = pad_sequence_into_array(input_tuple[1], 150)  # TODO MAXLENGTH!!!
 
+        # Dim Shuffle to fit Keras [40x150] --> [1 x 40 x 150]
+        x_padded, x_mask, y_padded, y_mask = dim_shuffle(x_padded, x_mask, y_padded, y_mask)
+
         print('Image shape:', x_padded.shape)  # (B, T, D)
         print('Label shape:', y_padded.shape)  # (B, L)
 
-        B = 1
-        T, D = x_padded.shape  # D = 28
+        B, T, D = x_padded.shape  # D = 28
         L = y_padded.shape[1]
 
         total_seqlen, total_ed = 0.0, 0.0

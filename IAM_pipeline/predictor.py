@@ -80,7 +80,7 @@ class IAM_Predictor(PredictorTask):
 
         self.minNcharPerseq, self.maxNcharPerseq = 2, 10
 
-        net_input = Input(shape=(1, feadim, None))
+        net_input = Input(shape=(1, feadim, 150))  #net_input = Input(shape=(1, feadim, None))
         cnn0   = Convolution2D( 64, 3, 3, border_mode=border_mode, activation='relu', name='cnn0')(net_input)
         pool0  = MaxPooling2D(pool_size=(2, 2), name='pool0')(cnn0)
         cnn1   = Convolution2D(128, 3, 3, border_mode=border_mode, activation='relu', name='cnn1')(pool0)
@@ -223,12 +223,13 @@ class IAM_Predictor(PredictorTask):
         gt = y_padded
         gt_mask = y_mask
 
-        print('Traindata:', traindata.shape)  # (B, T, D)
-        print('GT:', gt.shape)  # (B, L)
-        print('GT Mask:', gt_mask.shape)  # (B, T, D)
-        print('Traindata Mask:', traindata_mask.shape)  # (B, L)
+        print('Traindata:', traindata.shape)  # (1x1x150x40)
+        print('GT:', gt.shape)  # (1x150)
+        print('GT Mask:', gt_mask.shape)  # (1x150)
+        print('Traindata Mask:', traindata_mask.shape)  # (40x150)
 
         ctcloss, score_matrix = self.model.train_on_batch(x=traindata, y=gt, sample_weight=gt_mask, sm_mask=traindata_mask, return_sm=True)
+
         print('ctcloss = ', ctcloss)
         resultseqs = CTC.best_path_decode_batch(score_matrix, traindata_mask)
         targetseqs = convert_gt_from_array_to_list(gt, gt_mask)

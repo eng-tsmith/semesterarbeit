@@ -96,7 +96,9 @@ class IAM_Predictor(PredictorTask):
         pool3  = MaxPooling2D(pool_size=(2, 1), name='pool3')(BN1)
         cnn6   = Convolution2D(512,   2, 2, border_mode=border_mode, activation='relu', name='cnn6')(pool3)  # MAYBE BORDER MODE
 
-        net_reshape = Permute((3, 2), name='net_reshape')(cnn6)
+        net_reshape = Permute((0, 3, 2, 1), name='net_reshape')(cnn6)  #  net_reshape = Permute((3, 2), name='net_reshape')(cnn6)
+
+        #Reshape(input_width, num_filters)
 
         lstm0  = LSTM(256, return_sequences=True, activation='tanh', name='lstm0')(net_reshape)  # bi lstm missing
         lstm1  = LSTM(256, return_sequences=True, activation='tanh', go_backwards=True, keep_time_order=True, name='lstm1')(lstm0)

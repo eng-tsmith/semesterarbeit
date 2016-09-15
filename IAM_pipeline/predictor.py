@@ -66,7 +66,7 @@ class IAM_Predictor(PredictorTask):
     :param optimizer:
     :return:
     """
-        feadim = 40
+        feadim = 40  #TODO
         chars = [' ', '!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', '0', '1', '2',
                       '3', '4', '5', '6', '7', '8', '9', ':', ';', '<', '=', '>', '?', '@', 'A', 'B', 'C', 'D', 'E',
                       'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
@@ -80,7 +80,7 @@ class IAM_Predictor(PredictorTask):
 
         self.minNcharPerseq, self.maxNcharPerseq = 2, 10
 
-        net_input = Input(shape=(1, feadim, 150))  #net_input = Input(shape=(1, feadim, None))
+        net_input = Input(shape=(1, feadim, 151))  #net_input = Input(shape=(1, feadim, None))  #TODO maxlength
         cnn0   = Convolution2D( 64, 3, 3, border_mode=border_mode, activation='relu', name='cnn0')(net_input)
         pool0  = MaxPooling2D(pool_size=(2, 2), name='pool0')(cnn0)
         cnn1   = Convolution2D(128, 3, 3, border_mode=border_mode, activation='relu', name='cnn1')(pool0)
@@ -201,8 +201,8 @@ class IAM_Predictor(PredictorTask):
         :param input_tuple:
         :return:
         """
-        x_padded, x_mask = pad_sequence_into_array(input_tuple[0], 150)  #TODO MAXLENGTH!!!
-        y_padded, y_mask = pad_sequence_into_array(input_tuple[1], 150)  # TODO MAXLENGTH!!!
+        x_padded, x_mask = pad_sequence_into_array(input_tuple[0], 151)  #TODO MAXLENGTH!!!
+        y_padded, y_mask = pad_sequence_into_array(input_tuple[1], 151)  # TODO MAXLENGTH!!!
 
         # Dim Shuffle to fit Keras [40x150] --> [1 x 40 x 150]
         x_padded, x_mask, y_padded, y_mask = dim_shuffle(x_padded, x_mask, y_padded, y_mask)

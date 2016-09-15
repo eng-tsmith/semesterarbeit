@@ -20,8 +20,8 @@ def dim_shuffle(x, x_mask, y, y_mask):
     """
     x_dim = x[np.newaxis, :, :]
     x_mask_dim = x_mask[np.newaxis, :, :]
-    y_dim = y[np.newaxis, :]
-    y_mask_dim = y_mask[np.newaxis, :]
+    y_dim = y
+    y_mask_dim = y_mask
 
     return x_dim, x_mask_dim, y_dim, y_mask_dim
 

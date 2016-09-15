@@ -18,9 +18,8 @@ def dim_shuffle(x, x_mask, y, y_mask):
     :param y_mask:
     :return:
     """
-    print("MASK", x_mask.shape, )
     x_dim = x[np.newaxis, :, :]
-    x_mask_dim = x_mask[np.newaxis, :, :]
+    x_mask_dim = x_mask
     y_dim = y
     y_mask_dim = y_mask
     print("MASK", x_mask.shape, x_mask_dim.shape)

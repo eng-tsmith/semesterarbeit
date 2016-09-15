@@ -66,7 +66,7 @@ class IAM_Predictor(PredictorTask):
     :param optimizer:
     :return:
     """
-        feadim = 37  #TODO
+        feadim = 32  #TODO
         chars = [' ', '!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', '0', '1', '2',
                       '3', '4', '5', '6', '7', '8', '9', ':', ';', '<', '=', '>', '?', '@', 'A', 'B', 'C', 'D', 'E',
                       'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
@@ -80,24 +80,24 @@ class IAM_Predictor(PredictorTask):
 
         self.minNcharPerseq, self.maxNcharPerseq = 2, 10
 
-        net_input = Input(shape=(1, feadim, 151))  #net_input = Input(shape=(1, feadim, None))  #TODO maxlength
+        net_input = Input(shape=(1, 1, feadim, None))  #net_input = Input(shape=(1, feadim, None))  #TODO maxlength
         cnn0   = Convolution2D( 64, 3, 3, border_mode=border_mode, activation='relu', name='cnn0')(net_input)
         pool0  = MaxPooling2D(pool_size=(2, 2), name='pool0')(cnn0)
         cnn1   = Convolution2D(128, 3, 3, border_mode=border_mode, activation='relu', name='cnn1')(pool0)
         pool1  = MaxPooling2D(pool_size=(2, 2), name='pool1')(cnn1)
         cnn2   = Convolution2D(256, 3, 3, border_mode=border_mode, activation='relu', name='cnn2')(pool1)
-        BN0    = BatchNormalization(mode=0, axis=1, name='BN0')(cnn2)
-        cnn3   = Convolution2D(256, 3, 3, border_mode=border_mode, activation='relu', name='cnn3')(BN0)
+        # BN0    = BatchNormalization(mode=0, axis=1, name='BN0')(cnn2)
+        cnn3   = Convolution2D(256, 3, 3, border_mode=border_mode, activation='relu', name='cnn3')(cnn2)
         pool2  = MaxPooling2D(pool_size=(2, 1), name='pool2')(cnn3)
         cnn4   = Convolution2D(512, 3, 3, border_mode=border_mode, activation='relu', name='cnn4')(pool2)
-        BN1    = BatchNormalization(mode=0, axis=1, name='BN1')(cnn4)
-        cnn5   = Convolution2D(512, 3, 3, border_mode=border_mode, activation='relu', name='cnn5')(BN1)
-        pool3  = MaxPooling2D(pool_size=(2, 1), name='pool3')(cnn5)
-        cnn6   = Convolution2D(1,   3, 3, border_mode=border_mode, activation='relu', name='cnn6')(pool3)
-        BN2    = BatchNormalization(mode=0, axis=1, name='BN2')(cnn6)
-        net_reshape = Permute((3, 2), name='net_reshape')(BN2)
-        lstm0  = LSTM(100, return_sequences=True, activation='tanh', name='lstm0')(net_reshape)
-        lstm1  = LSTM(100, return_sequences=True, activation='tanh', go_backwards=True, keep_time_order=True, name='lstm1')(lstm0)
+        BN0    = BatchNormalization(mode=0, axis=1, name='BN1')(cnn4)
+        cnn5   = Convolution2D(512, 3, 3, border_mode=border_mode, activation='relu', name='cnn5')(BN0)
+        BN1 = BatchNormalization(mode=0, axis=1, name='BN0')(cnn5)
+        pool3  = MaxPooling2D(pool_size=(2, 1), name='pool3')(BN1)
+        cnn6   = Convolution2D(512,   2, 2, border_mode=border_mode, activation='relu', name='cnn6')(pool3)  # MAYBE BORDER MODE
+        net_reshape = Permute((3, 2), name='net_reshape')(cnn6)
+        lstm0  = LSTM(256, return_sequences=True, activation='tanh', name='lstm0')(net_reshape)  # bi lstm missing
+        lstm1  = LSTM(256, return_sequences=True, activation='tanh', go_backwards=True, keep_time_order=True, name='lstm1')(lstm0)
         dense0 = TimeDistributed(Dense(Nclass + 1, activation='softmax', name='dense0'))(lstm1)
         self.model  = Model(net_input, dense0)
         self.model.compile(loss=loss, optimizer=optimizer, sample_weight_mode='temporal')

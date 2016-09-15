@@ -104,7 +104,8 @@ class IAM_Predictor(PredictorTask):
         self.model  = Model(net_input, dense0)
         self.model.compile(loss=loss, optimizer=optimizer, sample_weight_mode='temporal')
 
-        print(cnn6.output_shape)
+        print("out cnn6", self.model.layer.cnn6.layer.output_shape)
+        print("in lstm", self.model.layer.lstm0.input_shape)
 
         print("Compiled Keras model successfully.")
 

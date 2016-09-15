@@ -80,7 +80,7 @@ class IAM_Predictor(PredictorTask):
 
         self.minNcharPerseq, self.maxNcharPerseq = 2, 10
 
-        net_input = Input(shape=(1, 1, feadim, None))  #net_input = Input(shape=(1, feadim, None))  #TODO maxlength
+        net_input = Input(shape=(1, feadim, None))  #net_input = Input(shape=(1, feadim, None))  #TODO maxlength
         cnn0   = Convolution2D( 64, 3, 3, border_mode=border_mode, activation='relu', name='cnn0')(net_input)
         pool0  = MaxPooling2D(pool_size=(2, 2), name='pool0')(cnn0)
         cnn1   = Convolution2D(128, 3, 3, border_mode=border_mode, activation='relu', name='cnn1')(pool0)

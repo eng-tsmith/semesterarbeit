@@ -101,9 +101,9 @@ class IAM_Predictor(PredictorTask):
         lstm1 = LSTM(100, return_sequences=True, activation='tanh', go_backwards=True, keep_time_order=True,
                      name='lstm1')(lstm0)
         dense0 = TimeDistributed(Dense(Nclass + 1, activation='softmax', name='dense0'))(lstm1)
-        model = Model(net_input, dense0)
+        self.model = Model(net_input, dense0)
 
-        model.compile(loss=loss, optimizer=optimizer, sample_weight_mode='temporal')
+        self.model.compile(loss=loss, optimizer=optimizer, sample_weight_mode='temporal')
 
         # cnn0   = Convolution2D( 64, 3, 3, border_mode=border_mode, activation='relu', name='cnn0')(net_input)
         # pool0  = MaxPooling2D(pool_size=(2, 2), name='pool0')(cnn0)

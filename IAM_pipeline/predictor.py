@@ -22,7 +22,7 @@ def dim_shuffle(x, x_mask, y, y_mask):
     x_mask_dim = x_mask  # [np.newaxis, :, :]
     y_dim = y
     y_mask_dim = y_mask
-    print("MASK", x_mask.shape, x_mask_dim.shape)
+    # print("MASK", x_mask.shape, x_mask_dim.shape)
 
     return x_dim, x_mask_dim, y_dim, y_mask_dim
 
@@ -223,8 +223,12 @@ class IAM_Predictor(PredictorTask):
         gt = y_padded
         gt_mask = y_mask
 
-        ctcloss, score_matrix = self.model.train_on_batch(x=traindata, y=gt, sample_weight=gt_mask,
-                                                     sm_mask=traindata_mask, return_sm=True)
+        print('Traindata:', traindata.shape)  # (B, T, D)
+        print('GT:', gt.shape)  # (B, L)
+        print('GT Mask:', gt_mask.shape)  # (B, T, D)
+        print('Traindata Mask:', traindata_mask.shape)  # (B, L)
+
+        ctcloss, score_matrix = self.model.train_on_batch(x=traindata, y=gt, sample_weight=gt_mask, sm_mask=traindata_mask, return_sm=True)
         print('ctcloss = ', ctcloss)
         resultseqs = CTC.best_path_decode_batch(score_matrix, traindata_mask)
         targetseqs = convert_gt_from_array_to_list(gt, gt_mask)

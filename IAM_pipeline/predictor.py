@@ -99,7 +99,7 @@ class IAM_Predictor(PredictorTask):
 
         # CNN to RNN
         net_reshape1 = Permute((3, 2), name='net_reshape')(cnn6)
-        net_reshape2 = Reshape((32, 576), name='net_reshape')(net_reshape1) #Reshape(input_width, num_filters)
+        net_reshape2 = Reshape((576, 32), name='net_reshape')(net_reshape1) #Reshape(input_width, num_filters)
 
         # RNN
         lstm0  = LSTM(256, return_sequences=True, activation='tanh', name='lstm0')(net_reshape2)  # bi lstm missing

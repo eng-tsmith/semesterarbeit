@@ -29,7 +29,7 @@ def dim_shuffle(x, x_mask, y, y_mask):
 
 def _change_input_shape(floatx='float32'):
     x = tensor.tensor3('input', dtype=floatx)
-    y = x  #  .dimshuffle((0, 'x', 1, 2))# y = x.dimshuffle((0, 'x', 2, 1))
+    y = x.dimshuffle((0, 'x', 2, 1))
     f = theano.function([x], y, allow_input_downcast=True)
     return f
 

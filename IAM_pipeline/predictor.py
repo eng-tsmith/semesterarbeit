@@ -90,17 +90,22 @@ class IAM_Predictor(PredictorTask):
         cnn3   = Convolution2D(256, 3, 3, border_mode=border_mode, activation='relu', name='cnn3')(cnn2)
         pool2  = MaxPooling2D(pool_size=(2, 1), name='pool2')(cnn3)
         cnn4   = Convolution2D(512, 3, 3, border_mode=border_mode, activation='relu', name='cnn4')(pool2)
-        BN0    = BatchNormalization(mode=0, axis=1, name='BN1')(cnn4)
+        BN0    = BatchNormalization(mode=0, axis=1, name='BN0')(cnn4)
         cnn5   = Convolution2D(512, 3, 3, border_mode=border_mode, activation='relu', name='cnn5')(BN0)
-        BN1 = BatchNormalization(mode=0, axis=1, name='BN0')(cnn5)
+        BN1 = BatchNormalization(mode=0, axis=1, name='BN1')(cnn5)
         pool3  = MaxPooling2D(pool_size=(2, 1), name='pool3')(BN1)
         cnn6   = Convolution2D(512,   2, 2, border_mode=border_mode, activation='relu', name='cnn6')(pool3)  # MAYBE BORDER MODE
+
         net_reshape = Permute((3, 2), name='net_reshape')(cnn6)
+
         lstm0  = LSTM(256, return_sequences=True, activation='tanh', name='lstm0')(net_reshape)  # bi lstm missing
         lstm1  = LSTM(256, return_sequences=True, activation='tanh', go_backwards=True, keep_time_order=True, name='lstm1')(lstm0)
         dense0 = TimeDistributed(Dense(Nclass + 1, activation='softmax', name='dense0'))(lstm1)
         self.model  = Model(net_input, dense0)
         self.model.compile(loss=loss, optimizer=optimizer, sample_weight_mode='temporal')
+
+        print(cnn6.output_shape)
+
         print("Compiled Keras model successfully.")
 
         self.reshape_func = _change_input_shape()

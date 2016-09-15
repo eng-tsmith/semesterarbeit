@@ -248,7 +248,8 @@ class IAM_Predictor(PredictorTask):
         time0 = time.time()
 
         traindata = self.reshape_func(x_padded)
-        traindata_mask = np.transpose(x_mask)   # TODO [0, 0::16][:, :-1]
+        traindata_mask1 = x_mask[0, 0::16][:, :-1]
+        traindata_mask2 = np.transpose(traindata_mask1)   # TODO [0, 0::16][:, :-1]
 
         gt = y_padded
         gt_mask = y_mask
@@ -256,9 +257,9 @@ class IAM_Predictor(PredictorTask):
         print('Traindata:', traindata.shape)  # (1x1x150x40)
         print('GT:', gt.shape)  # (1x150)
         print('GT Mask:', gt_mask.shape)  # (1x150)
-        print('Traindata Mask:', traindata_mask.shape)  # (40x150)
+        print('Traindata Mask:', traindata_mask2.shape)  # (40x150)
 
-        ctcloss, score_matrix = self.model.train_on_batch(x=traindata, y=gt, sample_weight=gt_mask, sm_mask=traindata_mask, return_sm=True)
+        ctcloss, score_matrix = self.model.train_on_batch(x=traindata, y=gt, sample_weight=gt_mask, sm_mask=traindata_mask2, return_sm=True)
 
         print('ctcloss = ', ctcloss)
         resultseqs = CTC.best_path_decode_batch(score_matrix, traindata_mask)

@@ -189,7 +189,8 @@ class IAM_Predictor(PredictorTask):
         print('Image shape:', x_padded.shape)  # (B, T, D)
         print('Label shape:', y_padded.shape)  # (B, L)
 
-        B, T, D = x_padded.shape  # D = 28
+        B = 1
+        T, D = x_padded.shape  # D = 28
         L = y_padded.shape[1]
 
         total_seqlen, total_ed = 0.0, 0.0

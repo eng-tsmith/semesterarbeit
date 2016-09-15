@@ -248,8 +248,8 @@ class IAM_Predictor(PredictorTask):
         time0 = time.time()
 
         traindata = self.reshape_func(x_padded)
-        traindata_mask1 = x_mask[0, 0::16][:, :-1]
-        traindata_mask2 = np.transpose(traindata_mask1)   # TODO [0, 0::16][:, :-1]
+        traindata_mask1 = np.transpose(x_mask)
+        traindata_mask2 = traindata_mask1[0, 0::16][:, :-1]   # TODO [0, 0::16][:, :-1]
 
         gt = y_padded
         gt_mask = y_mask
@@ -262,7 +262,7 @@ class IAM_Predictor(PredictorTask):
         ctcloss, score_matrix = self.model.train_on_batch(x=traindata, y=gt, sample_weight=gt_mask, sm_mask=traindata_mask2, return_sm=True)
 
         print('ctcloss = ', ctcloss)
-        resultseqs = CTC.best_path_decode_batch(score_matrix, traindata_mask)
+        resultseqs = CTC.best_path_decode_batch(score_matrix, traindata_mask2)
         targetseqs = convert_gt_from_array_to_list(gt, gt_mask)
         CER_batch, ed_batch, seqlen_batch = CTC.calc_CER(resultseqs, targetseqs)
         total_seqlen += seqlen_batch

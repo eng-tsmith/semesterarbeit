@@ -166,9 +166,9 @@ def scaling(img):
     :param img:
     :return: resized image
     """
-    baseheight = 41  # data_config.img_ht  #TODO is data always being created?
+    baseheight = 37  # data_config.img_ht  #TODO is data always being created?
     hpercent = (baseheight / float(img.shape[0]))
-    dim = (int(img.shape[1] * hpercent), 41)
+    dim = (int(img.shape[1] * hpercent), 37)
 
     img_scaled = cv.resize(img, dim, interpolation=cv.INTER_NEAREST)
 

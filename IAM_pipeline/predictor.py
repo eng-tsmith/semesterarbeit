@@ -218,27 +218,18 @@ class IAM_Predictor(PredictorTask):
         x_padded = pad_sequence_into_array(input_tuple[0], self.img_w)
         y_with_blank = input_tuple[1]  #TODO blank
 
-        the_input = np.asarray(x_padded, dtype='float32')
-        the_labels = np.asarray(y_with_blank, dtype='float32')
-        input_length = np.array([self.downsampled_width], dtype='int64')
-        label_length = np.array([len(the_labels)], dtype='int64')
-
-        out = np.zeros([1])
-
-        # inputs = [the_input[np.newaxis, np.newaxis, :, :], the_labels[np.newaxis, :], input_length[np.newaxis, :], label_length[np.newaxis, :]]
-        inputs = ({'the_input': the_input, 'the_labels': the_labels, 'input_length': input_length, 'label_length': label_length}, {'output': out})
-
-        # print('Input: ', inputs[0].shape)
-        # print('Label: ', inputs[1].shape)
-        # print('Input_length: ', inputs[2].shape)
-        # print('Label_length: ', inputs[3].shape)
+        inputs = {'the_input': np.asarray(x_padded, dtype='float32'),
+                  'the_labels': np.asarray(y_with_blank, dtype='float32'),
+                  'input_length': np.array([self.downsampled_width], dtype='int64'),
+                  'label_length': np.array([len(np.asarray(y_with_blank, dtype='float32'))], dtype='int64')}
+        outputs = {'ctc': np.zeros([1])}
 
         # Neural Net
         if test_set == 0:
-            loss, metric = self.train_rnn(inputs)
+            loss, metric = self.train_rnn((inputs, outputs))
             # cst, pred = self.train_rnn(feature_vec, input_tuple[1])
         else:
-            loss, metric = self.test_rnn(inputs)
+            loss, metric = self.test_rnn((inputs, outputs))
 
         metric = 0
 

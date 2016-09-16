@@ -218,7 +218,7 @@ class IAM_Predictor(PredictorTask):
         input_length = self.downsampled_width
         label_length = len(the_labels)
 
-        inputs = [the_input, the_labels, input_length, label_length]
+        inputs = [the_input[np.newaxis, :, :], the_labels, input_length, label_length]
 
         outputs = {'ctc': np.zeros([1])}
 

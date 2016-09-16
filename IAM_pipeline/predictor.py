@@ -256,8 +256,8 @@ class IAM_Predictor(PredictorTask):
         # ipdb.set_trace()
 
           # TODO [0, 0::16][:, :-1] !!!!!!
-        traindata_mask1 = np.transpose(x_mask)
-        traindata_mask2 = traindata_mask1[0:1, 0::16][:,:-1]
+        # traindata_mask1 = np.transpose(x_mask)
+        traindata_mask2 = x_mask[0:1, 0::16][:,:-1]
 
         gt = y_padded
         gt_mask = y_mask

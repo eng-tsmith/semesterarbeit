@@ -248,11 +248,16 @@ class IAM_Predictor(PredictorTask):
         time0 = time.time()
 
         traindata = self.reshape_func(x_padded)
-        traindata_mask1 = np.transpose(x_mask)
 
-        # import ipdb; ipdb.set_trace()
+        import ipdb
+        ipdb.set_trace()
 
-        traindata_mask2 = traindata_mask1[0::16][:, :-1]   # TODO [0, 0::16][:, :-1] !!!!!!
+        traindata_mask1 = x_mask[0::16][:, :-1]  # TODO [0, 0::16][:, :-1] !!!!!!
+        traindata_mask2 = np.transpose(traindata_mask1)
+
+
+
+
 
         gt = y_padded
         gt_mask = y_mask

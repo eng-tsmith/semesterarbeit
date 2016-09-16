@@ -215,8 +215,8 @@ class IAM_Predictor(PredictorTask):
 
         the_input = np.asarray(x_padded, dtype='float32')
         the_labels = np.asarray(y_with_blank, dtype='float32')
-        input_length = np.asarray(self.downsampled_width, dtype='int64')
-        label_length = np.asarray(len(the_labels), dtype='int64')
+        input_length = self.downsampled_width
+        label_length = len(the_labels)
 
         inputs = [the_input, the_labels, input_length, label_length]
 
@@ -224,8 +224,8 @@ class IAM_Predictor(PredictorTask):
 
         print('Input: ', inputs[0].shape)
         print('Label: ', inputs[1].shape)
-        print('Input_length: ', inputs[2].shape)
-        print('Label_length: ', inputs[3].shape)
+        print('Input_length: ', inputs[2])
+        print('Label_length: ', inputs[3])
 
         # Neural Net
         if test_set == 0:

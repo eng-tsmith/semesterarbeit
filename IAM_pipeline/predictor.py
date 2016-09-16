@@ -169,7 +169,7 @@ class IAM_Predictor(PredictorTask):
         # print(inputs[0])
         # print(inputs[1])
 
-        self.model.train_on_batch(self, inputs[0], inputs[1], class_weight=None, sample_weight=None)  #TODO metrics?
+        self.model.train_on_batch(self, inputs, class_weight=None, sample_weight=None)  #TODO metrics?
 
         loss = inputs[1]
 
@@ -224,7 +224,6 @@ class IAM_Predictor(PredictorTask):
         in4 = np.array([len(np.asarray(y_with_blank, dtype='float32'))], dtype='int64')[np.newaxis, :]
 
         out1 = np.zeros([1])
-
 
         inputs = {'the_input': in1,
                   'the_labels': in2,

@@ -216,7 +216,8 @@ class IAM_Predictor(PredictorTask):
         input_length = np.array(self.downsampled_width, dtype='int64')
         label_length = np.array(len(the_labels), dtype='int64')
 
-        inputs = [the_input, the_labels, input_length, label_length]
+        inputs = {'input_data': the_input, 'labels': the_labels, 'input_length': input_length, 'label_length': label_length}
+
         outputs = {'ctc': np.zeros([1])}
 
         print(inputs)

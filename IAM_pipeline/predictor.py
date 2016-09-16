@@ -218,17 +218,25 @@ class IAM_Predictor(PredictorTask):
         x_padded = pad_sequence_into_array(input_tuple[0], self.img_w)
         y_with_blank = input_tuple[1]  #TODO blank
 
-        inputs = {'the_input': np.asarray(x_padded, dtype='float32'),
-                  'the_labels': np.asarray(y_with_blank, dtype='float32'),
-                  'input_length': np.array([self.downsampled_width], dtype='int64'),
-                  'label_length': np.array([len(np.asarray(y_with_blank, dtype='float32'))], dtype='int64')}
-        outputs = {'ctc': np.zeros([1])}
+        in1 = np.asarray(x_padded, dtype='float32')[np.newaxis, :, :, np.newaxis]
+        in2 = np.asarray(y_with_blank, dtype='float32')[np.newaxis, :]
+        in3 = np.array([self.downsampled_width], dtype='int64')[np.newaxis, :]
+        in4 = np.array([len(np.asarray(y_with_blank, dtype='float32'))], dtype='int64')[np.newaxis, :]
 
-        print('GO: ', np.asarray(x_padded, dtype='float32').shape)
-        print(np.asarray(y_with_blank, dtype='float32').shape)
-        print(np.array([self.downsampled_width], dtype='int64').shape)
-        print(np.array([len(np.asarray(y_with_blank, dtype='float32'))], dtype='int64').shape)
-        print(np.zeros([1]).shape)
+        out1 = np.zeros([1])
+
+
+        inputs = {'the_input': in1,
+                  'the_labels': in2,
+                  'input_length': in3,
+                  'label_length': in4}
+        outputs = {'ctc': out1}
+
+        print('GO: ', in1.shape)
+        print(in2.shape)
+        print(in3.shape)
+        print(in4.shape)
+        print(out1.shape)
 
         # Neural Net
         if test_set == 0:

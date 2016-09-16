@@ -53,7 +53,8 @@ def pad_label_with_blank(label, blank_id, max_length):
     label_out = np.ones(shape=[max_length]) * np.asarray(blank_id)
 
     trunc = label_pad[:max_length]
-
+    import ipdb
+    ipdb.set_trace()
     label_out[:len(trunc)] = trunc
 
     return label_out

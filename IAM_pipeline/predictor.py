@@ -149,11 +149,11 @@ class IAM_Predictor(PredictorTask):
         gru_1 = GRU(rnn_size, return_sequences=True, name='gru1')(inner)
         gru_1b = GRU(rnn_size, return_sequences=True, go_backwards=True, name='gru1_b')(inner)
         gru1_merged = merge([gru_1, gru_1b], mode='sum')
-        gru_2 = GRU(rnn_size, return_sequences=True, name='gru2')(gru1_merged)
-        gru_2b = GRU(rnn_size, return_sequences=True, go_backwards=True)(gru1_merged)
+        # gru_2 = GRU(rnn_size, return_sequences=True, name='gru2')(gru1_merged)
+        # gru_2b = GRU(rnn_size, return_sequences=True, go_backwards=True)(gru1_merged)
 
         # transforms RNN output to character activations:
-        inner = TimeDistributed(Dense(self.output_size, name='dense2'))(merge([gru_2, gru_2b], mode='concat'))
+        inner = TimeDistributed(Dense(self.output_size, name='dense2'))(merge([gru_1, gru_1b], mode='concat'))
         y_pred = Activation('softmax', name='softmax')(inner)
         # Model(input=[input_data], output=y_pred).summary()
 
@@ -193,7 +193,7 @@ class IAM_Predictor(PredictorTask):
         # print(inputs[0])
         # print(inputs[1])
 
-        self.model.train_on_batch(inputs[0], inputs[1], class_weight=None, sample_weight=None)  #TODO metrics?
+        self.model.train_on_batch(inputs[0], inputs[1], class_weight=None, sample_weight=None)
         # self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1)
         loss = inputs[1]
 
@@ -207,7 +207,7 @@ class IAM_Predictor(PredictorTask):
         :return:
         """
         print('Test...')
-        self.model.test_on_batch(x=inputs[0], y=inputs[1], sample_weight=None)  #TODO metrics?
+        self.model.test_on_batch(x=inputs[0], y=inputs[1], sample_weight=None)
 
         loss = inputs[1]
 

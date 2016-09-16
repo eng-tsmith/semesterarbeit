@@ -29,7 +29,7 @@ def dim_shuffle(x, x_mask, y, y_mask):
 
 def _change_input_shape(floatx='float32'):
     x = tensor.tensor3('input', dtype=floatx)
-    y = x.dimshuffle((0, 'x', 1, 2))
+    y = x.dimshuffle((0, 'x', 2, 1))
     f = theano.function([x], y, allow_input_downcast=True)
     return f
 
@@ -45,7 +45,7 @@ def pad_sequence_into_array(image, maxlen):
     image_ht = image.shape[0]
 
     Xout = np.ones(shape=[image_ht, maxlen], dtype=image[0].dtype) * np.asarray(value, dtype=image[0].dtype)
-    Mask = np.zeros(shape=[image_ht, maxlen], dtype=image.dtype)
+    Mask = np.zeros(shape=[1, maxlen], dtype=image.dtype)
 
     trunc = image[:, :maxlen]
 
@@ -231,8 +231,11 @@ class IAM_Predictor(PredictorTask):
         :param input_tuple:
         :return:
         """
-        x_padded, x_mask = pad_sequence_into_array(input_tuple[0], 151)  #TODO MAXLENGTH!!!
-        y_padded, y_mask = pad_sequence_into_array(input_tuple[1], 151)  # TODO MAXLENGTH!!!
+        image_length = 168  #TODO MAXLENGTH!!!
+        label_length = 25
+
+        x_padded, x_mask = pad_sequence_into_array(input_tuple[0], image_length)
+        y_padded, y_mask = pad_sequence_into_array(input_tuple[1], image_length)
 
         # Dim Shuffle to fit Keras [40x150] --> [1 x 40 x 150]
         x_padded, x_mask, y_padded, y_mask = dim_shuffle(x_padded, x_mask, y_padded, y_mask)
@@ -254,10 +257,10 @@ class IAM_Predictor(PredictorTask):
 
           # TODO [0, 0::16][:, :-1] !!!!!!
         traindata_mask1 = np.transpose(x_mask)
-        traindata_mask2 = traindata_mask1[1:1, 0::16][:, :-1]
+        traindata_mask2 = traindata_mask1[0:1, 0::16][:,:-1]
 
-        gt = y_padded[1:1, :]
-        gt_mask = y_mask[1:1, :]
+        gt = y_padded
+        gt_mask = y_mask
 
         print('Traindata:', traindata.shape)  # (1x1x150x40)
         print('GT:', gt.shape)  # (1x150)

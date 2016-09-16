@@ -244,7 +244,7 @@ class IAM_Predictor(PredictorTask):
         y_with_blank = pad_label_with_blank(np.asarray(input_tuple[1]), self.output_size, self.absolute_max_string_len)  #TODO blank
 
         in1 = np.asarray(x_padded, dtype='float32')[np.newaxis, np.newaxis, :, :]
-        in2 = np.asarray(y_with_blank, dtype='float32')
+        in2 = np.transpose(np.asarray(y_with_blank, dtype='float32'))
         in3 = np.array([self.downsampled_width], dtype='int64')[np.newaxis, :]
         in4 = np.array([len(np.asarray(y_with_blank, dtype='float32'))], dtype='int64')[np.newaxis, :]
 

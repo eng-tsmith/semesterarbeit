@@ -219,7 +219,7 @@ class IAM_Predictor(PredictorTask):
         y_with_blank = input_tuple[1]  #TODO blank
 
         in1 = np.asarray(x_padded, dtype='float32')[np.newaxis, :, :, np.newaxis]
-        in2 = np.asarray(y_with_blank, dtype='float32')[np.newaxis, :]
+        in2 = np.asarray(y_with_blank, dtype='float32')
         in3 = np.array([self.downsampled_width], dtype='int64')[np.newaxis, :]
         in4 = np.array([len(np.asarray(y_with_blank, dtype='float32'))], dtype='int64')[np.newaxis, :]
 

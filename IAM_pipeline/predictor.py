@@ -80,7 +80,7 @@ class IAM_Predictor(PredictorTask):
 
         self.minNcharPerseq, self.maxNcharPerseq = 2, 10
 
-        net_input = Input(shape=(1, feadim, None))  #net_input = Input(shape=(1, feadim, None))  #TODO maxlength
+        net_input = Input(shape=(1, feadim, 168))  #net_input = Input(shape=(1, feadim, None))  #TODO maxlength
         # CNN
         cnn0 = Convolution2D(64, 3, 3, border_mode=border_mode, activation='relu', name='cnn0')(net_input)
         pool0 = MaxPooling2D(pool_size=(2, 2), name='pool0')(cnn0)
@@ -235,7 +235,7 @@ class IAM_Predictor(PredictorTask):
         label_length = 25
 
         x_padded, x_mask = pad_sequence_into_array(input_tuple[0], image_length)
-        y_padded, y_mask = pad_sequence_into_array(input_tuple[1], image_length)
+        y_padded, y_mask = pad_sequence_into_array(input_tuple[1], label_length)
 
         # Dim Shuffle to fit Keras [40x150] --> [1 x 40 x 150]
         x_padded, x_mask, y_padded, y_mask = dim_shuffle(x_padded, x_mask, y_padded, y_mask)

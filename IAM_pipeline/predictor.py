@@ -131,7 +131,7 @@ class IAM_Predictor(PredictorTask):
         # transforms RNN output to character activations:
         inner = TimeDistributed(Dense(self.output_size, name='dense2'))(merge([gru_2, gru_2b], mode='concat'))
         y_pred = Activation('softmax', name='softmax')(inner)
-        Model(input=[input_data], output=y_pred).summary()
+        # Model(input=[input_data], output=y_pred).summary()
 
         # LABELS
         labels = Input(name='the_labels', shape=[self.absolute_max_string_len], dtype='float32')
@@ -144,7 +144,7 @@ class IAM_Predictor(PredictorTask):
         loss_out = Lambda(ctc_lambda_func, output_shape=(1,), name="ctc")([y_pred, labels, input_length, label_length])
 
         # Keras Model of NN
-        self.model = Model(input=[input_data, labels, input_length, label_length], output=[loss_out])
+        self.model = Model(input=[input_data, labels, input_length, label_length], output=[loss_out]).summary()
 
         # the loss calc occurs elsewhere, so use a dummy lambda func for the loss
         self.model.compile(loss={'ctc': lambda y_true, y_pred: y_pred}, optimizer=sgd)
@@ -164,6 +164,7 @@ class IAM_Predictor(PredictorTask):
         :param label:
         """
         print('Train...')
+
         loss = self.model.train_on_batch(self, inputs, class_weight=None, sample_weight=None)  #TODO metrics?
 
         return loss
@@ -216,11 +217,14 @@ class IAM_Predictor(PredictorTask):
         input_length = np.array(self.downsampled_width, dtype='int64')
         label_length = np.array(len(the_labels), dtype='int64')
 
-        inputs = {'input_data': the_input, 'labels': the_labels, 'input_length': input_length, 'label_length': label_length}
+        inputs = [the_input, the_labels, input_length, label_length]
 
         outputs = {'ctc': np.zeros([1])}
 
-        print(inputs)
+        print('Input: ', inputs[0].shape)
+        print('Label: ', inputs[1].shape)
+        print('Input_length: ', inputs[2].shape)
+        print('Label_length: ', inputs[3].shape)
 
         # Neural Net
         if test_set == 0:

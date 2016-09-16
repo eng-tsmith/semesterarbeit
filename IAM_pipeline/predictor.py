@@ -13,13 +13,7 @@ from keras.utils import np_utils
 from keras.utils.data_utils import get_file
 from keras.preprocessing import image
 import keras.callbacks
-import itertools
-import re
-import datetime
-import cairocffi as cairo
-import editdistance
-from scipy import ndimage
-import pylab
+
 
 
 def pad_sequence_into_array(image, maxlen):

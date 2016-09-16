@@ -193,7 +193,7 @@ class IAM_Predictor(PredictorTask):
         # print(inputs[0])
         # print(inputs[1])
 
-        self.model.train_on_batch(self, inputs[0], inputs[1], class_weight=None, sample_weight=None)  #TODO metrics?
+        self.model.train_on_batch(inputs[0], inputs[1], class_weight=None, sample_weight=None)  #TODO metrics?
         # self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1)
         loss = inputs[1]
 
@@ -207,7 +207,7 @@ class IAM_Predictor(PredictorTask):
         :return:
         """
         print('Test...')
-        self.model.test_on_batch(self, x=inputs[0], y=inputs[1], sample_weight=None)  #TODO metrics?
+        self.model.test_on_batch(x=inputs[0], y=inputs[1], sample_weight=None)  #TODO metrics?
 
         loss = inputs[1]
 

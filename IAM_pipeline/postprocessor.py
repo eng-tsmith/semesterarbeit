@@ -39,7 +39,7 @@ class IAM_Postprocessor(PostprocessorTask):
         """
         print("label: ", input_tuple[0])
         print("loss: ", input_tuple[1])
-        print("acc: ", input_tuple[2])
+        print("metric: ", input_tuple[2])
 
         # printer = Printer()
         #

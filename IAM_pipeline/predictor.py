@@ -1,37 +1,26 @@
 from validation_task import PredictorTask
 import sys
 import os
-from keras.models import Model, Graph
-from keras.layers import LSTM, TimeDistributed, Dense, Dropout, Input, Convolution2D, MaxPooling2D, Reshape, Permute, \
-                         Merge, Activation, BatchNormalization
-import numpy as np, time
-import gzip, pickle, theano
-from CTC_utils import CTC
-from theano import tensor
+import numpy as np
+from keras import backend as K
+from keras.layers.convolutional import Convolution2D, MaxPooling2D
+from keras.layers import Input, Layer, Dense, Activation, Flatten
+from keras.layers import Reshape, Lambda, merge, Permute, TimeDistributed
+from keras.models import Model
+from keras.layers.recurrent import GRU
+from keras.optimizers import SGD
+from keras.utils import np_utils
+from keras.utils.data_utils import get_file
+from keras.preprocessing import image
+import keras.callbacks
+import itertools
+import re
+import datetime
+import cairocffi as cairo
+import editdistance
+from scipy import ndimage
+import pylab
 
-def dim_shuffle(x, x_mask, y, y_mask):
-    """
-
-    :param x:
-    :param x_mask:
-    :param y:
-    :param y_mask:
-    :return:
-    """
-    x_dim = x[np.newaxis, :, :]
-    x_mask_dim = x_mask  # [np.newaxis, :, :]
-    y_dim = y
-    y_mask_dim = y_mask
-    # print("MASK", x_mask.shape, x_mask_dim.shape)
-
-    return x_dim, x_mask_dim, y_dim, y_mask_dim
-
-
-def _change_input_shape(floatx='float32'):
-    x = tensor.tensor3('input', dtype=floatx)
-    y = x.dimshuffle((0, 'x', 1, 2))
-    f = theano.function([x], y, allow_input_downcast=True)
-    return f
 
 def pad_sequence_into_array(image, maxlen):
     """
@@ -45,15 +34,19 @@ def pad_sequence_into_array(image, maxlen):
     image_ht = image.shape[0]
 
     Xout = np.ones(shape=[image_ht, maxlen], dtype=image[0].dtype) * np.asarray(value, dtype=image[0].dtype)
-    Mask = np.zeros(shape=[1, maxlen], dtype=image.dtype)
 
     trunc = image[:, :maxlen]
 
     Xout[:, :trunc.shape[1]] = trunc
-    Mask[:, :trunc.shape[1]] = 1
 
-    return Xout, Mask
+    return Xout
 
+def ctc_lambda_func(args):
+    y_pred, labels, input_length, label_length = args
+    # the 2 is critical here since the first couple outputs of the RNN
+    # tend to be garbage:
+    y_pred = y_pred[:, 2:, :]
+    return K.ctc_batch_cost(labels, y_pred, input_length, label_length)
 
 class IAM_Predictor(PredictorTask):
 
@@ -66,151 +59,132 @@ class IAM_Predictor(PredictorTask):
     :param optimizer:
     :return:
     """
-        feadim = 28  #TODO
+
+        # Input Parameters
         chars = [' ', '!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', '0', '1', '2',
                       '3', '4', '5', '6', '7', '8', '9', ':', ';', '<', '=', '>', '?', '@', 'A', 'B', 'C', 'D', 'E',
                       'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
                       'Y', 'Z', '[', '\\', ']', '^', '_', '`', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
                       'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '{', '|', '}',
                       '~']  # data['chars']
-        Nclass = len(chars)
-        loss = 'ctc_cost_for_train'
-        optimizer = 'Adadelta'
-        border_mode = 'same'
 
-        self.minNcharPerseq, self.maxNcharPerseq = 2, 10
+        # Input Parameters
+        self.img_h = 64
+        self.img_w = 512
+        self.absolute_max_string_len = 25 # TODO
+        self.output_size = len(chars)
+        minibatch_size = 1  #TODO
+        words_per_epoch = 16000  # TODO
 
-        net_input = Input(shape=(1, feadim, 168))  #net_input = Input(shape=(1, feadim, None))  #TODO maxlength
-        # CNN
-        cnn0 = Convolution2D(64, 3, 3, border_mode=border_mode, activation='relu', name='cnn0')(net_input)
-        pool0 = MaxPooling2D(pool_size=(2, 2), name='pool0')(cnn0)
-        cnn1 = Convolution2D(128, 3, 3, border_mode=border_mode, activation='relu', name='cnn1')(pool0)
-        pool1 = MaxPooling2D(pool_size=(2, 2), name='pool1')(cnn1)
-        cnn2 = Convolution2D(256, 3, 3, border_mode=border_mode, activation='relu', name='cnn2')(pool1)
-        BN0 = BatchNormalization(mode=0, axis=1, name='BN0')(cnn2)
-        cnn3 = Convolution2D(256, 3, 3, border_mode=border_mode, activation='relu', name='cnn3')(BN0)
-        pool2 = MaxPooling2D(pool_size=(2, 1), name='pool2')(cnn3)
-        cnn4 = Convolution2D(512, 3, 3, border_mode=border_mode, activation='relu', name='cnn4')(pool2)
-        BN1 = BatchNormalization(mode=0, axis=1, name='BN1')(cnn4)
-        cnn5 = Convolution2D(512, 3, 3, border_mode=border_mode, activation='relu', name='cnn5')(BN1)
-        pool3 = MaxPooling2D(pool_size=(2, 1), name='pool3')(cnn5)
-        cnn6 = Convolution2D(1, 3, 3, border_mode=border_mode, activation='relu', name='cnn6')(pool3)
-        BN2 = BatchNormalization(mode=0, axis=1, name='BN2')(cnn6)
-        net_reshape = Permute((3, 2), name='net_reshape')(BN2)
-        lstm0 = LSTM(100, return_sequences=True, activation='tanh', name='lstm0')(net_reshape)
-        lstm1 = LSTM(100, return_sequences=True, activation='tanh', go_backwards=True, keep_time_order=True,
-                     name='lstm1')(lstm0)
-        dense0 = TimeDistributed(Dense(Nclass + 1, activation='softmax', name='dense0'))(lstm1)
-        self.model = Model(net_input, dense0)
+        # Network parameters
+        conv_num_filters = 16
+        filter_size = 3
+        pool_size_1 = 4
+        pool_size_2 = 2
+        time_dense_size = 32
+        rnn_size = 512
+        time_steps = self.img_w / (pool_size_1 * pool_size_2)
+        lr = 0.03
+        # clipnorm seems to speeds up convergence
+        clipnorm = 5
+        self.downsampled_width = self.img_w / (pool_size_1 * pool_size_2) - 2
 
-        self.model.compile(loss=loss, optimizer=optimizer, sample_weight_mode='temporal')
+        # Optimizer
+        sgd = SGD(lr=lr, decay=3e-7, momentum=0.9, nesterov=True, clipnorm=clipnorm)
+        # Activition functrion
+        act = 'relu'
 
-        # cnn0   = Convolution2D( 64, 3, 3, border_mode=border_mode, activation='relu', name='cnn0')(net_input)
-        # pool0  = MaxPooling2D(pool_size=(2, 2), name='pool0')(cnn0)
-        # cnn1   = Convolution2D(128, 3, 3, border_mode=border_mode, activation='relu', name='cnn1')(pool0)
-        # pool1  = MaxPooling2D(pool_size=(2, 2), name='pool1')(cnn1)
-        # cnn2   = Convolution2D(256, 3, 3, border_mode=border_mode, activation='relu', name='cnn2')(pool1)
-        # # BN0    = BatchNormalization(mode=0, axis=1, name='BN0')(cnn2)
-        # cnn3   = Convolution2D(256, 3, 3, border_mode=border_mode, activation='relu', name='cnn3')(cnn2)
-        # pool2  = MaxPooling2D(pool_size=(1, 2), name='pool2')(cnn3)
-        # cnn4   = Convolution2D(512, 3, 3, border_mode=border_mode, activation='relu', name='cnn4')(pool2)
-        # BN0    = BatchNormalization(mode=0, axis=1, name='BN0')(cnn4)
-        # cnn5   = Convolution2D(512, 3, 3, border_mode=border_mode, activation='relu', name='cnn5')(BN0)
-        # BN1 = BatchNormalization(mode=0, axis=1, name='BN1')(cnn5)
-        # pool3  = MaxPooling2D(pool_size=(1, 2), name='pool3')(BN1)
-        # cnn6   = Convolution2D(512,   2, 2, border_mode='valid', activation='relu', name='cnn6')(pool3)  # MAYBE BORDER MODE
-        #
-        # # CNN to RNN
-        # net_reshape = Permute((3, 2), name='net_reshape')(cnn6)
-        #
-        # # RNN
-        # lstm0  = LSTM(256, return_sequences=True, activation='tanh', name='lstm0')(net_reshape)  # bi lstm missing
-        # lstm1  = LSTM(256, return_sequences=True, activation='tanh', go_backwards=True, keep_time_order=True, name='lstm1')(lstm0)
-        # dense0 = TimeDistributed(Dense(Nclass + 1, activation='softmax', name='dense0'))(lstm1)
-        #
-        # self.model  = Model(net_input, dense0)
-        # self.model.compile(loss=loss, optimizer=optimizer, sample_weight_mode='temporal')
+        if K.image_dim_ordering() == 'th':
+            input_shape = (1, self.img_h, self.img_w)
+        else:
+            input_shape = (self.img_h, self.img_w, 1)
 
+        #################################################
+        # Network archtitecture
+        input_data = Input(name='the_input', shape=input_shape, dtype='float32')
+
+        # CNN encoder
+        inner = Convolution2D(conv_num_filters, filter_size, filter_size, border_mode='same',
+                              activation=act, name='conv1')(input_data)
+        inner = MaxPooling2D(pool_size=(pool_size_1, pool_size_1), name='max1')(inner)
+        inner = Convolution2D(conv_num_filters, filter_size, filter_size, border_mode='same',
+                              activation=act, name='conv2')(inner)
+        inner = MaxPooling2D(pool_size=(pool_size_2, pool_size_2), name='max2')(inner)
+
+        # CNN to RNN convert
+        conv_to_rnn_dims = (
+        (self.img_h / (pool_size_1 * pool_size_2)) * conv_num_filters, self.img_w / (pool_size_1 * pool_size_2))
+
+        a = conv_to_rnn_dims[0]
+        b = conv_to_rnn_dims[1]
+        c = [int(a), int(b)]
+
+        inner = Reshape(target_shape=c, name='reshape')(inner)
+        inner = Permute(dims=(2, 1), name='permute')(inner)
+
+        # cuts down input size going into RNN:
+        inner = TimeDistributed(Dense(time_dense_size, activation=act, name='dense1'))(inner)
+
+        # RNN
+        # Two layers of bidirecitonal GRUs
+        # GRU seems to work as well, if not better than LSTM:
+        gru_1 = GRU(rnn_size, return_sequences=True, name='gru1')(inner)
+        gru_1b = GRU(rnn_size, return_sequences=True, go_backwards=True, name='gru1_b')(inner)
+        gru1_merged = merge([gru_1, gru_1b], mode='sum')
+        gru_2 = GRU(rnn_size, return_sequences=True, name='gru2')(gru1_merged)
+        gru_2b = GRU(rnn_size, return_sequences=True, go_backwards=True)(gru1_merged)
+
+        # transforms RNN output to character activations:
+        inner = TimeDistributed(Dense(self.output_size, name='dense2'))(merge([gru_2, gru_2b], mode='concat'))
+        y_pred = Activation('softmax', name='softmax')(inner)
+        Model(input=[input_data], output=y_pred).summary()
+
+        # LABELS
+        labels = Input(name='the_labels', shape=[self.absolute_max_string_len], dtype='float32')
+        input_length = Input(name='input_length', shape=[1], dtype='int64')
+        label_length = Input(name='label_length', shape=[1], dtype='int64')
+
+        # CTC layer
+        # Keras doesn't currently support loss funcs with extra parameters
+        # so CTC loss is implemented in a lambda layer
+        loss_out = Lambda(ctc_lambda_func, output_shape=(1,), name="ctc")([y_pred, labels, input_length, label_length])
+
+        # Keras Model of NN
+        self.model = Model(input=[input_data, labels, input_length, label_length], output=[loss_out])
+
+        # the loss calc occurs elsewhere, so use a dummy lambda func for the loss
+        self.model.compile(loss={'ctc': lambda y_true, y_pred: y_pred}, optimizer=sgd)
+
+        # Init NN done
         print("Compiled Keras model successfully.")
+        # OLD PRINT
+        # # captures output of softmax so we can decode the output during visualization
+        # test_func = K.function([input_data], [y_pred])
+        #
+        # viz_cb = VizCallback(test_func, img_gen.next_val())
 
-        self.reshape_func = _change_input_shape()
-        print('reshape_func compiled')
-
-    def FeatureExtractor(self, img):
-        """
-
-        :param img:
-        :return:
-        """
-        feature_vec = np.zeros((9, img.shape[1]))
-
-        # needed values
-        m = img.shape[0]
-
-        for col in range(img.shape[1]):
-            # 1 Number of black Pixel
-            feature_vec[0, col] = np.sum(img[:, col]) / 255.0  # TODO /255 oder nicht?
-
-            # 2 Center of Gravity
-            feature_vec[1, col] = np.sum(np.arange(1, m + 1) * img[:, col]) / m
-
-            # 3 Second order Center of Gravitiy "Second order moment"
-            feature_vec[2, col] = np.sum(np.square(np.arange(1, m + 1)) * img[:, col]) / np.square(m)
-
-            # 4/5 Position top / bottom black
-            black_pixels = np.nonzero(img[:, col])
-            if np.sum(img[:, col]) == 0:
-                feature_vec[3, col] = 1
-                feature_vec[4, col] = m
-            else:
-                feature_vec[3, col] = black_pixels[0][0] + 1
-                feature_vec[4, col] = black_pixels[0][-1] + 1
-
-            # 6/ 7 grad top/bottom
-            if col == 0:
-                feature_vec[5, col] = 0
-                feature_vec[6, col] = 0
-            else:
-                feature_vec[5, col] = feature_vec[3, col] - feature_vec[3, col - 1]
-                feature_vec[6, col] = feature_vec[4, col] - feature_vec[4, col - 1]
-
-            # 8 Number of transitions between black and white
-            feature_vec[7, col] = np.sum(np.absolute(np.diff(np.asarray(img[:, col])))) / 255
-
-            # 9 How many black between top and black
-            if np.sum(img[:, col]) == 0:
-                feature_vec[8, col] = 0
-            else:
-                feature_vec[8, col] = np.sum(
-                    img[:, col][black_pixels[0][0]:black_pixels[0][-1] + 1]) / 255.0  # TODO /255 oder nicht?
-
-        # Pad Sequence with '0' so that every sequence has same length
-        feature_vec_pad = sequence.pad_sequences(feature_vec, maxlen=self.maxlen)
-
-        return feature_vec_pad
-
-    def train_rnn(self, img_feat_vec, label):
+    def train_rnn(self, inputs):
         """
 
         :param img_feat_vec:
         :param label:
         """
         print('Train...')
-        loss, accuracy = self.model.train_on_batch(img_feat_vec, label)
+        loss = self.model.train_on_batch(self, inputs, class_weight=None, sample_weight=None)  #TODO metrics?
 
-        return loss, accuracy
+        return loss
 
-    def test_rnn(self, img_feat_vec, label):
+    def test_rnn(self, inputs):
         """
 
         :param img_feat_vec:
         :param label:
         :return:
         """
-        print('Evaluate...')
-        loss, accuracy = self.model.test_on_batch(img_feat_vec, label)
+        print('Test...')
+        loss = self.model.test_on_batch(self, inputs, class_weight=None, sample_weight=None)  #TODO metrics?
 
-        return loss, accuracy
+        return loss
 
     def predict_rnn(self, img_feat_vec):
         """
@@ -231,65 +205,37 @@ class IAM_Predictor(PredictorTask):
         :param input_tuple:
         :return:
         """
-        image_length = 168  #TODO MAXLENGTH!!!
-        label_length = 25
+        # NN Preprocessing
+        # inputs = {'the_input': X_data,    (1, self.img_h, self.img_w)
+        #           'the_labels': labels,   int list
+        #           'input_length': input_length,  img_w / (pool_size_1 * pool_size_2) - 2  --> self.downsampled_width
+        #           'label_length': label_length,   len label
+        #           }
+        #
+        # outputs = {'ctc': np.zeros([size])}  # dummy data for dummy loss function
 
-        x_padded, x_mask = pad_sequence_into_array(input_tuple[0], image_length)
-        y_padded, y_mask = pad_sequence_into_array(input_tuple[1], label_length)
+        x_padded = pad_sequence_into_array(input_tuple[0], self.img_w)
+        y_with_blank = input_tuple[1]  #TODO blank
 
-        # Dim Shuffle to fit Keras [40x150] --> [1 x 40 x 150]
-        x_padded, x_mask, y_padded, y_mask = dim_shuffle(x_padded, x_mask, y_padded, y_mask)
+        the_input = x_padded
+        the_labels = y_with_blank
+        input_length = self.downsampled_width
+        label_length = len(the_labels)
 
-        print('Image shape:', x_padded.shape)  # (B, T, D)
-        print('Label shape:', y_padded.shape)  # (B, L)
+        inputs = [the_input, the_labels, input_length, label_length]
+        outputs = {'ctc': np.zeros([1])}
 
-        B, T, D = x_padded.shape  # D = 28
-        L = y_padded.shape[1]
 
-        total_seqlen, total_ed = 0.0, 0.0
-
-        time0 = time.time()
-
-        traindata = self.reshape_func(x_padded)
-
-        # import ipdb
-        # ipdb.set_trace()
-
-          # TODO [0, 0::16][:, :-1] !!!!!!
-        # traindata_mask1 = np.transpose(x_mask)
-        traindata_mask2 = x_mask[0:1, 0::16][:,:-1]
-
-        gt = y_padded
-        gt_mask = y_mask
-
-        print('Traindata:', traindata.shape)  # (1x1x150x40)
-        print('GT:', gt.shape)  # (1x150)
-        print('GT Mask:', gt_mask.shape)  # (1x150)
-        print('Traindata Mask:', traindata_mask2.shape)  # (40x150)
-
-        ctcloss, score_matrix = self.model.train_on_batch(x=traindata, y=gt, sample_weight=gt_mask, sm_mask=traindata_mask2, return_sm=True)
-
-        print('ctcloss = ', ctcloss)
-        resultseqs = CTC.best_path_decode_batch(score_matrix, traindata_mask2)
-        targetseqs = convert_gt_from_array_to_list(gt, gt_mask)
-        CER_batch, ed_batch, seqlen_batch = CTC.calc_CER(resultseqs, targetseqs)
-        total_seqlen += seqlen_batch
-        total_ed += ed_batch
-        CER = total_ed / total_seqlen * 100.0
-        time1 = time.time()
-
-        print('CER = %0.2f, CER_batch = %0.2f, time = %0.2fs' % (
-        CER, CER_batch, (time1 - time0)))
-
-        # 2. Neural Net
+        # Neural Net
         if test_set == 0:
-            loss, acc = self.train_rnn(feature_vec, y_train)
+            loss, metric = self.train_rnn(inputs)
             # cst, pred = self.train_rnn(feature_vec, input_tuple[1])
         else:
-            loss, acc = self.test_rnn(feature_vec, input_tuple[1])
-            # pred = self.classify_rnn(feature_vec)
+            loss, metric = self.test_rnn(inputs)
 
-        return [input_tuple[1], loss, acc]  #TODO DIFFERNET OUTPUT
+        metric = 0
+
+        return [input_tuple[1], loss, metric]  #TODO DIFFERNET OUTPUT
 
     def save(self, directory):
         print ("Saving myPredictor to ", directory)

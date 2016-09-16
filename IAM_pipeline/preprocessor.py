@@ -166,7 +166,7 @@ def scaling(img):
     :param img:
     :return: resized image
     """
-    baseheight = 64  # data_config.img_ht  #TODO is data always being created?
+    baseheight = 32  # data_config.img_ht  #TODO is data always being created?
     hpercent = (baseheight / float(img.shape[0]))
     dim = (int(img.shape[1] * hpercent), baseheight)
 

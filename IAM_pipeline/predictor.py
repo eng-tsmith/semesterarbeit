@@ -219,6 +219,7 @@ class IAM_Predictor(PredictorTask):
         inputs = [the_input, the_labels, input_length, label_length]
         outputs = {'ctc': np.zeros([1])}
 
+        print(inputs)
 
         # Neural Net
         if test_set == 0:

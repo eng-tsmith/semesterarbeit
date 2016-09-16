@@ -89,7 +89,7 @@ class IAM_Predictor(PredictorTask):
         # Input Parameters
         self.img_h = 64
         self.img_w = 512
-        self.absolute_max_string_len = 25 # TODO
+        self.absolute_max_string_len = 8 # TODO
         self.output_size = len(chars)
         minibatch_size = 1  #TODO
         words_per_epoch = 16000  # TODO
@@ -100,7 +100,7 @@ class IAM_Predictor(PredictorTask):
         pool_size_1 = 4
         pool_size_2 = 2
         time_dense_size = 32
-        rnn_size = 512
+        rnn_size = 256
         time_steps = self.img_w / (pool_size_1 * pool_size_2)
         lr = 0.03
         # clipnorm seems to speeds up convergence

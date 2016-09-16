@@ -183,7 +183,9 @@ class IAM_Predictor(PredictorTask):
         :return:
         """
         print('Test...')
-        loss = self.model.test_on_batch(self, inputs[0], inputs[1], class_weight=None, sample_weight=None)  #TODO metrics?
+        self.model.test_on_batch(self, x=inputs[0], y=inputs[1], sample_weight=None)  #TODO metrics?
+
+        loss = inputs[1]
 
         return loss
 

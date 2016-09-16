@@ -240,7 +240,7 @@ class IAM_Predictor(PredictorTask):
         #
         # outputs = {'ctc': np.zeros([size])}  # dummy data for dummy loss function
         x_padded = pad_sequence_into_array(input_tuple[0], self.img_w)
-        y_with_blank = pad_label_with_blank(input_tuple[1], self.output_size, self.absolute_max_string_len)  #TODO blank
+        y_with_blank = pad_label_with_blank(np.asarray(input_tuple[1]), self.output_size, self.absolute_max_string_len)  #TODO blank
 
         in1 = np.asarray(x_padded, dtype='float32')[np.newaxis, np.newaxis, :, :]
         in2 = np.asarray(y_with_blank, dtype='float32')

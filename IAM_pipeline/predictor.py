@@ -43,18 +43,18 @@ def pad_label_with_blank(label, blank_id, max_length):
     :return: Xout, the padded sequence (now an augmented array with shape (Narrays, N1stdim, N2nddim, ...)
     :return: mask, the corresponding mask, binary array, with shape (Narray, N1stdim)
     """
-    label_len = len(label)
+    label_len = len(label[0])
 
     label_pad = [blank_id]
     for _ in range(label_len):
-        label_pad.append(label[_])
+        label_pad.append(label[0][_])
         label_pad.append(blank_id)
 
     label_out = np.ones(shape=[max_length]) * np.asarray(blank_id)
 
     trunc = label_pad[:max_length]
-    import ipdb
-    ipdb.set_trace()
+    # import ipdb
+    # ipdb.set_trace()
     label_out[:len(trunc)] = trunc
 
     return label_out

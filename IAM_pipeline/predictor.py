@@ -166,6 +166,9 @@ class IAM_Predictor(PredictorTask):
         """
         print('Train...')
 
+        print(self.model.inputs)
+
+
         loss = self.model.train_on_batch(self, inputs, class_weight=None, sample_weight=None)  #TODO metrics?
 
         return loss

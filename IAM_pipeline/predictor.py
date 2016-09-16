@@ -35,6 +35,29 @@ def pad_sequence_into_array(image, maxlen):
 
     return Xout
 
+def pad_label_with_blank(label, blank_id, max_length):
+    """
+    Padding sequence (list of numpy arrays) into an numpy array
+    :param Xs: list of numpy arrays. The arrays must have the same shape except the first dimension.
+    :param maxlen: the allowed maximum of the first dimension of Xs's arrays. Any array longer than maxlen is truncated to maxlen
+    :return: Xout, the padded sequence (now an augmented array with shape (Narrays, N1stdim, N2nddim, ...)
+    :return: mask, the corresponding mask, binary array, with shape (Narray, N1stdim)
+    """
+    label_len = len(label)
+
+    label_pad = [blank_id]
+    for _ in range(label_len):
+        label_pad.append(label[_])
+        label_pad.append(blank_id)
+
+    label_out = np.ones(shape=[max_length]) * np.asarray(blank_id)
+
+    trunc = label_pad[:max_length]
+
+    label_out[:len(trunc)] = trunc
+
+    return label_out
+
 def ctc_lambda_func(args):
     y_pred, labels, input_length, label_length = args
     # the 2 is critical here since the first couple outputs of the RNN
@@ -216,9 +239,8 @@ class IAM_Predictor(PredictorTask):
         #           }
         #
         # outputs = {'ctc': np.zeros([size])}  # dummy data for dummy loss function
-
         x_padded = pad_sequence_into_array(input_tuple[0], self.img_w)
-        y_with_blank = input_tuple[1]  #TODO blank
+        y_with_blank = pad_label_with_blank(input_tuple[1], self.output_size, self.absolute_max_string_len)  #TODO blank
 
         in1 = np.asarray(x_padded, dtype='float32')[np.newaxis, np.newaxis, :, :]
         in2 = np.asarray(y_with_blank, dtype='float32')

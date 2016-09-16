@@ -215,8 +215,8 @@ class IAM_Predictor(PredictorTask):
 
         the_input = np.asarray(x_padded, dtype='float32')
         the_labels = np.asarray(y_with_blank, dtype='float32')
-        input_length = np.array(self.downsampled_width, dtype='int64')
-        label_length = np.array(len(the_labels), dtype='int64')
+        input_length = np.asarray(self.downsampled_width, dtype='int64')
+        label_length = np.asarray(len(the_labels), dtype='int64')
 
         inputs = [the_input, the_labels, input_length, label_length]
 

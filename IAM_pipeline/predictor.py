@@ -144,7 +144,8 @@ class IAM_Predictor(PredictorTask):
         loss_out = Lambda(ctc_lambda_func, output_shape=(1,), name="ctc")([y_pred, labels, input_length, label_length])
 
         # Keras Model of NN
-        self.model = Model(input=[input_data, labels, input_length, label_length], output=[loss_out]).summary()
+        Model(input=[input_data, labels, input_length, label_length], output=[loss_out]).summary()
+        self.model = Model(input=[input_data, labels, input_length, label_length], output=[loss_out])
 
         # the loss calc occurs elsewhere, so use a dummy lambda func for the loss
         self.model.compile(loss={'ctc': lambda y_true, y_pred: y_pred}, optimizer=sgd)

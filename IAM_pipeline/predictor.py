@@ -166,8 +166,8 @@ class IAM_Predictor(PredictorTask):
         """
         print('Train...')
 
-        print(inputs[0])
-        print(inputs[1])
+        # print(inputs[0])
+        # print(inputs[1])
 
         self.model.train_on_batch(self, inputs[0], inputs[1], class_weight=None, sample_weight=None)  #TODO metrics?
 
@@ -223,6 +223,12 @@ class IAM_Predictor(PredictorTask):
                   'input_length': np.array([self.downsampled_width], dtype='int64'),
                   'label_length': np.array([len(np.asarray(y_with_blank, dtype='float32'))], dtype='int64')}
         outputs = {'ctc': np.zeros([1])}
+
+        print('GO: ', np.asarray(x_padded, dtype='float32').shape)
+        print(np.asarray(y_with_blank, dtype='float32').shape)
+        print(np.array([self.downsampled_width], dtype='int64').shape)
+        print(np.array([len(np.asarray(y_with_blank, dtype='float32'))], dtype='int64').shape)
+        print(np.zeros([1]).shape)
 
         # Neural Net
         if test_set == 0:

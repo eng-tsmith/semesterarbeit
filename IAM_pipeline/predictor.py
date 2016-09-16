@@ -215,17 +215,17 @@ class IAM_Predictor(PredictorTask):
 
         the_input = np.asarray(x_padded, dtype='float32')
         the_labels = np.asarray(y_with_blank, dtype='float32')
-        input_length = self.downsampled_width
-        label_length = len(the_labels)
+        input_length = np.array([self.downsampled_width], dtype='int64')
+        label_length = np.array([len(the_labels)], dtype='int64')
 
         inputs = [the_input[np.newaxis, :, :], the_labels, input_length, label_length]
 
         outputs = {'ctc': np.zeros([1])}
 
-        print('Input: ', inputs[0].shape, inputs[0].type)
-        print('Label: ', inputs[1].shape, inputs[1].type)
-        print('Input_length: ', inputs[2], inputs[2].type)
-        print('Label_length: ', inputs[3], inputs[3].type)
+        print('Input: ', inputs[0].shape)
+        print('Label: ', inputs[1].shape)
+        print('Input_length: ', inputs[2])
+        print('Label_length: ', inputs[3])
 
         # Neural Net
         if test_set == 0:

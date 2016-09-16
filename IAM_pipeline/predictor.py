@@ -81,7 +81,7 @@ class IAM_Predictor(PredictorTask):
         lr = 0.03
         # clipnorm seems to speeds up convergence
         clipnorm = 5
-        self.downsampled_width = self.img_w / (pool_size_1 * pool_size_2) - 2
+        self.downsampled_width = int(self.img_w / (pool_size_1 * pool_size_2) - 2)
 
         # Optimizer
         sgd = SGD(lr=lr, decay=3e-7, momentum=0.9, nesterov=True, clipnorm=clipnorm)
@@ -222,10 +222,10 @@ class IAM_Predictor(PredictorTask):
 
         outputs = {'ctc': np.zeros([1])}
 
-        print('Input: ', inputs[0].shape)
-        print('Label: ', inputs[1].shape)
-        print('Input_length: ', inputs[2])
-        print('Label_length: ', inputs[3])
+        print('Input: ', inputs[0].shape, inputs[0].type)
+        print('Label: ', inputs[1].shape, inputs[1].type)
+        print('Input_length: ', inputs[2], inputs[2].type)
+        print('Label_length: ', inputs[3], inputs[3].type)
 
         # Neural Net
         if test_set == 0:

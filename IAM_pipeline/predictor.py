@@ -211,10 +211,10 @@ class IAM_Predictor(PredictorTask):
         x_padded = pad_sequence_into_array(input_tuple[0], self.img_w)
         y_with_blank = input_tuple[1]  #TODO blank
 
-        the_input = x_padded
-        the_labels = y_with_blank
-        input_length = self.downsampled_width
-        label_length = len(the_labels)
+        the_input = np.asarray(x_padded, dtype='float32')
+        the_labels = np.asarray(y_with_blank, dtype='float32')
+        input_length = np.array(self.downsampled_width, dtype='int64')
+        label_length = np.array(len(the_labels), dtype='int64')
 
         inputs = [the_input, the_labels, input_length, label_length]
         outputs = {'ctc': np.zeros([1])}

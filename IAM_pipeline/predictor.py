@@ -191,11 +191,6 @@ class IAM_Predictor(PredictorTask):
         """
         print('Train...')
 
-        print('the_input', inputs[0].shape)
-        print('the_labels', inputs[0][1][0])
-        print('input_length', inputs[0][2][0])
-        print('label_length', inputs[0][3][0])
-
         self.model.train_on_batch(inputs[0], inputs[1], class_weight=None, sample_weight=None)
         # self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1)
         loss = inputs[1]
@@ -210,10 +205,6 @@ class IAM_Predictor(PredictorTask):
         :return:
         """
         print('Test...')
-        print('the_input', inputs[0][0].shape)
-        print('the_labels', inputs[0][1].shape)
-        print('input_length', inputs[0][2].shape)
-        print('label_length', inputs[0][3].shape)
 
         self.model.test_on_batch(x=inputs[0], y=inputs[1], sample_weight=None)
 
@@ -264,11 +255,10 @@ class IAM_Predictor(PredictorTask):
                   'label_length': in4}
         outputs = {'ctc': out1}
 
-        print('GO: ', in1.shape)
-        print(in2.shape)
-        print(in3.shape)
-        print(in4.shape)
-        print(out1.shape)
+        print('the_input', in1[0].shape)
+        print('the_labels', in2[0])
+        print('input_length', in3[0])
+        print('label_length', in4[0])
 
         # Neural Net
         if test_set == 0:

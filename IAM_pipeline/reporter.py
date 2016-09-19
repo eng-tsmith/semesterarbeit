@@ -8,7 +8,7 @@ class IAM_Reporter(ReporterTask):
         f.truncate()
         f.close()
 
-        fields = ["Match", "Shown", "Seen", "Cost", "Total Accuracy:", "Test Set:"]
+        fields = ["Label", "Loss", "Metric", "Test Set:"]
         with open("output/report.csv", "a") as f:  #TODO Filename in config
             writer = csv.writer(f)
             writer.writerow(fields)
@@ -21,12 +21,11 @@ class IAM_Reporter(ReporterTask):
         :param evaluator_output: match, accuracy
         :return:
         """
-        print("Cost: ", postprocessor_output[1], "\n",
-              "Accuracy: ", evaluator_output[1], "\n",
+        print("Loss: ", evaluator_output[1], "\n",
+              "Metric: ", evaluator_output[2], "\n",
               "Test Set: ", test_set, "\n")
 
-        fields = [evaluator_output[0], postprocessor_output[2], postprocessor_output[3], postprocessor_output[1],
-                  evaluator_output[1], test_set]
+        fields = [evaluator_output[0], evaluator_output[1], evaluator_output[2], test_set]
 
         with open("output/report.csv", "a") as f:  #TODO Filename in config
             writer = csv.writer(f)

@@ -48,23 +48,23 @@ class VizCallback(keras.callbacks.Callback):
         # os.makedirs(self.output_dir)
         print("Callback init")
 
-    def show_edit_distance(self, num):
-        # num_left = num
-        # mean_norm_ed = 0.0
-        # mean_ed = 0.0
-        # while num_left > 0:
-        #     word_batch = next(self.text_img_gen)[0]
-        #     num_proc = min(word_batch['the_input'].shape[0], num_left)
-        #     decoded_res = decode_batch(self.test_func, word_batch['the_input'][0:num_proc])
-        #     for j in range(0, num_proc):
-        #         edit_dist = editdistance.eval(decoded_res[j], word_batch['source_str'][j])
-        #         mean_ed += float(edit_dist)
-        #         mean_norm_ed += float(edit_dist) / len(word_batch['source_str'][j])
-        #     num_left -= num_proc
-        # mean_norm_ed = mean_norm_ed / num
-        # mean_ed = mean_ed / num
-        # print('\nOut of %d samples:  Mean edit distance: %.3f Mean normalized edit distance: %0.3f'
-        #       % (num, mean_ed, mean_norm_ed))
+    # def show_edit_distance(self, num):
+    #     # num_left = num
+    #     # mean_norm_ed = 0.0
+    #     # mean_ed = 0.0
+    #     # while num_left > 0:
+    #     #     word_batch = next(self.text_img_gen)[0]
+    #     #     num_proc = min(word_batch['the_input'].shape[0], num_left)
+    #     #     decoded_res = decode_batch(self.test_func, word_batch['the_input'][0:num_proc])
+    #     #     for j in range(0, num_proc):
+    #     #         edit_dist = editdistance.eval(decoded_res[j], word_batch['source_str'][j])
+    #     #         mean_ed += float(edit_dist)
+    #     #         mean_norm_ed += float(edit_dist) / len(word_batch['source_str'][j])
+    #     #     num_left -= num_proc
+    #     # mean_norm_ed = mean_norm_ed / num
+    #     # mean_ed = mean_ed / num
+    #     # print('\nOut of %d samples:  Mean edit distance: %.3f Mean normalized edit distance: %0.3f'
+    #     #       % (num, mean_ed, mean_norm_ed))
 
     def on_epoch_end(self, epoch, logs={}):
         print("Callback aufruf")

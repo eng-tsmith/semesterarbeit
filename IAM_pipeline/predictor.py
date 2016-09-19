@@ -45,7 +45,7 @@ class TimCallback(keras.callbacks.Callback):
             OUTPUT_DIR, datetime.datetime.now().strftime('%A, %d. %B %Y %I.%M%p'))
         # self.text_img_gen = text_img_gen
         self.num_display_words = num_display_words
-        os.makedirs(self.output_dir)
+        os.makedirs(self.output_dir, 0755)
         print("Callback init")
 
     def show_edit_distance(self, num):

@@ -19,19 +19,25 @@ import itertools
 
 
 def decode_batch(test_func, word_batch):
+    chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E',
+             'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+             'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
+             'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '.', ',', '\'', '\"']
+    n_classes = len(chars) - 1
+
     out = test_func([word_batch])[0]
     ret = []
     for j in range(out.shape[0]):
         out_best = list(np.argmax(out[j, 2:], 1))
         out_best = [k for k, g in itertools.groupby(out_best)]
         # 26 is space, 27 is CTC blank char
-        outstr = ''
-        for c in out_best:
-            if c >= 0 and c < 26:
-                outstr += chr(c + ord('a'))
-            elif c == 26:
-                outstr += ' '
-        ret.append(outstr)
+        outstr = []
+
+        for il, l in enumerate(out_best):
+            if (l != n_classes) and (il == 0 or l != out_best[il-1]):
+                outstr.append(l)
+        labels_list = [chars[l] for l in outstr]
+        ret.append(labels_list)
     return ret
 
 
@@ -55,10 +61,10 @@ class TimCallback(keras.callbacks.Callback):
         while num_left > 0:
             import ipdb
             ipdb.set_trace()
-            word_batch = self.model.validation_data[0]  # TODO IS THIS RIGHT?
+            word_batch = self.model.validation_data  # TODO IS THIS RIGHT?
 
-            num_proc = min(word_batch['the_input'].shape[0], num_left)
-            decoded_res = decode_batch(self.test_func, word_batch['the_input'][0:num_proc])
+            num_proc = min(word_batch[0].shape[0], num_left)
+            decoded_res = decode_batch(self.test_func, word_batch[0][0:num_proc])
             for j in range(0, num_proc):
                 edit_dist = editdistance.eval(decoded_res[j], word_batch['source_str'][j])
                 mean_ed += float(edit_dist)
@@ -76,17 +82,18 @@ class TimCallback(keras.callbacks.Callback):
         self.show_edit_distance(256)
         import ipdb
         ipdb.set_trace()
-        word_batch = self.model.validation_data[0]  # TODO IS THIS RIGHT?
-        res = decode_batch(self.test_func, word_batch['the_input'][0:self.num_display_words])
+        word_batch = self.model.validation_data  # TODO IS THIS RIGHT?
+        # res = decode_batch(self.test_func, word_batch['the_input'][0:self.num_display_words])
+        res = decode_batch(self.test_func, word_batch)
 
         for i in range(self.num_display_words):
-            pylab.subplot(self.num_display_words, 1, i + 1)
+            # pylab.subplot(self.num_display_words, 1, i + 1)
             if K.image_dim_ordering() == 'th':
                 the_input = word_batch['the_input'][i, 0, :, :]
             else:
                 the_input = word_batch['the_input'][i, :, :, 0]
-            pylab.imshow(the_input, cmap='Greys_r')
-            pylab.xlabel('Truth = \'%s\' Decoded = \'%s\'' % (word_batch['source_str'][i], res[i]))
+            # pylab.imshow(the_input, cmap='Greys_r')
+            # pylab.xlabel('Truth = \'%s\' Decoded = \'%s\'' % (word_batch['source_str'][i], res[i]))
         fig = pylab.gcf()
         fig.set_size_inches(10, 12)
         pylab.savefig(os.path.join(self.output_dir, 'e%02d.png' % epoch))

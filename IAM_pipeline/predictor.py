@@ -43,12 +43,14 @@ def pad_label_with_blank(label, blank_id, max_length):
     :return: Xout, the padded sequence (now an augmented array with shape (Narrays, N1stdim, N2nddim, ...)
     :return: mask, the corresponding mask, binary array, with shape (Narray, N1stdim)
     """
-    label_len = len(label[0])
+    label_len_1 = len(label[0])
+    label_len_2 = len(label[0])
 
-    label_pad = [blank_id]
-    for _ in range(label_len):
-        label_pad.append(label[0][_])
-        label_pad.append(blank_id)
+    label_pad = label
+
+    while label_len_2 < max_length:
+        label_pad.append([-1])
+        label_len_2 += 1
 
     label_out = np.ones(shape=[max_length]) * np.asarray(blank_id)
 
@@ -57,7 +59,7 @@ def pad_label_with_blank(label, blank_id, max_length):
     # ipdb.set_trace()
     label_out[:len(trunc)] = trunc
 
-    return label_out
+    return label_out, label_len_1
 
 def ctc_lambda_func(args):
     y_pred, labels, input_length, label_length = args
@@ -240,12 +242,12 @@ class IAM_Predictor(PredictorTask):
         #
         # outputs = {'ctc': np.zeros([size])}  # dummy data for dummy loss function
         x_padded = pad_sequence_into_array(input_tuple[0], self.img_w)
-        y_with_blank = pad_label_with_blank(np.asarray(input_tuple[1]), self.output_size, self.absolute_max_string_len)  #TODO blank
+        y_with_blank, y_len = pad_label_with_blank(np.asarray(input_tuple[1]), self.output_size, self.absolute_max_string_len)  #TODO blank
 
         in1 = np.asarray(x_padded, dtype='float32')[np.newaxis, np.newaxis, :, :]
         in2 = np.asarray(y_with_blank, dtype='float32')[np.newaxis, :]
-        in3 = np.array([self.downsampled_width], dtype='int64')[np.newaxis, :]
-        in4 = np.array([len(np.asarray(y_with_blank, dtype='float32'))], dtype='int64')[np.newaxis, :]
+        in3 = np.array([self.downsampled_width], dtype='float32')[np.newaxis, :]
+        in4 = np.array(y_len, dtype='float32')[np.newaxis, :]
 
         out1 = np.zeros([1])
 

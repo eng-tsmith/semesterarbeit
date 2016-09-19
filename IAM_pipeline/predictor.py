@@ -191,7 +191,7 @@ class IAM_Predictor(PredictorTask):
         """
         print('Train...')
 
-        print('the_input', inputs[0][0][0].shape)
+        print('the_input', inputs[0][0].shape)
         print('the_labels', inputs[0][1][0])
         print('input_length', inputs[0][2][0])
         print('label_length', inputs[0][3][0])

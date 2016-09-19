@@ -292,7 +292,7 @@ class IAM_Predictor(PredictorTask):
         """
         print('Test...')
 
-        loss = self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1, validation_split=1.0, callbacks=[self.cb])
+        loss = self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1, validation_data=inputs, callbacks=[self.cb])
 
         return loss
 

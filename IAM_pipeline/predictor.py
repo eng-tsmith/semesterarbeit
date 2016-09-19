@@ -13,8 +13,79 @@ from keras.utils import np_utils
 from keras.utils.data_utils import get_file
 from keras.preprocessing import image
 import keras.callbacks
+import pylab
+import datetime
+import itertools
 
 
+def decode_batch(test_func, word_batch):
+    out = test_func([word_batch])[0]
+    ret = []
+    for j in range(out.shape[0]):
+        out_best = list(np.argmax(out[j, 2:], 1))
+        out_best = [k for k, g in itertools.groupby(out_best)]
+        # 26 is space, 27 is CTC blank char
+        outstr = ''
+        for c in out_best:
+            if c >= 0 and c < 26:
+                outstr += chr(c + ord('a'))
+            elif c == 26:
+                outstr += ' '
+        ret.append(outstr)
+    return ret
+
+
+class VizCallback(keras.callbacks.Callback):
+
+    def __init__(self):
+        # def __init__(self, test_func, text_img_gen, num_display_words=6):
+        # OUTPUT_DIR = '/output/'
+        # self.test_func = test_func
+        # self.output_dir = os.path.join(
+        #     OUTPUT_DIR, datetime.datetime.now().strftime('%A, %d. %B %Y %I.%M%p'))
+        # # self.text_img_gen = text_img_gen
+        # self.num_display_words = num_display_words
+        # os.makedirs(self.output_dir)
+        print("Callback init")
+
+    def show_edit_distance(self, num):
+        # num_left = num
+        # mean_norm_ed = 0.0
+        # mean_ed = 0.0
+        # while num_left > 0:
+        #     word_batch = next(self.text_img_gen)[0]
+        #     num_proc = min(word_batch['the_input'].shape[0], num_left)
+        #     decoded_res = decode_batch(self.test_func, word_batch['the_input'][0:num_proc])
+        #     for j in range(0, num_proc):
+        #         edit_dist = editdistance.eval(decoded_res[j], word_batch['source_str'][j])
+        #         mean_ed += float(edit_dist)
+        #         mean_norm_ed += float(edit_dist) / len(word_batch['source_str'][j])
+        #     num_left -= num_proc
+        # mean_norm_ed = mean_norm_ed / num
+        # mean_ed = mean_ed / num
+        # print('\nOut of %d samples:  Mean edit distance: %.3f Mean normalized edit distance: %0.3f'
+        #       % (num, mean_ed, mean_norm_ed))
+
+    def on_epoch_end(self, epoch, logs={}):
+        print("Callback aufruf")
+        print(self.model.inputs)
+        # self.model.save_weights(os.path.join(self.output_dir, 'weights%02d.h5' % epoch))
+        # self.show_edit_distance(256)
+        # word_batch = next(self.text_img_gen)[0]
+        # res = decode_batch(self.test_func, word_batch['the_input'][0:self.num_display_words])
+        #
+        # for i in range(self.num_display_words):
+        #     pylab.subplot(self.num_display_words, 1, i + 1)
+        #     if K.image_dim_ordering() == 'th':
+        #         the_input = word_batch['the_input'][i, 0, :, :]
+        #     else:
+        #         the_input = word_batch['the_input'][i, :, :, 0]
+        #     pylab.imshow(the_input, cmap='Greys_r')
+        #     pylab.xlabel('Truth = \'%s\' Decoded = \'%s\'' % (word_batch['source_str'][i], res[i]))
+        # fig = pylab.gcf()
+        # fig.set_size_inches(10, 12)
+        # pylab.savefig(os.path.join(self.output_dir, 'e%02d.png' % epoch))
+        # pylab.close()
 
 def pad_sequence_into_array(image, maxlen):
     """
@@ -181,6 +252,11 @@ class IAM_Predictor(PredictorTask):
         # the loss calc occurs elsewhere, so use a dummy lambda func for the loss
         self.model.compile(loss={'ctc': lambda y_true, y_pred: y_pred}, optimizer=sgd)
 
+        # captures output of softmax so we can decode the output during visualization
+        self.test_func = K.function([input_data], [y_pred])
+
+        self.cb = VizCallback()
+
         # Init NN done
         print("Compiled Keras model successfully.")
         # OLD PRINT
@@ -197,8 +273,8 @@ class IAM_Predictor(PredictorTask):
         """
         print('Train...')
 
-        self.model.train_on_batch(inputs[0], inputs[1], class_weight=None, sample_weight=None)
-        # self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1)
+        # self.model.train_on_batch(inputs[0], inputs[1], class_weight=None, sample_weight=None)
+        self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1, callbacks=[self.cb])
         loss = inputs[1]
 
         return loss

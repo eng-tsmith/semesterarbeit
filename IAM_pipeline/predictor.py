@@ -191,8 +191,10 @@ class IAM_Predictor(PredictorTask):
         """
         print('Train...')
 
-        # print(inputs[0])
-        # print(inputs[1])
+        print('the_input', inputs[0][0].shape)
+        print('the_labels', inputs[0][1].shape)
+        print('input_length', inputs[0][2].shape)
+        print('label_length', inputs[0][3].shape)
 
         self.model.train_on_batch(inputs[0], inputs[1], class_weight=None, sample_weight=None)
         # self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1)

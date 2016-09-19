@@ -208,6 +208,11 @@ class IAM_Predictor(PredictorTask):
         :return:
         """
         print('Test...')
+        print('the_input', inputs[0][0].shape)
+        print('the_labels', inputs[0][1].shape)
+        print('input_length', inputs[0][2].shape)
+        print('label_length', inputs[0][3].shape)
+
         self.model.test_on_batch(x=inputs[0], y=inputs[1], sample_weight=None)
 
         loss = inputs[1]

@@ -55,7 +55,8 @@ class TimCallback(keras.callbacks.Callback):
         while num_left > 0:
             import ipdb
             ipdb.set_trace()
-            word_batch = self.model.inputs  # TODO IS THIS RIGHT?
+            word_batch = self.model.validation_data[0]  # TODO IS THIS RIGHT?
+
             num_proc = min(word_batch['the_input'].shape[0], num_left)
             decoded_res = decode_batch(self.test_func, word_batch['the_input'][0:num_proc])
             for j in range(0, num_proc):
@@ -75,7 +76,7 @@ class TimCallback(keras.callbacks.Callback):
         self.show_edit_distance(256)
         import ipdb
         ipdb.set_trace()
-        word_batch = self.model.inputs  # TODO IS THIS RIGHT?
+        word_batch = self.model.validation_data[0]  # TODO IS THIS RIGHT?
         res = decode_batch(self.test_func, word_batch['the_input'][0:self.num_display_words])
 
         for i in range(self.num_display_words):
@@ -278,7 +279,7 @@ class IAM_Predictor(PredictorTask):
         print('Train...')
 
         # self.model.train_on_batch(inputs[0], inputs[1], class_weight=None, sample_weight=None)
-        self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1, callbacks=[self.cb])
+        self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1)
         loss = inputs[1]
 
         return loss
@@ -292,7 +293,7 @@ class IAM_Predictor(PredictorTask):
         """
         print('Test...')
 
-        self.model.test_on_batch(x=inputs[0], y=inputs[1], sample_weight=None)
+        self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1, validation_split=1.0, callbacks=[self.cb])
 
         loss = inputs[1]
 

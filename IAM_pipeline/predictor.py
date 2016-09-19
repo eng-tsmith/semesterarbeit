@@ -49,16 +49,18 @@ def pad_label_with_blank(label, blank_id, max_length):
 
     label_pad = []
 
-    for _ in label:
-        label_pad.append(label[0][_])
+    for _ in label[0]:
+        print(_)
+        label_pad.append(_)
 
     while label_len_2 < max_length:
-        label_pad.append([-1])
+        label_pad.append(-1)
         label_len_2 += 1
 
     label_out = np.ones(shape=[max_length]) * np.asarray(blank_id)
 
     trunc = label_pad[:max_length]
+    print(trunc)
     # import ipdb
     # ipdb.set_trace()
     label_out[:len(trunc)] = trunc

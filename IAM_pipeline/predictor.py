@@ -50,7 +50,6 @@ def pad_label_with_blank(label, blank_id, max_length):
     label_pad = []
 
     for _ in label[0]:
-        print(_)
         label_pad.append(_)
 
     while label_len_2 < max_length:
@@ -247,14 +246,14 @@ class IAM_Predictor(PredictorTask):
         #           }
         #
         # outputs = {'ctc': np.zeros([size])}  # dummy data for dummy loss function
-        
+
         x_padded = pad_sequence_into_array(input_tuple[0], self.img_w)
         y_with_blank, y_len = pad_label_with_blank(np.asarray(input_tuple[1]), self.output_size, self.absolute_max_string_len)  #TODO blank
 
         in1 = np.asarray(x_padded, dtype='float32')[np.newaxis, np.newaxis, :, :]
         in2 = np.asarray(y_with_blank, dtype='float32')[np.newaxis, :]
         in3 = np.array([self.downsampled_width], dtype='float32')[np.newaxis, :]
-        in4 = np.array(y_len, dtype='float32')[np.newaxis, :]
+        in4 = np.array([y_len], dtype='float32')[np.newaxis, :]
 
         out1 = np.zeros([1])
 

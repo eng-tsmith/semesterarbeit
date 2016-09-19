@@ -154,7 +154,7 @@ class IAM_Predictor(PredictorTask):
         gru_2b = GRU(rnn_size, return_sequences=True, go_backwards=True)(gru1_merged)
 
         # transforms RNN output to character activations:
-        inner = TimeDistributed(Dense(self.output_size, name='dense2'))(merge([gru_2, gru_2b], mode='concat'))
+        inner = TimeDistributed(Dense(self.output_size+1, name='dense2'))(merge([gru_2, gru_2b], mode='concat'))
         y_pred = Activation('softmax', name='softmax')(inner)
         # Model(input=[input_data], output=y_pred).summary()
 

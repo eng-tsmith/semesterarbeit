@@ -35,7 +35,7 @@ def decode_batch(test_func, word_batch):
     return ret
 
 
-class VizCallback(keras.callbacks.Callback):
+class TimCallback(keras.callbacks.Callback):
 
     def __init__(self, test_func, num_display_words=6):
         # def __init__(self, test_func, text_img_gen, num_display_words=6):
@@ -255,7 +255,7 @@ class IAM_Predictor(PredictorTask):
         # captures output of softmax so we can decode the output during visualization
         self.test_func = K.function([input_data], [y_pred])
 
-        self.cb = VizCallback()
+        self.cb = TimCallback(self.test_func)
 
         # Init NN done
         print("Compiled Keras model successfully.")

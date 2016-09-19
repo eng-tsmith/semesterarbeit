@@ -46,7 +46,10 @@ def pad_label_with_blank(label, blank_id, max_length):
     label_len_1 = len(label[0])
     label_len_2 = len(label[0])
 
-    label_pad = label
+    label_pad = []
+
+    for _ in label:
+        label_pad.append(label[0][_])
 
     while label_len_2 < max_length:
         label_pad.append([-1])

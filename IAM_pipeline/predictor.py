@@ -39,7 +39,7 @@ class TimCallback(keras.callbacks.Callback):
 
     def __init__(self, test_func, num_display_words=6):
         # def __init__(self, test_func, text_img_gen, num_display_words=6):
-        OUTPUT_DIR = '/output/'
+        OUTPUT_DIR = 'output'
         self.test_func = test_func
         self.output_dir = os.path.join(
             OUTPUT_DIR, datetime.datetime.now().strftime('%A, %d. %B %Y %I.%M%p'))

@@ -22,6 +22,7 @@ valset1_path = '../media/nas/01_Datasets/IAM/validationset1.txt'
 valset2_path = '../media/nas/01_Datasets/IAM/validationset2.txt'
 testset_path = '../media/nas/01_Datasets/IAM/testset.txt'
 timset_path = '../media/nas/01_Datasets/IAM/tim_set.txt'
+timset_val_path = '../media/nas/01_Datasets/IAM/tim_set_val.txt'
 
 
 
@@ -29,11 +30,13 @@ timset_path = '../media/nas/01_Datasets/IAM/tim_set.txt'
 # files_training = [timset_path]
 files_training = [trainset_path]
 files_validate = [valset1_path]
-files_words = [valset1_path]
+files_words = [timset_path]
+files_val_words = [timset_val_path]
 
 IAM_dataset_train = []
 IAM_dataset_validate = []
 IAM_dataset_words = []
+IAM_dataset_val_words = []
 
 for path in files_training:
     with open(path, 'r') as txtfile:
@@ -83,13 +86,35 @@ for path in files_words:
             set.append((image, label, child.get('id')))
         IAM_dataset_words.append(set)
 
-IAM = [IAM_dataset_train, IAM_dataset_validate, IAM_dataset_words]
+for path in files_val_words:
+    with open(path, 'r') as txtfile:
+        content = txtfile.readlines()
+
+    for row in content:
+        part1 = row.split('-')[0]
+        part2 = row.split('-')[1]
+        label = IAM_label_path + part1 + "-" + part2 + ".xml"
+
+        filename = row.split('\n')[0]
+        filepath = IAM_label_path + filename + ".xml"
+
+        tree = ET.parse(label)
+        root = tree.getroot()
+        set = []
+        for child in root.iter("word"):
+            # if child.get('id') == filename:
+            image = IAM_word_path + part1 + "/" + part1 + "-" + part2 + "/" + child.get('id') + ".png"
+            label = IAM_label_path + part1 + "-" + part2 + ".xml"
+            set.append((image, label, child.get('id')))
+            IAM_dataset_val_words.append(set)
+
+IAM = [IAM_dataset_train, IAM_dataset_validate, IAM_dataset_words, IAM_dataset_val_words]
 
 # ____________________________
 # ______ SELECT DATASET ______
 # ____________________________
 
-dataset_train, dataset_val, dataset_words = IAM
+dataset_train, dataset_val, dataset_words, dataset_val_words = IAM
 
 
 

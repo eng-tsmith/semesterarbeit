@@ -90,8 +90,8 @@ class IAM_Predictor(PredictorTask):
                  'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
                  'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
         # Input Parameters
-        self.img_h = 32
-        self.img_w = 256
+        self.img_h = 64
+        self.img_w = 512
         self.absolute_max_string_len = 12  # TODO
         self.output_size = len(chars)
 
@@ -101,7 +101,7 @@ class IAM_Predictor(PredictorTask):
         pool_size_1 = 4
         pool_size_2 = 2
         time_dense_size = 32
-        rnn_size = 256
+        rnn_size = 512
         time_steps = self.img_w / (pool_size_1 * pool_size_2)
         lr = 0.03
         # clipnorm seems to speeds up convergence
@@ -150,11 +150,11 @@ class IAM_Predictor(PredictorTask):
         gru_1 = GRU(rnn_size, return_sequences=True, name='gru1')(inner)
         gru_1b = GRU(rnn_size, return_sequences=True, go_backwards=True, name='gru1_b')(inner)
         gru1_merged = merge([gru_1, gru_1b], mode='sum')
-        # gru_2 = GRU(rnn_size, return_sequences=True, name='gru2')(gru1_merged)
-        # gru_2b = GRU(rnn_size, return_sequences=True, go_backwards=True)(gru1_merged)
+        gru_2 = GRU(rnn_size, return_sequences=True, name='gru2')(gru1_merged)
+        gru_2b = GRU(rnn_size, return_sequences=True, go_backwards=True)(gru1_merged)
 
         # transforms RNN output to character activations:
-        inner = TimeDistributed(Dense(self.output_size, name='dense2'))(merge([gru_1, gru_1b], mode='concat'))
+        inner = TimeDistributed(Dense(self.output_size, name='dense2'))(merge([gru_2, gru_2b], mode='concat'))
         y_pred = Activation('softmax', name='softmax')(inner)
         # Model(input=[input_data], output=y_pred).summary()
 

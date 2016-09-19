@@ -92,7 +92,7 @@ class IAM_Predictor(PredictorTask):
         # Input Parameters
         self.img_h = 64
         self.img_w = 512
-        self.absolute_max_string_len = 12  # TODO
+        self.absolute_max_string_len = 16  # TODO
         self.output_size = len(chars)
 
         # Network parameters
@@ -191,10 +191,10 @@ class IAM_Predictor(PredictorTask):
         """
         print('Train...')
 
-        print('the_input', inputs[0][0].shape)
-        print('the_labels', inputs[0][1].shape)
-        print('input_length', inputs[0][2].shape)
-        print('label_length', inputs[0][3].shape)
+        print('the_input', inputs[0][0][0].shape)
+        print('the_labels', inputs[0][1][0])
+        print('input_length', inputs[0][2][0])
+        print('label_length', inputs[0][3][0])
 
         self.model.train_on_batch(inputs[0], inputs[1], class_weight=None, sample_weight=None)
         # self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1)
@@ -252,7 +252,7 @@ class IAM_Predictor(PredictorTask):
         y_with_blank = pad_label_with_blank(np.asarray(input_tuple[1]), self.output_size, self.absolute_max_string_len)  #TODO blank
 
         in1 = np.asarray(x_padded, dtype='float32')[np.newaxis, np.newaxis, :, :]
-        in2 = np.asarray(y_with_blank, dtype='float32')[np.newaxis,:]
+        in2 = np.asarray(y_with_blank, dtype='float32')[np.newaxis, :]
         in3 = np.array([self.downsampled_width], dtype='int64')[np.newaxis, :]
         in4 = np.array([len(np.asarray(y_with_blank, dtype='float32'))], dtype='int64')[np.newaxis, :]
 

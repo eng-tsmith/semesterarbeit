@@ -37,55 +37,55 @@ def decode_batch(test_func, word_batch):
 
 class VizCallback(keras.callbacks.Callback):
 
-    def __init__(self):
+    def __init__(self, test_func, num_display_words=6):
         # def __init__(self, test_func, text_img_gen, num_display_words=6):
-        # OUTPUT_DIR = '/output/'
-        # self.test_func = test_func
-        # self.output_dir = os.path.join(
-        #     OUTPUT_DIR, datetime.datetime.now().strftime('%A, %d. %B %Y %I.%M%p'))
-        # # self.text_img_gen = text_img_gen
-        # self.num_display_words = num_display_words
-        # os.makedirs(self.output_dir)
+        OUTPUT_DIR = '/output/'
+        self.test_func = test_func
+        self.output_dir = os.path.join(
+            OUTPUT_DIR, datetime.datetime.now().strftime('%A, %d. %B %Y %I.%M%p'))
+        # self.text_img_gen = text_img_gen
+        self.num_display_words = num_display_words
+        os.makedirs(self.output_dir)
         print("Callback init")
 
-    # def show_edit_distance(self, num):
-    #     # num_left = num
-    #     # mean_norm_ed = 0.0
-    #     # mean_ed = 0.0
-    #     # while num_left > 0:
-    #     #     word_batch = next(self.text_img_gen)[0]
-    #     #     num_proc = min(word_batch['the_input'].shape[0], num_left)
-    #     #     decoded_res = decode_batch(self.test_func, word_batch['the_input'][0:num_proc])
-    #     #     for j in range(0, num_proc):
-    #     #         edit_dist = editdistance.eval(decoded_res[j], word_batch['source_str'][j])
-    #     #         mean_ed += float(edit_dist)
-    #     #         mean_norm_ed += float(edit_dist) / len(word_batch['source_str'][j])
-    #     #     num_left -= num_proc
-    #     # mean_norm_ed = mean_norm_ed / num
-    #     # mean_ed = mean_ed / num
-    #     # print('\nOut of %d samples:  Mean edit distance: %.3f Mean normalized edit distance: %0.3f'
-    #     #       % (num, mean_ed, mean_norm_ed))
+    def show_edit_distance(self, num):
+        num_left = num
+        mean_norm_ed = 0.0
+        mean_ed = 0.0
+        while num_left > 0:
+            word_batch = self.model.inputs  # TODO IS THIS RIGHT?
+            num_proc = min(word_batch['the_input'].shape[0], num_left)
+            decoded_res = decode_batch(self.test_func, word_batch['the_input'][0:num_proc])
+            for j in range(0, num_proc):
+                edit_dist = editdistance.eval(decoded_res[j], word_batch['source_str'][j])
+                mean_ed += float(edit_dist)
+                mean_norm_ed += float(edit_dist) / len(word_batch['source_str'][j])
+            num_left -= num_proc
+        mean_norm_ed = mean_norm_ed / num
+        mean_ed = mean_ed / num
+        print('\nOut of %d samples:  Mean edit distance: %.3f Mean normalized edit distance: %0.3f'
+              % (num, mean_ed, mean_norm_ed))
 
     def on_epoch_end(self, epoch, logs={}):
         print("Callback aufruf")
         print(self.model.inputs)
-        # self.model.save_weights(os.path.join(self.output_dir, 'weights%02d.h5' % epoch))
-        # self.show_edit_distance(256)
-        # word_batch = next(self.text_img_gen)[0]
-        # res = decode_batch(self.test_func, word_batch['the_input'][0:self.num_display_words])
-        #
-        # for i in range(self.num_display_words):
-        #     pylab.subplot(self.num_display_words, 1, i + 1)
-        #     if K.image_dim_ordering() == 'th':
-        #         the_input = word_batch['the_input'][i, 0, :, :]
-        #     else:
-        #         the_input = word_batch['the_input'][i, :, :, 0]
-        #     pylab.imshow(the_input, cmap='Greys_r')
-        #     pylab.xlabel('Truth = \'%s\' Decoded = \'%s\'' % (word_batch['source_str'][i], res[i]))
-        # fig = pylab.gcf()
-        # fig.set_size_inches(10, 12)
-        # pylab.savefig(os.path.join(self.output_dir, 'e%02d.png' % epoch))
-        # pylab.close()
+        self.model.save_weights(os.path.join(self.output_dir, 'weights%02d.h5' % epoch))
+        self.show_edit_distance(256)
+        word_batch = self.model.inputs  # TODO IS THIS RIGHT?
+        res = decode_batch(self.test_func, word_batch['the_input'][0:self.num_display_words])
+
+        for i in range(self.num_display_words):
+            pylab.subplot(self.num_display_words, 1, i + 1)
+            if K.image_dim_ordering() == 'th':
+                the_input = word_batch['the_input'][i, 0, :, :]
+            else:
+                the_input = word_batch['the_input'][i, :, :, 0]
+            pylab.imshow(the_input, cmap='Greys_r')
+            pylab.xlabel('Truth = \'%s\' Decoded = \'%s\'' % (word_batch['source_str'][i], res[i]))
+        fig = pylab.gcf()
+        fig.set_size_inches(10, 12)
+        pylab.savefig(os.path.join(self.output_dir, 'e%02d.png' % epoch))
+        pylab.close()
 
 def pad_sequence_into_array(image, maxlen):
     """
@@ -351,8 +351,9 @@ class IAM_Predictor(PredictorTask):
             loss = self.test_rnn((inputs, outputs))
 
         metric = 0
+        loss1 = 0
 
-        return [input_tuple[1], loss, metric]  #TODO DIFFERNET OUTPUT
+        return [input_tuple[1], loss1, metric]  #TODO DIFFERNET OUTPUT
 
     def save(self, directory):
         print ("Saving myPredictor to ", directory)

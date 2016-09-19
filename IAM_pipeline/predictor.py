@@ -35,6 +35,7 @@ def pad_sequence_into_array(image, maxlen):
 
     return Xout
 
+
 def pad_label_with_blank(label, blank_id, max_length):
     """
     Padding sequence (list of numpy arrays) into an numpy array
@@ -244,6 +245,8 @@ class IAM_Predictor(PredictorTask):
         #           }
         #
         # outputs = {'ctc': np.zeros([size])}  # dummy data for dummy loss function
+        import ipdb; ipdb.set_trace
+
         x_padded = pad_sequence_into_array(input_tuple[0], self.img_w)
         y_with_blank, y_len = pad_label_with_blank(np.asarray(input_tuple[1]), self.output_size, self.absolute_max_string_len)  #TODO blank
 

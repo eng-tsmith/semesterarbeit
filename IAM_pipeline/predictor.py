@@ -357,6 +357,8 @@ class IAM_Predictor(PredictorTask):
         loss1 = 0
 
         print(loss)
+        import ipdb
+        ipdb.set_trace()
 
         return [input_tuple[1], loss1, metric]  #TODO DIFFERNET OUTPUT
 

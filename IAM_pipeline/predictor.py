@@ -59,7 +59,6 @@ def pad_label_with_blank(label, blank_id, max_length):
     label_out = np.ones(shape=[max_length]) * np.asarray(blank_id)
 
     trunc = label_pad[:max_length]
-    print(trunc)
     # import ipdb
     # ipdb.set_trace()
     label_out[:len(trunc)] = trunc
@@ -263,17 +262,17 @@ class IAM_Predictor(PredictorTask):
                   'label_length': in4}
         outputs = {'ctc': out1}
 
-        print('the_input', in1[0].shape)
-        print('the_labels', in2[0])
-        print('input_length', in3[0])
-        print('label_length', in4[0])
+        # print('the_input', in1[0].shape)
+        # print('the_labels', in2[0])
+        # print('input_length', in3[0])
+        # print('label_length', in4[0])
 
         # Neural Net
         if test_set == 0:
-            loss, metric = self.train_rnn((inputs, outputs))
+            loss = self.train_rnn((inputs, outputs))
             # cst, pred = self.train_rnn(feature_vec, input_tuple[1])
         else:
-            loss, metric = self.test_rnn((inputs, outputs))
+            loss = self.test_rnn((inputs, outputs))
 
         metric = 0
 

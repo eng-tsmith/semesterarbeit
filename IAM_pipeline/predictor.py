@@ -53,6 +53,8 @@ class TimCallback(keras.callbacks.Callback):
         mean_norm_ed = 0.0
         mean_ed = 0.0
         while num_left > 0:
+            import ipdb
+            ipdb.set_trace()
             word_batch = self.model.inputs  # TODO IS THIS RIGHT?
             num_proc = min(word_batch['the_input'].shape[0], num_left)
             decoded_res = decode_batch(self.test_func, word_batch['the_input'][0:num_proc])
@@ -71,7 +73,8 @@ class TimCallback(keras.callbacks.Callback):
         print(self.model.inputs)
         self.model.save_weights(os.path.join(self.output_dir, 'weights%02d.h5' % epoch))
         self.show_edit_distance(256)
-        import ipdb; ipdb.set_trace()
+        import ipdb
+        ipdb.set_trace()
         word_batch = self.model.inputs  # TODO IS THIS RIGHT?
         res = decode_batch(self.test_func, word_batch['the_input'][0:self.num_display_words])
 

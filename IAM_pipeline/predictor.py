@@ -170,7 +170,7 @@ class IAM_Predictor(PredictorTask):
         chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E',
                  'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
                  'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
-                 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+                 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '.', ',', '\'', '\"']
         # Input Parameters
         self.img_h = 64
         self.img_w = 512
@@ -279,8 +279,7 @@ class IAM_Predictor(PredictorTask):
         print('Train...')
 
         # self.model.train_on_batch(inputs[0], inputs[1], class_weight=None, sample_weight=None)
-        self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1)
-        loss = inputs[1]
+        loss = self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1)
 
         return loss
 
@@ -293,19 +292,18 @@ class IAM_Predictor(PredictorTask):
         """
         print('Test...')
 
-        self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1, validation_split=1.0, callbacks=[self.cb])
-
-        loss = inputs[1]
+        loss = self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1, validation_split=1.0, callbacks=[self.cb])
 
         return loss
 
-    def predict_rnn(self, img_feat_vec):
+    def predict_rnn(self, inputs):
         """
 
         :param img_feat_vec:
         """
         print('Evaluate...')
-        pred = self.model.predict_on_batch(img_feat_vec)
+        pred = self.predict(inputs[0], batch_size=1, verbose=0)
+        print('Prediction: ', pred, 'True Label', inputs[0][1])
 
         return pred
 
@@ -357,6 +355,8 @@ class IAM_Predictor(PredictorTask):
 
         metric = 0
         loss1 = 0
+
+        print(loss)
 
         return [input_tuple[1], loss1, metric]  #TODO DIFFERNET OUTPUT
 

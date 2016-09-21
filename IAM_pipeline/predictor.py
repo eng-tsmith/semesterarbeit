@@ -1,5 +1,5 @@
-%matplotlib inline
-
+import matplotlib
+matplotlib.use('Agg')
 from validation_task import PredictorTask
 import sys
 import os

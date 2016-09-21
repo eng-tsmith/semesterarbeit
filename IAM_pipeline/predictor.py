@@ -16,6 +16,7 @@ import keras.callbacks
 import pylab
 import datetime
 import itertools
+import editdistance
 
 
 def decode_batch(test_func, word_batch):

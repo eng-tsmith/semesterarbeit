@@ -79,8 +79,8 @@ class TimCallback(keras.callbacks.Callback):
 
         word_batch = self.model.validation_data
         # res = decode_batch(self.test_func, word_batch['the_input'][0:self.num_display_words])
-        import ipdb
-        ipdb.set_trace()
+        # import ipdb
+        # ipdb.set_trace()
         res = decode_batch(self.test_func, word_batch[0][0:self.num_display_words])
 
         for i in range(self.num_display_words):
@@ -326,6 +326,9 @@ class IAM_Predictor(PredictorTask):
         in2 = np.asarray(y_with_blank, dtype='float32')[np.newaxis, :]
         in3 = np.array([self.downsampled_width], dtype='float32')[np.newaxis, :]
         in4 = np.array([y_len], dtype='float32')[np.newaxis, :]
+        in5 = []
+        for c in input_tuple[2]:
+            in5.append(c)
 
         out1 = np.zeros([1])
 
@@ -333,7 +336,7 @@ class IAM_Predictor(PredictorTask):
                   'the_labels': in2,
                   'input_length': in3,
                   'label_length': in4,
-                  'source_str': input_tuple[2]}
+                  'source_str': in5}
         outputs = {'ctc': out1}
 
         # print('the_input', in1[0].shape)

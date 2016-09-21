@@ -84,7 +84,7 @@ class TimCallback(keras.callbacks.Callback):
         res = decode_batch(self.test_func, word_batch[0][0:self.num_display_words])
 
         for i in range(self.num_display_words):
-            print('Truth = \'%s\' Decoded = \'%s\'' % (word_batch[4][i], res[i]))
+            print('Truth = ', word_batch[4], 'Decoded = ', res))
 
 def pad_sequence_into_array(image, maxlen):
     """

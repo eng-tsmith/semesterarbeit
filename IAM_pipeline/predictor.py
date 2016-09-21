@@ -66,7 +66,7 @@ class TimCallback(keras.callbacks.Callback):
             num_proc = min(word_batch[0].shape[0], num_left)
             decoded_res = decode_batch(self.test_func, word_batch[0][0:num_proc])
             for j in range(0, num_proc):
-                edit_dist = editdistance.eval(decoded_res[j], word_batch['source_str'][j])
+                edit_dist = editdistance.eval(decoded_res[j], word_batch['source_str'][j]) # TODO hier weitermachen
                 mean_ed += float(edit_dist)
                 mean_norm_ed += float(edit_dist) / len(word_batch['source_str'][j])
             num_left -= num_proc

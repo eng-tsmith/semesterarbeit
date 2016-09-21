@@ -83,7 +83,7 @@ class TimCallback(keras.callbacks.Callback):
         # ipdb.set_trace()
         res = decode_batch(self.test_func, word_batch[0][0:self.num_display_words])
         for i in range(self.num_display_words):
-            print('Truth = ', word_batch[4], 'Decoded = ', res))
+            print('Truth = ', word_batch[4], 'Decoded = ', res)
 
 def pad_sequence_into_array(image, maxlen):
     """

@@ -19,7 +19,7 @@ import itertools
 
 
 def decode_batch(test_func, word_batch):
-    chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E',
+    chars = [' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E',
              'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
              'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
              'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '.', ',', '\'', '\"']
@@ -34,10 +34,9 @@ def decode_batch(test_func, word_batch):
         outstr = []
 
         for il, l in enumerate(out_best):
-            if (l != n_classes) and (il == 0 or l != out_best[il-1]):
-                outstr.append(l)
-        labels_list = [chars[l] for l in outstr]
-        ret.append(labels_list)
+            if (l != n_classes) and (il == 0 or l != out_best[il - 1]):
+                outstr.append(chars[l])
+        ret.append(outstr)
     return ret
 
 
@@ -66,9 +65,9 @@ class TimCallback(keras.callbacks.Callback):
             num_proc = min(word_batch[0].shape[0], num_left)
             decoded_res = decode_batch(self.test_func, word_batch[0][0:num_proc])
             for j in range(0, num_proc):
-                edit_dist = editdistance.eval(decoded_res[j], word_batch['source_str'][j]) # TODO hier weitermachen
+                edit_dist = editdistance.eval(decoded_res[j], word_batch[4][j]) # TODO hier weitermachen
                 mean_ed += float(edit_dist)
-                mean_norm_ed += float(edit_dist) / len(word_batch['source_str'][j])
+                mean_norm_ed += float(edit_dist) / len(word_batch[4][j])
             num_left -= num_proc
         mean_norm_ed = mean_norm_ed / num
         mean_ed = mean_ed / num
@@ -89,9 +88,9 @@ class TimCallback(keras.callbacks.Callback):
         for i in range(self.num_display_words):
             # pylab.subplot(self.num_display_words, 1, i + 1)
             if K.image_dim_ordering() == 'th':
-                the_input = word_batch['the_input'][i, 0, :, :]
+                the_input = word_batch[0][i, 0, :, :]
             else:
-                the_input = word_batch['the_input'][i, :, :, 0]
+                the_input = word_batch[0][i, :, :, 0]
             # pylab.imshow(the_input, cmap='Greys_r')
             # pylab.xlabel('Truth = \'%s\' Decoded = \'%s\'' % (word_batch['source_str'][i], res[i]))
         fig = pylab.gcf()
@@ -174,7 +173,7 @@ class IAM_Predictor(PredictorTask):
         #          'Y', 'Z', '[', '\\', ']', '^', '_', '`', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
         #          'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '{', '|', '}',
         #          '~']  # data['chars']
-        chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E',
+        chars = [' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E',
                  'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
                  'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
                  'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '.', ',', '\'', '\"']
@@ -320,7 +319,7 @@ class IAM_Predictor(PredictorTask):
          1. Feature Extractor
          2. Neural Net
 
-        :param input_tuple:
+        :param  input_tuple [img_norm, label, label_raw] :
         :return:
         """
         # NN Preprocessing
@@ -345,7 +344,8 @@ class IAM_Predictor(PredictorTask):
         inputs = {'the_input': in1,
                   'the_labels': in2,
                   'input_length': in3,
-                  'label_length': in4}
+                  'label_length': in4,
+                  'source_str': input_tuple[2]}
         outputs = {'ctc': out1}
 
         # print('the_input', in1[0].shape)

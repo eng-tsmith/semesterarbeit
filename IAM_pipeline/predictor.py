@@ -45,6 +45,7 @@ class TimCallback(keras.callbacks.Callback):
     def __init__(self, test_func, num_display_words=1):   # TODO NUM_DISPLAY WORDS
         # def __init__(self, test_func, text_img_gen, num_display_words=6):
         OUTPUT_DIR = 'output'
+        self.true_string = ''
         self.test_func = test_func
         self.output_dir = os.path.join(
             OUTPUT_DIR, datetime.datetime.now().strftime('%A, %d. %B %Y %I.%M%p'))
@@ -52,6 +53,9 @@ class TimCallback(keras.callbacks.Callback):
         self.num_display_words = num_display_words
         os.makedirs(self.output_dir, exist_ok=True)
         print("Callback init")
+
+    def init_true_string(self, label):
+        self.true_string = label
 
     def show_edit_distance(self, num):
         num_left = num
@@ -63,9 +67,9 @@ class TimCallback(keras.callbacks.Callback):
             num_proc = min(word_batch[0].shape[0], num_left)
             decoded_res = decode_batch(self.test_func, word_batch[0][0:num_proc])
             for j in range(0, num_proc):
-                edit_dist = editdistance.eval(decoded_res[j], word_batch[4][j])
+                edit_dist = editdistance.eval(decoded_res[j], self.true_string)
                 mean_ed += float(edit_dist)
-                mean_norm_ed += float(edit_dist) / len(word_batch[4][j])
+                mean_norm_ed += float(edit_dist) / len(self.true_string)
             num_left -= num_proc
         mean_norm_ed = mean_norm_ed / num
         mean_ed = mean_ed / num
@@ -83,7 +87,7 @@ class TimCallback(keras.callbacks.Callback):
         # ipdb.set_trace()
         res = decode_batch(self.test_func, word_batch[0][0:self.num_display_words])
         for i in range(self.num_display_words):
-            print('Truth = ', word_batch[4], 'Decoded = ', res)
+            print('Truth = ', self.true_string, 'Decoded = ', res)
 
 def pad_sequence_into_array(image, maxlen):
     """
@@ -325,18 +329,13 @@ class IAM_Predictor(PredictorTask):
         in2 = np.asarray(y_with_blank, dtype='float32')[np.newaxis, :]
         in3 = np.array([self.downsampled_width], dtype='float32')[np.newaxis, :]
         in4 = np.array([y_len], dtype='float32')[np.newaxis, :]
-        in5 = []
-        for c in input_tuple[2]:
-            in5.append(c)
-        string = "".join(in5)
 
         out1 = np.zeros([1])
 
         inputs = {'the_input': in1,
                   'the_labels': in2,
                   'input_length': in3,
-                  'label_length': in4,
-                  'source_str': string}
+                  'label_length': in4}
         outputs = {'ctc': out1}
 
         # print('the_input', in1[0].shape)
@@ -349,6 +348,12 @@ class IAM_Predictor(PredictorTask):
             loss = self.train_rnn((inputs, outputs))
             # cst, pred = self.train_rnn(feature_vec, input_tuple[1])
         else:
+            # Init true string
+            in5 = []
+            for c in input_tuple[2]:
+                in5.append(c)
+            string = "".join(in5)
+            self.cb.init_true_string(string)
             loss = self.test_rnn((inputs, outputs))
 
         metric = 0

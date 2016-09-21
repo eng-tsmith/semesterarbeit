@@ -42,7 +42,7 @@ def decode_batch(test_func, word_batch):
 
 class TimCallback(keras.callbacks.Callback):
 
-    def __init__(self, test_func, num_display_words=6):
+    def __init__(self, test_func, num_display_words=1):   # TODO NUM_DISPLAY WORDS
         # def __init__(self, test_func, text_img_gen, num_display_words=6):
         OUTPUT_DIR = 'output'
         self.test_func = test_func

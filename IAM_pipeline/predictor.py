@@ -77,23 +77,24 @@ class TimCallback(keras.callbacks.Callback):
 
     def on_epoch_end(self, epoch, logs={}):
         print("Callback aufruf")
-        print(self.model.inputs)
         self.model.save_weights(os.path.join(self.output_dir, 'weights%02d.h5' % epoch))
         self.show_edit_distance(256)
-        # import ipdb
-        # ipdb.set_trace()
+
         word_batch = self.model.validation_data  # TODO IS THIS RIGHT?
         # res = decode_batch(self.test_func, word_batch['the_input'][0:self.num_display_words])
-        res = decode_batch(self.test_func, word_batch)
+        res = decode_batch(self.test_func, word_batch[0][0:self.num_display_words])
+
+        import ipdb
+        ipdb.set_trace()
 
         for i in range(self.num_display_words):
-            # pylab.subplot(self.num_display_words, 1, i + 1)
+            pylab.subplot(self.num_display_words, 1, i + 1)
             if K.image_dim_ordering() == 'th':
                 the_input = word_batch[0][i, 0, :, :]
             else:
                 the_input = word_batch[0][i, :, :, 0]
-            # pylab.imshow(the_input, cmap='Greys_r')
-            # pylab.xlabel('Truth = \'%s\' Decoded = \'%s\'' % (word_batch['source_str'][i], res[i]))
+            pylab.imshow(the_input, cmap='Greys_r')
+            pylab.xlabel('Truth = \'%s\' Decoded = \'%s\'' % (word_batch['source_str'][i], res[i]))
         fig = pylab.gcf()
         fig.set_size_inches(10, 12)
         pylab.savefig(os.path.join(self.output_dir, 'e%02d.png' % epoch))

@@ -80,7 +80,7 @@ class TimCallback(keras.callbacks.Callback):
         self.model.save_weights(os.path.join(self.output_dir, 'weights%02d.h5' % epoch))
         self.show_edit_distance(256)
 
-        word_batch = self.model.validation_data  # TODO IS THIS RIGHT?
+        word_batch = self.model.validation_data  #  TODO IS THIS RIGHT?
         # res = decode_batch(self.test_func, word_batch['the_input'][0:self.num_display_words])
         res = decode_batch(self.test_func, word_batch[0][0:self.num_display_words])
 

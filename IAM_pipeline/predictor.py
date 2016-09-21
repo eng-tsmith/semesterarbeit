@@ -58,8 +58,6 @@ class TimCallback(keras.callbacks.Callback):
         mean_norm_ed = 0.0
         mean_ed = 0.0
         while num_left > 0:
-            # import ipdb
-            # ipdb.set_trace()
             word_batch = self.model.validation_data
 
             num_proc = min(word_batch[0].shape[0], num_left)
@@ -81,6 +79,8 @@ class TimCallback(keras.callbacks.Callback):
 
         word_batch = self.model.validation_data
         # res = decode_batch(self.test_func, word_batch['the_input'][0:self.num_display_words])
+        import ipdb
+        ipdb.set_trace()
         res = decode_batch(self.test_func, word_batch[0][0:self.num_display_words])
 
         for i in range(self.num_display_words):

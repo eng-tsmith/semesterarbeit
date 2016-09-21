@@ -14,7 +14,7 @@ class IAM_InputIterator(InputIteratorTask):
             for fold in data.dataset_words: # TODO WORD!!!
                 for input in fold:
                     print("Train with: ", input)
-                    yield input, 1  #TODO BACK!!!
+                    yield input, 0  #TODO BACK!!!
 
             for fold in data.dataset_val_words:  #TODO
                 for input in fold:

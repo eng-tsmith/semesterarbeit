@@ -328,14 +328,15 @@ class IAM_Predictor(PredictorTask):
         in5 = []
         for c in input_tuple[2]:
             in5.append(c)
+        string = "".join(in5)
 
         out1 = np.zeros([1])
-        print(in5)
+
         inputs = {'the_input': in1,
                   'the_labels': in2,
                   'input_length': in3,
                   'label_length': in4,
-                  'source_str': in5}
+                  'source_str': string}
         outputs = {'ctc': out1}
 
         # print('the_input', in1[0].shape)

@@ -330,7 +330,7 @@ class IAM_Predictor(PredictorTask):
             in5.append(c)
 
         out1 = np.zeros([1])
-
+        print(in5)
         inputs = {'the_input': in1,
                   'the_labels': in2,
                   'input_length': in3,

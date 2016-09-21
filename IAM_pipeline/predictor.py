@@ -1,4 +1,3 @@
-matplotlib.use('Agg')
 from validation_task import PredictorTask
 import sys
 import os
@@ -14,7 +13,6 @@ from keras.utils import np_utils
 from keras.utils.data_utils import get_file
 from keras.preprocessing import image
 import keras.callbacks
-import pylab
 import datetime
 import itertools
 import editdistance
@@ -77,7 +75,7 @@ class TimCallback(keras.callbacks.Callback):
               % (num, mean_ed, mean_norm_ed))
 
     def on_epoch_end(self, epoch, logs={}):
-        print("Callback aufruf")
+        print("Callback Aufruf")
         self.model.save_weights(os.path.join(self.output_dir, 'weights%02d.h5' % epoch))
         self.show_edit_distance(256)
 
@@ -89,17 +87,11 @@ class TimCallback(keras.callbacks.Callback):
         ipdb.set_trace()
 
         for i in range(self.num_display_words):
-            pylab.subplot(self.num_display_words, 1, i + 1)
             if K.image_dim_ordering() == 'th':
                 the_input = word_batch[0][i, 0, :, :]
             else:
                 the_input = word_batch[0][i, :, :, 0]
-            pylab.imshow(the_input, cmap='Greys_r')
-            pylab.xlabel('Truth = \'%s\' Decoded = \'%s\'' % (word_batch['source_str'][i], res[i]))
-        fig = pylab.gcf()
-        fig.set_size_inches(10, 12)
-        pylab.savefig(os.path.join(self.output_dir, 'e%02d.png' % epoch))
-        pylab.close()
+           print('Truth = \'%s\' Decoded = \'%s\'' % (word_batch[0][i], res[i]))
 
 def pad_sequence_into_array(image, maxlen):
     """

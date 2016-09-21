@@ -1,3 +1,5 @@
+%matplotlib inline
+
 from validation_task import PredictorTask
 import sys
 import os

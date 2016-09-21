@@ -60,12 +60,12 @@ class TimCallback(keras.callbacks.Callback):
         while num_left > 0:
             # import ipdb
             # ipdb.set_trace()
-            word_batch = self.model.validation_data  #  TODO IS THIS RIGHT?
+            word_batch = self.model.validation_data
 
             num_proc = min(word_batch[0].shape[0], num_left)
             decoded_res = decode_batch(self.test_func, word_batch[0][0:num_proc])
             for j in range(0, num_proc):
-                edit_dist = editdistance.eval(decoded_res[j], word_batch[4][j]) # TODO hier weitermachen
+                edit_dist = editdistance.eval(decoded_res[j], word_batch[4][j])
                 mean_ed += float(edit_dist)
                 mean_norm_ed += float(edit_dist) / len(word_batch[4][j])
             num_left -= num_proc
@@ -79,19 +79,16 @@ class TimCallback(keras.callbacks.Callback):
         self.model.save_weights(os.path.join(self.output_dir, 'weights%02d.h5' % epoch))
         self.show_edit_distance(256)
 
-        word_batch = self.model.validation_data  #  TODO IS THIS RIGHT?
+        word_batch = self.model.validation_data
         # res = decode_batch(self.test_func, word_batch['the_input'][0:self.num_display_words])
         res = decode_batch(self.test_func, word_batch[0][0:self.num_display_words])
-
-        import ipdb
-        ipdb.set_trace()
 
         for i in range(self.num_display_words):
             if K.image_dim_ordering() == 'th':
                 the_input = word_batch[0][i, 0, :, :]
             else:
                 the_input = word_batch[0][i, :, :, 0]
-            print('Truth = \'%s\' Decoded = \'%s\'' % (word_batch[0][i], res[i]))
+            print('Truth = \'%s\' Decoded = \'%s\'' % (word_batch[4][i], res[i]))
 
 def pad_sequence_into_array(image, maxlen):
     """

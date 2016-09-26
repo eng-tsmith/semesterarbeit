@@ -61,7 +61,7 @@ class TimCallback(keras.callbacks.Callback):
         edit_dist = editdistance.eval(decoded_res, self.true_string)
 
         mean_ed = float(edit_dist)
-        mean_norm_ed = float(edit_dist) / len(self.true_string)
+        mean_norm_ed = float(edit_dist) / float(len(self.true_string))
 
         print('\nEdit distance: %.3f Normalized edit distance: %0.3f'
               % (mean_ed, mean_norm_ed))

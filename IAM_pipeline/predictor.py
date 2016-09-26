@@ -19,10 +19,7 @@ import editdistance
 
 
 def decode_batch(test_func, word_batch):
-    chars = [' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E',
-             'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
-             'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
-             'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '.', ',', '\'', '\"']
+    chars = [' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '.', ',', '\'', '\"']
     n_classes = len(chars)
 
     out = test_func([word_batch])[0]
@@ -36,7 +33,7 @@ def decode_batch(test_func, word_batch):
         for il, l in enumerate(out_best):
             if (l != n_classes) and (il == 0 or l != out_best[il - 1]):
                 outstr.append(chars[l])
-        ret.append(outstr)
+        ret = outstr
     return ret
 
 
@@ -85,9 +82,14 @@ class TimCallback(keras.callbacks.Callback):
         # res = decode_batch(self.test_func, word_batch['the_input'][0:self.num_display_words])
         import ipdb
         ipdb.set_trace()
-        res = decode_batch(self.test_func, word_batch[0][0:self.num_display_words])
-        for i in range(self.num_display_words):
-            print('Truth = ', self.true_string, 'Decoded = ', res)
+        res = decode_batch(self.test_func, word_batch[0])
+
+        out_str = []
+        for c in res:
+            out_str.append(c)
+        dec_string = "".join(out_str)
+
+        print('Truth: ', self.true_string, 'Decoded: ', dec_string)
 
 def pad_sequence_into_array(image, maxlen):
     """
@@ -121,9 +123,10 @@ def pad_label_with_blank(label, blank_id, max_length):
     label_len_2 = len(label[0])
 
     label_pad = []
-
+    label_pad.append(blank_id)
     for _ in label[0]:
         label_pad.append(_)
+        label_pad.append(blank_id)
 
     while label_len_2 < max_length:
         label_pad.append(-1)
@@ -164,10 +167,11 @@ class IAM_Predictor(PredictorTask):
         #          'Y', 'Z', '[', '\\', ']', '^', '_', '`', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
         #          'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '{', '|', '}',
         #          '~']  # data['chars']
-        chars = [' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E',
-                 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
-                 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
-                 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '.', ',', '\'', '\"']
+        chars = [' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
+                 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c',
+                 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w',
+                 'x', 'y', 'z', '.', ',', '\'', '\"']
+
         # Input Parameters
         self.img_h = 64
         self.img_w = 512
@@ -182,7 +186,7 @@ class IAM_Predictor(PredictorTask):
         time_dense_size = 32
         rnn_size = 512
         time_steps = self.img_w / (pool_size_1 * pool_size_2)
-        lr = 0.03
+        lr = 0.001
         # clipnorm seems to speeds up convergence
         clipnorm = 5
         self.downsampled_width = int(self.img_w / (pool_size_1 * pool_size_2) - 2)

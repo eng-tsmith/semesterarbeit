@@ -11,10 +11,10 @@ class IAM_InputIterator(InputIteratorTask):
 
         for epoch in range(100):  # TODO fix in config
             print("Epoche: ", epoch)
-            # for fold in data.dataset_words: # TODO WORD!!!
-            #     for input in fold:
-            #         print("Train with: ", input)
-            #         yield input, 0
+            for fold in data.dataset_words: # TODO WORD!!!
+                for input in fold:
+                    print("Train with: ", input)
+                    yield input, 0
 
             for fold in data.dataset_val_words:  #TODO
                 for input in fold:

@@ -80,8 +80,8 @@ class TimCallback(keras.callbacks.Callback):
 
         word_batch = self.model.validation_data
         # res = decode_batch(self.test_func, word_batch['the_input'][0:self.num_display_words])
-        import ipdb
-        ipdb.set_trace()
+        # import ipdb
+        # ipdb.set_trace()
         res = decode_batch(self.test_func, word_batch[0])
 
         out_str = []
@@ -89,7 +89,7 @@ class TimCallback(keras.callbacks.Callback):
             out_str.append(c)
         dec_string = "".join(out_str)
 
-        print('Truth: ', self.true_string, 'Decoded: ', dec_string)
+        print('Truth: ', self.true_string, '   ---   Decoded: ', dec_string)
 
 def pad_sequence_into_array(image, maxlen):
     """

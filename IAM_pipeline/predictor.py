@@ -54,32 +54,26 @@ class TimCallback(keras.callbacks.Callback):
     def init_true_string(self, label):
         self.true_string = label
 
-    def show_edit_distance(self, num):
-        num_left = num
+    def show_edit_distance(self):
+
         mean_norm_ed = 0.0
         mean_ed = 0.0
-        while num_left > 0:
-            word_batch = self.model.validation_data
 
-            import ipdb
-            ipdb.set_trace()
+        word_batch = self.model.validation_data
+        decoded_res = decode_batch(self.test_func, word_batch[0])
 
-            num_proc = min(word_batch[0].shape[0], num_left)
-            decoded_res = decode_batch(self.test_func, word_batch[0][0:num_proc])
-            for j in range(0, num_proc):
-                edit_dist = editdistance.eval(decoded_res[j], self.true_string)
-                mean_ed += float(edit_dist)
-                mean_norm_ed += float(edit_dist) / len(self.true_string)
-            num_left -= num_proc
-        mean_norm_ed = mean_norm_ed / num
-        mean_ed = mean_ed / num
+        edit_dist = editdistance.eval(decoded_res, self.true_string)
+
+        mean_ed = float(edit_dist)
+        mean_norm_ed = float(edit_dist) / len(self.true_string)
+
         print('\nOut of %d samples:  Mean edit distance: %.3f Mean normalized edit distance: %0.3f'
               % (num, mean_ed, mean_norm_ed))
 
     def on_epoch_end(self, epoch, logs={}):
         print("Callback Aufruf")
         self.model.save_weights(os.path.join(self.output_dir, 'weights%02d.h5' % epoch))
-        self.show_edit_distance(256)
+        self.show_edit_distance()
 
         word_batch = self.model.validation_data
         # res = decode_batch(self.test_func, word_batch['the_input'][0:self.num_display_words])

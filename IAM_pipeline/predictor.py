@@ -61,6 +61,9 @@ class TimCallback(keras.callbacks.Callback):
         while num_left > 0:
             word_batch = self.model.validation_data
 
+            import ipdb
+            ipdb.set_trace()
+
             num_proc = min(word_batch[0].shape[0], num_left)
             decoded_res = decode_batch(self.test_func, word_batch[0][0:num_proc])
             for j in range(0, num_proc):

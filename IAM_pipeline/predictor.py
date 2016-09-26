@@ -280,9 +280,8 @@ class IAM_Predictor(PredictorTask):
         print('Train...')
 
         # self.model.train_on_batch(inputs[0], inputs[1], class_weight=None, sample_weight=None)
-        loss = self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1)
-
-        return loss
+        self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1)
+        return self.model.metrics_names, self.model.output
 
     def test_rnn(self, inputs):
         """
@@ -293,9 +292,8 @@ class IAM_Predictor(PredictorTask):
         """
         print('Test...')
 
-        loss = self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1, validation_data=inputs, callbacks=[self.cb])
-
-        return loss
+        self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1, validation_data=inputs, callbacks=[self.cb])
+        return self.model.metrics_names, self.model.output
 
     def predict_rnn(self, inputs):
         """
@@ -349,7 +347,7 @@ class IAM_Predictor(PredictorTask):
 
         # Neural Net
         if test_set == 0:
-            loss = self.train_rnn((inputs, outputs))
+            metric, loss = self.train_rnn((inputs, outputs))
             # cst, pred = self.train_rnn(feature_vec, input_tuple[1])
         else:
             # Init true string
@@ -358,14 +356,11 @@ class IAM_Predictor(PredictorTask):
                 in5.append(c)
             string = "".join(in5)
             self.cb.init_true_string(string)
-            loss = self.test_rnn((inputs, outputs))
+            metric, loss = self.test_rnn((inputs, outputs))
 
-        metric = 0
-        loss1 = 0
+        print(metric, loss)
 
-        print(loss)
-
-        return [input_tuple[1], loss1, metric]  #TODO DIFFERNET OUTPUT
+        return [input_tuple[1], loss, metric]  #TODO DIFFERNET OUTPUT
 
     def save(self, directory):
         print ("Saving myPredictor to ", directory)

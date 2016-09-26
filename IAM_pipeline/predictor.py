@@ -83,8 +83,8 @@ class TimCallback(keras.callbacks.Callback):
 
         word_batch = self.model.validation_data
         # res = decode_batch(self.test_func, word_batch['the_input'][0:self.num_display_words])
-        # import ipdb
-        # ipdb.set_trace()
+        import ipdb
+        ipdb.set_trace()
         res = decode_batch(self.test_func, word_batch[0][0:self.num_display_words])
         for i in range(self.num_display_words):
             print('Truth = ', self.true_string, 'Decoded = ', res)

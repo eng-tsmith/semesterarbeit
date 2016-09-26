@@ -67,8 +67,8 @@ class TimCallback(keras.callbacks.Callback):
         mean_ed = float(edit_dist)
         mean_norm_ed = float(edit_dist) / len(self.true_string)
 
-        print('\nOut of %d samples:  Mean edit distance: %.3f Mean normalized edit distance: %0.3f'
-              % (num, mean_ed, mean_norm_ed))
+        print('\nMean edit distance: %.3f Mean normalized edit distance: %0.3f'
+              % (mean_ed, mean_norm_ed))
 
     def on_epoch_end(self, epoch, logs={}):
         print("Callback Aufruf")

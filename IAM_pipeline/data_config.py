@@ -30,8 +30,8 @@ timset_val_path = '../media/nas/01_Datasets/IAM/tim_set_val.txt'
 # files_training = [timset_path]
 files_training = [trainset_path]
 files_validate = [valset1_path]
-files_words = [timset_path]
-files_val_words = [timset_val_path]
+files_words = [trainset_path]
+files_val_words = [valset1_path]
 
 IAM_dataset_train = []
 IAM_dataset_validate = []

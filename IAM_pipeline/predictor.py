@@ -268,9 +268,8 @@ class IAM_Predictor(PredictorTask):
         :param label:
         """
         print('Train...')
-
-        # self.model.train_on_batch(inputs[0], inputs[1], class_weight=None, sample_weight=None)
         history_callback = self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1)
+
         return history_callback
 
     def test_rnn(self, inputs):
@@ -281,8 +280,8 @@ class IAM_Predictor(PredictorTask):
         :return:
         """
         print('Test...')
-
         history_callback = self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1, validation_data=inputs, callbacks=[self.metric_recorder])
+
         return history_callback
 
     def predict_rnn(self, inputs):
@@ -329,6 +328,7 @@ class IAM_Predictor(PredictorTask):
             loss = history.history["loss"]
             cer = -1
             wer = -1
+            pred = -1
         else:
             # Init true string
             in5 = []

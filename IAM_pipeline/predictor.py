@@ -55,10 +55,6 @@ class TimCallback(keras.callbacks.Callback):
         self.true_string = label
 
     def show_edit_distance(self):
-
-        mean_norm_ed = 0.0
-        mean_ed = 0.0
-
         word_batch = self.model.validation_data
         decoded_res = decode_batch(self.test_func, word_batch[0])
 
@@ -67,7 +63,7 @@ class TimCallback(keras.callbacks.Callback):
         mean_ed = float(edit_dist)
         mean_norm_ed = float(edit_dist) / len(self.true_string)
 
-        print('\nMean edit distance: %.3f Mean normalized edit distance: %0.3f'
+        print('\nEdit distance: %.3f Normalized edit distance: %0.3f'
               % (mean_ed, mean_norm_ed))
 
     def on_epoch_end(self, epoch, logs={}):
@@ -120,10 +116,10 @@ def pad_label_with_blank(label, blank_id, max_length):
     label_len_2 = len(label[0])
 
     label_pad = []
-    label_pad.append(blank_id)
+    # label_pad.append(blank_id)
     for _ in label[0]:
         label_pad.append(_)
-        label_pad.append(blank_id)
+        # label_pad.append(blank_id)
 
     while label_len_2 < max_length:
         label_pad.append(-1)

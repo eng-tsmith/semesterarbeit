@@ -19,7 +19,10 @@ import editdistance
 
 
 def decode_batch(test_func, word_batch):
-    chars = [' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '.', ',', '\'', '\"']
+    chars = [' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+             'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e',
+             'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+             '.', ',', '\'', '\"']
     n_classes = len(chars)
 
     out = test_func([word_batch])[0]
@@ -39,17 +42,21 @@ def decode_batch(test_func, word_batch):
 
 class TimCallback(keras.callbacks.Callback):
 
-    def __init__(self, test_func, num_display_words=1):   # TODO NUM_DISPLAY WORDS
-        # def __init__(self, test_func, text_img_gen, num_display_words=6):
+    def __init__(self, test_func):
         OUTPUT_DIR = 'output'
         self.true_string = ''
+        self.pred = ''
         self.test_func = test_func
         self.output_dir = os.path.join(
             OUTPUT_DIR, datetime.datetime.now().strftime('%A, %d. %B %Y %I.%M%p'))
-        # self.text_img_gen = text_img_gen
-        self.num_display_words = num_display_words
         os.makedirs(self.output_dir, exist_ok=True)
+        self.word_error_rate = 0
+        self.char_error_rate = 0
         print("Callback init")
+
+    def init_testing(self):
+        self.word_error_rate = 0
+        self.char_error_rate = 0
 
     def init_true_string(self, label):
         self.true_string = label
@@ -63,8 +70,11 @@ class TimCallback(keras.callbacks.Callback):
         mean_ed = float(edit_dist)
         mean_norm_ed = float(edit_dist) / float(len(self.true_string))
 
-        print('\nEdit distance: %.3f Normalized edit distance: %0.3f'
-              % (mean_ed, mean_norm_ed))
+        self.char_error_rate = mean_ed
+        if mean_ed == 0.0:
+            self.word_error_rate = 0
+        else:
+            self.word_error_rate = 1
 
     def on_epoch_end(self, epoch, logs={}):
         print("Callback Aufruf")
@@ -72,17 +82,16 @@ class TimCallback(keras.callbacks.Callback):
         self.show_edit_distance()
 
         word_batch = self.model.validation_data
-        # res = decode_batch(self.test_func, word_batch['the_input'][0:self.num_display_words])
-        # import ipdb
-        # ipdb.set_trace()
         res = decode_batch(self.test_func, word_batch[0])
 
         out_str = []
         for c in res:
             out_str.append(c)
         dec_string = "".join(out_str)
+        self.pred = dec_string
 
         print('Truth: ', self.true_string, '   ---   Decoded: ', dec_string)
+
 
 def pad_sequence_into_array(image, maxlen):
     """
@@ -128,11 +137,10 @@ def pad_label_with_blank(label, blank_id, max_length):
     label_out = np.ones(shape=[max_length]) * np.asarray(blank_id)
 
     trunc = label_pad[:max_length]
-    # import ipdb
-    # ipdb.set_trace()
     label_out[:len(trunc)] = trunc
 
     return label_out, label_len_1
+
 
 def ctc_lambda_func(args):
     y_pred, labels, input_length, label_length = args
@@ -140,6 +148,7 @@ def ctc_lambda_func(args):
     # tend to be garbage:
     y_pred = y_pred[:, 2:, :]
     return K.ctc_batch_cost(labels, y_pred, input_length, label_length)
+
 
 class IAM_Predictor(PredictorTask):
 
@@ -152,14 +161,7 @@ class IAM_Predictor(PredictorTask):
     :param optimizer:
     :return:
     """
-
         # Input Parameters
-        # chars = [' ', '!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', '0', '1', '2',
-        #          '3', '4', '5', '6', '7', '8', '9', ':', ';', '<', '=', '>', '?', '@', 'A', 'B', 'C', 'D', 'E',
-        #          'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
-        #          'Y', 'Z', '[', '\\', ']', '^', '_', '`', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
-        #          'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '{', '|', '}',
-        #          '~']  # data['chars']
         chars = [' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
                  'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c',
                  'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w',
@@ -253,16 +255,11 @@ class IAM_Predictor(PredictorTask):
 
         # captures output of softmax so we can decode the output during visualization
         self.test_func = K.function([input_data], [y_pred])
-
-        self.cb = TimCallback(self.test_func)
+        self.metric_recorder = TimCallback(self.test_func)
 
         # Init NN done
         print("Compiled Keras model successfully.")
-        # OLD PRINT
-        # # captures output of softmax so we can decode the output during visualization
-        # test_func = K.function([input_data], [y_pred])
-        #
-        # viz_cb = VizCallback(test_func, img_gen.next_val())
+
 
     def train_rnn(self, inputs):
         """
@@ -285,7 +282,7 @@ class IAM_Predictor(PredictorTask):
         """
         print('Test...')
 
-        history_callback = self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1, validation_data=inputs, callbacks=[self.cb])
+        history_callback = self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1, validation_data=inputs, callbacks=[self.metric_recorder])
         return history_callback
 
     def predict_rnn(self, inputs):
@@ -308,15 +305,6 @@ class IAM_Predictor(PredictorTask):
         :param  input_tuple [img_norm, label, label_raw] :
         :return:
         """
-        # NN Preprocessing
-        # inputs = {'the_input': X_data,    (1, self.img_h, self.img_w)
-        #           'the_labels': labels,   int list
-        #           'input_length': input_length,  img_w / (pool_size_1 * pool_size_2) - 2  --> self.downsampled_width
-        #           'label_length': label_length,   len label
-        #           }
-        #
-        # outputs = {'ctc': np.zeros([size])}  # dummy data for dummy loss function
-
         x_padded = pad_sequence_into_array(input_tuple[0], self.img_w)
         y_with_blank, y_len = pad_label_with_blank(np.asarray(input_tuple[1]), self.output_size, self.absolute_max_string_len)  #TODO blank
 
@@ -333,27 +321,30 @@ class IAM_Predictor(PredictorTask):
                   'label_length': in4}
         outputs = {'ctc': out1}
 
-        # print('the_input', in1[0].shape)
-        # print('the_labels', in2[0])
-        # print('input_length', in3[0])
-        # print('label_length', in4[0])
-
         # Neural Net
         if test_set == 0:
+            # Train
             history = self.train_rnn((inputs, outputs))
-            # cst, pred = self.train_rnn(feature_vec, input_tuple[1])
+            # Metrics
+            loss = history.history["loss"]
+            cer = -1
+            wer = -1
         else:
             # Init true string
             in5 = []
             for c in input_tuple[2]:
                 in5.append(c)
             string = "".join(in5)
-            self.cb.init_true_string(string)
+            self.metric_recorder.init_true_string(string)
+            # Test
             history = self.test_rnn((inputs, outputs))
+            # Metrics
+            loss = history.history["loss"]
+            cer = self.metric_recorder.char_error_rate
+            wer = self.metric_recorder.word_error_rate
+            pred = self.metric_recorder.pred
 
-        print(history.history["loss"])
-
-        return [input_tuple[1], history.history["loss"], 0]  #TODO DIFFERNET OUTPUT
+        return [input_tuple[1], pred, loss, cer, wer]
 
     def save(self, directory):
         print ("Saving myPredictor to ", directory)

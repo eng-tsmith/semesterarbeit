@@ -109,7 +109,7 @@ if __name__ == '__main__':
             print("==== Reporter.run ====" + progress_str)
             # Reporter should now save the metrics in evaluator_output
             start_timer()
-            reporter_output = reporter.run(evaluator_output, test_set)
+            reporter_output = reporter.run(input_tuple, evaluator_output, test_set)
             end_timer()
 
             end_timer("global")

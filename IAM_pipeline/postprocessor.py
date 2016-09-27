@@ -6,7 +6,7 @@ class IAM_Postprocessor(PostprocessorTask):
     def run(self, input_tuple):
         """
 
-        :param input_tuple:  [label, pred, loss, cer, wer]
+        :param input_tuple:  [true, pred, loss, cer_abs, cer, wer, wer_lib]
         :return:
         """
         return input_tuple

@@ -342,9 +342,10 @@ class IAM_Predictor(PredictorTask):
             loss = history.history["loss"]
             cer = self.metric_recorder.char_error_rate
             wer = self.metric_recorder.word_error_rate
+            true = self.metric_recorder.true_string
             pred = self.metric_recorder.pred
 
-        return [input_tuple[1], pred, loss, cer, wer]
+        return [true, pred, loss, cer, wer]
 
     def save(self, directory):
         print ("Saving myPredictor to ", directory)

@@ -427,6 +427,9 @@ class IAM_Predictor(PredictorTask):
             cer = -1
             wer = -1
             pred = -1
+            true = -1
+            cer_abs = -1
+            wer_lib = -1
         else:
             # Init true string
             in5 = []

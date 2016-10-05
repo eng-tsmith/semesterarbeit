@@ -17,13 +17,11 @@ def label_preproc(label_string):
     :param label_string: a string of the label
     :return: label_int: the string represented in integers
     """
-    # chars = [' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E',
-    #          'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
-    #          'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
-    #          'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '.', ',', '\'', '\"']
     chars = char_alpha.chars
 
     label_int = []
+
+    import ipdb;ipdb.set_trace()
     for letter in label_string:
         label_int.append(chars.index(letter))
 

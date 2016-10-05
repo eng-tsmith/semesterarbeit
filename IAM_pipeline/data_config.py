@@ -10,6 +10,7 @@ outfile = 'IAM_output_NN.txt'
 # ___________________________
 # ___________ IAM ___________
 # ___________________________
+print("Loading IAM-Dataset")
 
 IAM_BASE_PATH = "../media/nas/01_Datasets/IAM/"
 IAM_img_path = IAM_BASE_PATH + "lines/"

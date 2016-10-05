@@ -27,12 +27,12 @@ class IAM_InputIterator(InputIteratorTask):
         print("====== Line Training ======")
         for epoch in range(n_epochs_line):
             print("Epoche: ", epoch)
-            # for fold in data.dataset_words:
+            # for fold in data.dataset_train:
             #     for input in fold:
             #         print("Train with: ", input)
             #         yield input, 0
 
-            for fold in data.dataset_val_words:
+            for fold in data.dataset_val:
                 for input in fold:
                     print("Test:", input)
                     yield input, 1

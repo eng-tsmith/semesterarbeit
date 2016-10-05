@@ -21,7 +21,6 @@ def label_preproc(label_string):
 
     label_int = []
 
-    import ipdb;ipdb.set_trace()
     for letter in label_string:
         label_int.append(chars.index(letter))
 
@@ -64,6 +63,7 @@ def load(tupel_filenames):
     # img = cv.imread(tupel_filenames[0], cv.IMREAD_GRAYSCALE)
     img = cv.imread(tupel_filenames[0])
     label = XML_load(tupel_filenames[1], tupel_filenames[2])
+    import ipdb;ipdb.set_trace()
 
     return img, label
 

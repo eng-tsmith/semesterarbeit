@@ -173,7 +173,7 @@ class TimCallback(keras.callbacks.Callback):
         else:
             self.word_error_rate = 1
         import ipdb;ipdb.set_trace()
-        self.WER = wer(decoded_res, self.true_string)
+        self.WER = wer("".join(decoded_res), self.true_string)
 
     def on_epoch_end(self, epoch, logs={}):
         print("Callback Aufruf")

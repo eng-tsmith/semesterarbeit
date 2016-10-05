@@ -11,26 +11,26 @@ class IAM_InputIterator(InputIteratorTask):
         n_epochs_word = data.n_epochs_word
         n_epochs_line = data.n_epochs_line
 
-        # print("====== Word Training ======")
-        # for epoch in range(n_epochs_word):
-        #     print("Epoche: ", epoch)
-        #     for fold in data.dataset_words:
-        #         for input in fold:
-        #             print("Train with: ", input)
-        #             yield input, 0, 0
-        #
-        #     for fold in data.dataset_val_words:
-        #         for input in fold:
-        #             print("Test:", input)
-        #             yield input, 1, 0
+        print("====== Word Training ======")
+        for epoch in range(n_epochs_word):
+            print("Epoche: ", epoch)
+            for fold in data.dataset_words:
+                for input in fold:
+                    print("Train with: ", input)
+                    yield input, 0, 0
+
+            for fold in data.dataset_val_words:
+                for input in fold:
+                    print("Test:", input)
+                    yield input, 1, 0
 
         print("====== Line Training ======")
         for epoch in range(n_epochs_line):
             print("Epoche: ", epoch)
-            # for fold in data.dataset_train:
-            #     for input in fold:
-            #         print("Train with: ", input)
-            #         yield input, 0, 1
+            for fold in data.dataset_train:
+                for input in fold:
+                    print("Train with: ", input)
+                    yield input, 0, 1
 
             for fold in data.dataset_val:
                 for input in fold:

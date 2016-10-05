@@ -78,8 +78,6 @@ def load(tupel_filenames, is_line):
         label = XML_load_word(tupel_filenames[1], tupel_filenames[2])
     else:
         label = XML_load_line(tupel_filenames[1], tupel_filenames[2])
-    import ipdb;ipdb.set_trace()
-
     return img, label
 
 

@@ -4,16 +4,28 @@ import csv
 
 class IAM_Reporter(ReporterTask):
     def __init__(self):
-        self.out_dir = "output/report.csv"  # TODO filename in config
-        f = open(self.out_dir, "w")
+        self.out_dir_train = "output/report_train.csv"  # TODO filename in config
+        self.out_dir_test = "output/report_test.csv"    # TODO filename in config
+
+        f = open(self.out_dir_train, "w")
         f.truncate()
         f.close()
+
+        f = open(self.out_dir_test, "w")
+        f.truncate()
+        f.close()
+
         self.old_test = 0
 
-        fields = ["File", "Label", "Pred", "Loss", "CE", "CER", "WER", "WER_LIB", "Test Set:"]
-        with open(self.out_dir, "a") as f:
+        fields_train = ["File", "Loss", "Test Set:"]
+        with open(self.out_dir_train, "a") as f:
             writer = csv.writer(f)
-            writer.writerow(fields)
+            writer.writerow(fields_train)
+
+        fields_test = ["File", "Label", "Pred", "Loss", "CE", "CER", "WER", "WER_LIB", "Test Set:"]
+        with open(self.out_dir_test, "a") as f:
+            writer = csv.writer(f)
+            writer.writerow(fields_test)
 
     def run(self, input_tuple, evaluator_output, test_set):
         """
@@ -23,6 +35,15 @@ class IAM_Reporter(ReporterTask):
         :param test_set:
         :return:
         """
+        if test_set == 0:
+            print("Filename: ", input_tuple[2])
+            print("loss: ", evaluator_output[2])
+            # ["File", "Loss", "Test Set:"]
+            fields_train = [input_tuple[2], evaluator_output[2], test_set]
+            with open(self.out_dir_train, "a") as f:
+                writer = csv.writer(f)
+                writer.writerow(fields_train)
+
         if test_set == 1:
             print("Filename: ", input_tuple[2])
             print("True label: ", evaluator_output[0])
@@ -33,20 +54,20 @@ class IAM_Reporter(ReporterTask):
             print("WER: ", evaluator_output[5])
             print("WER_lib: ", evaluator_output[6])
             # ["File", "Label", "Pred", "Loss", "CE", "CER", "WER", "WER_LIB", "Test Set:"]
-            fields = [input_tuple[2], evaluator_output[0], evaluator_output[1], evaluator_output[2], evaluator_output[3], evaluator_output[4], evaluator_output[5],  evaluator_output[6], test_set]
-            with open(self.out_dir, "a") as f:
+            fields_test = [input_tuple[2], evaluator_output[0], evaluator_output[1], evaluator_output[2], evaluator_output[3], evaluator_output[4], evaluator_output[5],  evaluator_output[6], test_set]
+            with open(self.out_dir_test, "a") as f:
                 writer = csv.writer(f)
-                writer.writerow(fields)
+                writer.writerow(fields_test)
+
         # put in 0 line between two testings
         if self.old_test == 0 and test_set == 1:
             self.old_test = test_set
         if self.old_test == 1 and test_set == 0:
             self.old_test = test_set
             fields = [0, 0, 0, 0, 0, 0, 0]
-            with open(self.out_dir, "a") as f:
+            with open(self.out_dir_test, "a") as f:
                 writer = csv.writer(f)
                 writer.writerow(fields)
-
         return True
 
     def save(self, directory):

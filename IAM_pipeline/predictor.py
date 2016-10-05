@@ -16,9 +16,17 @@ import keras.callbacks
 import datetime
 import itertools
 import editdistance
+import IAM_pipeline.char_alphabet as char_alpha
 
 
 def wer(ref, hyp, debug=False):
+    """
+    http://progfruits.blogspot.de/2014/02/word-error-rate-wer-and-word.html
+    :param ref:
+    :param hyp:
+    :param debug:
+    :return:
+    """
     r = ref.split()
     h = hyp.split()
     # costs will holds the costs, like in the Levenshtein distance algorithm
@@ -116,10 +124,11 @@ def wer(ref, hyp, debug=False):
 
 
 def decode_batch(test_func, word_batch):
-    chars = [' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
-             'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e',
-             'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-             '.', ',', '\'', '\"']
+    # chars = [' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+    #          'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e',
+    #          'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+    #          '.', ',', '\'', '\"']
+    chars = char_alpha.chars
     n_classes = len(chars)
 
     out = test_func([word_batch])[0]
@@ -137,7 +146,7 @@ def decode_batch(test_func, word_batch):
     return ret
 
 
-class TimCallback(keras.callbacks.Callback):
+class MetricCallback(keras.callbacks.Callback):
 
     def __init__(self, test_func):
         OUTPUT_DIR = 'output'
@@ -263,15 +272,16 @@ class IAM_Predictor(PredictorTask):
     :return:
     """
         # Input Parameters
-        chars = [' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
-                 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c',
-                 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w',
-                 'x', 'y', 'z', '.', ',', '\'', '\"']
+        # chars = [' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
+        #          'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c',
+        #          'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w',
+        #          'x', 'y', 'z', '.', ',', '\'', '\"']
+        chars = char_alpha.chars
 
         # Input Parameters
         self.img_h = 64
         self.img_w = 512
-        self.absolute_max_string_len = 16  # TODO
+        self.absolute_max_string_len = 64
         self.output_size = len(chars)
 
         # Network parameters
@@ -356,7 +366,7 @@ class IAM_Predictor(PredictorTask):
 
         # captures output of softmax so we can decode the output during visualization
         self.test_func = K.function([input_data], [y_pred])
-        self.metric_recorder = TimCallback(self.test_func)
+        self.metric_recorder = MetricCallback(self.test_func)
 
         # Init NN done
         print("Compiled Keras model successfully.")
@@ -364,7 +374,7 @@ class IAM_Predictor(PredictorTask):
 
     def train_rnn(self, inputs):
         """
-
+        Train neural network on train data
         :param img_feat_vec:
         :param label:
         """
@@ -375,13 +385,13 @@ class IAM_Predictor(PredictorTask):
 
     def test_rnn(self, inputs):
         """
-
+        Test neural network
         :param img_feat_vec:
         :param label:
         :return:
         """
         print('Test...')
-        history_callback = self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1, validation_data=inputs, callbacks=[self.metric_recorder])
+        history_callback = self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1, validation_data=inputs, callbacks=[self.metric_recorder])  #TODO no training!!!
 
         return history_callback
 
@@ -397,8 +407,7 @@ class IAM_Predictor(PredictorTask):
         return pred
 
     def run(self, input_tuple, test_set):
-        """ TODO:
-        This function takes a normalized image as Input. During predicting following steps are computed:
+        """ This function takes a normalized image as Input. During predicting following steps are computed:
          1. Feature Extractor
          2. Neural Net
 
@@ -406,7 +415,7 @@ class IAM_Predictor(PredictorTask):
         :return:
         """
         x_padded = pad_sequence_into_array(input_tuple[0], self.img_w)
-        y_with_blank, y_len = pad_label_with_blank(np.asarray(input_tuple[1]), self.output_size, self.absolute_max_string_len)  #TODO blank
+        y_with_blank, y_len = pad_label_with_blank(np.asarray(input_tuple[1]), self.output_size, self.absolute_max_string_len)
 
         in1 = np.asarray(x_padded, dtype='float32')[np.newaxis, np.newaxis, :, :]
         in2 = np.asarray(y_with_blank, dtype='float32')[np.newaxis, :]

@@ -30,7 +30,7 @@ timset_val_path = '../media/nas/01_Datasets/IAM/tim_set_val.txt'
 # This determins which sets are used for training
 # files_training = [timset_path]
 files_training = [trainset_path]
-files_validate = [valset1_path]
+files_validate = [valset2_path]
 files_words = [trainset_path]
 files_val_words = [valset1_path]
 
@@ -114,6 +114,9 @@ IAM = [IAM_dataset_train, IAM_dataset_validate, IAM_dataset_words, IAM_dataset_v
 # ____________________________
 # ______ SELECT DATASET ______
 # ____________________________
+
+n_epochs_word = 10
+n_epochs_line = 20
 
 dataset_train, dataset_val, dataset_words, dataset_val_words = IAM
 

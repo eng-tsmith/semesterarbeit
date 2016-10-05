@@ -9,7 +9,6 @@ import IAM_pipeline.data_config as data_config
 import IAM_pipeline.char_alphabet as char_alpha
 
 
-
 def label_preproc(label_string):
     """
     This function is supposed to prepare the label so that it fits the standard of the rnn_ctc network.

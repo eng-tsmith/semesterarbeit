@@ -108,9 +108,12 @@ def wer(ref, hyp, debug=False):
         print("#sub " + str(numSub))
         print("#del " + str(numDel))
         print("#ins " + str(numIns))
-    return (numSub + numDel + numIns) / (float)(len(r))
-    wer_result = round((numSub + numDel + numIns) / (float)(len(r)), 3)
-    return {'WER': wer_result, 'Cor': numCor, 'Sub': numSub, 'Ins': numIns, 'Del': numDel}
+    if len(r) > 0.0:
+        wer_result = (numSub + numDel + numIns) / (float)(len(r))
+    else:
+        wer_result = -1
+    return wer_result
+
 
 def decode_batch(test_func, word_batch):
     chars = [' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',

@@ -198,6 +198,22 @@ class MetricCallback(keras.callbacks.Callback):
 
         print('Truth: ', self.true_string, '   ---   Decoded: ', dec_string)
 
+    def evaluate(self):
+        print("Manuel Callback Aufruf")
+        self.model.save_weights(os.path.join(self.output_dir, 'weights.h5'))
+        self.show_edit_distance()
+
+        word_batch = self.model.validation_data
+        res = decode_batch(self.test_func, word_batch[0])
+
+        out_str = []
+        for c in res:
+            out_str.append(c)
+        dec_string = "".join(out_str)
+        self.pred = dec_string
+
+        print('Truth: ', self.true_string, '   ---   Decoded: ', dec_string)
+
 
 def pad_sequence_into_array(image, maxlen):
     """
@@ -371,8 +387,8 @@ class IAM_Predictor(PredictorTask):
         :param label:
         """
         print('Train...')
-        history_callback = self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1)
-
+        # history_callback = self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1)
+        history_callback = self.model.train_on_batch(inputs[0], inputs[1])
         return history_callback
 
     def test_rnn(self, inputs):
@@ -383,8 +399,11 @@ class IAM_Predictor(PredictorTask):
         :return:
         """
         print('Test...')
-        history_callback = self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1, validation_data=inputs, callbacks=[self.metric_recorder])  #TODO no training!!!
-
+        # history_callback = self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1, validation_data=inputs,
+        #                                   callbacks=[self.metric_recorder])  # TODO no training!!!
+        # history_callback = self.model.evaluate(inputs[0], inputs[1], batch_size=1)
+        history_callback = self.test_on_batch(inputs[0], inputs[1])
+        self.metric_recorder.evaluate()
         return history_callback
 
     def predict_rnn(self, inputs):
@@ -427,9 +446,9 @@ class IAM_Predictor(PredictorTask):
             # Train
             history = self.train_rnn((inputs, outputs))
             # Metrics
-            loss = history.history["loss"]
+            loss = history  #history.history["loss"]
             cer = -1
-            wer = -1
+            wer1 = -1
             pred = -1
             true = -1
             cer_abs = -1
@@ -444,15 +463,15 @@ class IAM_Predictor(PredictorTask):
             # Test
             history = self.test_rnn((inputs, outputs))
             # Metrics
-            loss = history.history["loss"]
+            loss = history  #history.history["loss"]
             cer_abs = self.metric_recorder.char_error
             cer = self.metric_recorder.char_error_rate
-            wer = self.metric_recorder.word_error_rate
+            wer1 = self.metric_recorder.word_error_rate
             true = self.metric_recorder.true_string
             pred = self.metric_recorder.pred
             wer_lib = self.metric_recorder.WER
 
-        return [true, pred, loss, cer_abs, cer, wer, wer_lib]
+        return [true, pred, loss, cer_abs, cer, wer1, wer_lib]
 
     def save(self, directory):
-        print ("Saving myPredictor to ", directory)
+        print("Saving myPredictor to ", directory)

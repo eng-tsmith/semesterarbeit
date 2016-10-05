@@ -1,7 +1,6 @@
 from validation_task import InputIteratorTask
 import IAM_pipeline.data_config as data
 import functools
-import numpy as np
 
 
 class IAM_InputIterator(InputIteratorTask):

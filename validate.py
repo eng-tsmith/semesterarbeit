@@ -64,7 +64,7 @@ if __name__ == '__main__':
 
     index = 0
     total = len(input_iterator)
-    for input_tuple, test_set in input_iterator.run():
+    for input_tuple, test_set, is_line in input_iterator.run():
         index += 1
 
         start_timer("global")
@@ -76,7 +76,7 @@ if __name__ == '__main__':
 
             print("==== Preprocessor.run ====" + progress_str)
             start_timer()
-            preprocessor_output  = preprocessor.run(input_tuple)
+            preprocessor_output  = preprocessor.run(input_tuple, is_line)
             end_timer()
             if Pipeline.Preprocessor_save_to_disk:
                 print("==== Preprocessor.save ====" + progress_str)

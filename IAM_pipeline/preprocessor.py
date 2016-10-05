@@ -37,7 +37,7 @@ def show_img(img):
     plt.show()
 
 
-def XML_load(filepath, filename):
+def XML_load_word(filepath, filename):
     """
     This funtion is used for loading labels out of corresponding xml file
     :param filepath: location of xml file
@@ -46,23 +46,38 @@ def XML_load(filepath, filename):
     """
     tree = ET.parse(filepath)
     root = tree.getroot()
-    # for child in root.findall('./handwritten-part/'):
-    #     if child.get('id') == filename:
-    #         return child.get('text')
-    for child in root.iter('word'):  #TODO WORD IN CONFIG!!!
+
+    for child in root.iter('word'):
+        if child.get('id') == filename:
+            return child.get('text')
+
+def XML_load_line(filepath, filename):
+    """
+    This funtion is used for loading labels out of corresponding xml file
+    :param filepath: location of xml file
+    :param filename: the name of the current image
+    :return: the label of the image
+    """
+    tree = ET.parse(filepath)
+    root = tree.getroot()
+
+    for child in root.findall('./handwritten-part/'):
         if child.get('id') == filename:
             return child.get('text')
 
 
-def load(tupel_filenames):
+def load(tupel_filenames, is_line):
     """
-    This function returns the raw image and the corresponding label
+    Load image and label
     :param tupel_filenames:
-    :return: img: raw image loaded out of file, label: corresponding label as string
+    :param is_line:
+    :return:
     """
-    # img = cv.imread(tupel_filenames[0], cv.IMREAD_GRAYSCALE)
     img = cv.imread(tupel_filenames[0])
-    label = XML_load(tupel_filenames[1], tupel_filenames[2])
+    if is_line == 0:
+        label = XML_load_word(tupel_filenames[1], tupel_filenames[2])
+    else:
+        label = XML_load_line(tupel_filenames[1], tupel_filenames[2])
     import ipdb;ipdb.set_trace()
 
     return img, label
@@ -172,7 +187,7 @@ def scaling(img):
 
 
 class IAM_Preprocessor(PreprocessorTask):
-    def run(self, input_tuple):
+    def run(self, input_tuple, is_line):
         """ TODO:
         This function takes an image as Input. During Pre-Processing following steps are computed:
             1. Load image and label
@@ -188,8 +203,7 @@ class IAM_Preprocessor(PreprocessorTask):
         """
         print ("Inputs: ", input_tuple)
         # 1. Load img and label
-        # img_raw, label_raw = load(input_tuple)
-        img_raw, label_raw = load(input_tuple)
+        img_raw, label_raw = load(input_tuple, is_line)
 
         # 2. Greyscale
         img_grey = greyscale(img_raw)

@@ -402,7 +402,7 @@ class IAM_Predictor(PredictorTask):
         # history_callback = self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1, validation_data=inputs,
         #                                   callbacks=[self.metric_recorder])  # TODO no training!!!
         # history_callback = self.model.evaluate(inputs[0], inputs[1], batch_size=1)
-        history_callback = self.test_on_batch(inputs[0], inputs[1])
+        history_callback = self.model.test_on_batch(inputs[0], inputs[1])
         self.metric_recorder.evaluate()
         return history_callback
 

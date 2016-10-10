@@ -1,4 +1,6 @@
 import xml.etree.ElementTree as ET
+from random import shuffle
+
 # __________________________
 # _________ OUTPUT _________
 # __________________________
@@ -120,9 +122,8 @@ n_epochs_line = 20
 
 dataset_train, dataset_val, dataset_words, dataset_val_words = IAM
 
-
-
-
-
-
-
+# Randomize order of writers
+shuffle(dataset_train[0])
+shuffle(dataset_val[0])
+shuffle(dataset_words[0])
+shuffle(dataset_val_words[0])

@@ -428,7 +428,13 @@ class IAM_Predictor(PredictorTask):
         x_padded = pad_sequence_into_array(input_tuple[0], self.img_w)
         y_with_blank, y_len = pad_label_with_blank(np.asarray(input_tuple[1]), self.output_size, self.absolute_max_string_len)
 
-        in1 = np.asarray(x_padded, dtype='float32')[np.newaxis, np.newaxis, :, :]
+        # Prepare input for model
+        if K.image_dim_ordering() == 'th':
+            # input_shape = (1, self.img_h, self.img_w)
+            in1 = np.asarray(x_padded, dtype='float32')[np.newaxis, np.newaxis, :, :]
+        else:
+            # input_shape = (self.img_h, self.img_w, 1)
+            in1 = np.asarray(x_padded, dtype='float32')[np.newaxis, :, :, np.newaxis]
         in2 = np.asarray(y_with_blank, dtype='float32')[np.newaxis, :]
         in3 = np.array([self.downsampled_width], dtype='float32')[np.newaxis, :]
         in4 = np.array([y_len], dtype='float32')[np.newaxis, :]

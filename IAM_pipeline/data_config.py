@@ -121,7 +121,7 @@ shuffle(IAM_dataset_validate[0])
 shuffle(IAM_dataset_words)
 shuffle(IAM_dataset_val_words)
 
-IAM = [IAM_dataset_train, IAM_dataset_validate, IAM_dataset_words, IAM_dataset_val_words]
+IAM = [IAM_dataset_train, IAM_dataset_validate, [IAM_dataset_words], [IAM_dataset_val_words]]
 
 # ____________________________
 # ______ SELECT DATASET ______

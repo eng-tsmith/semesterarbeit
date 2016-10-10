@@ -4,7 +4,6 @@ from random import shuffle
 # __________________________
 # _________ OUTPUT _________
 # __________________________
-
 outdir = "/results/"
 outfile = 'IAM_output_NN.txt'
 
@@ -81,13 +80,13 @@ for path in files_words:
 
         tree = ET.parse(label)
         root = tree.getroot()
-        set = []
-        for child in root.iter("word"):
-            # if child.get('id') == filename:
-            image = IAM_word_path + part1 + "/" + part1 + "-" + part2 + "/" + child.get('id') + ".png"
-            label = IAM_label_path + part1 + "-" + part2 + ".xml"
-            set.append((image, label, child.get('id')))
-        IAM_dataset_words.append(set)
+
+        for child in root.iter("line"):
+            if child.get('id') == filename:
+                for child2 in child.iter("word"):
+                    image = IAM_word_path + part1 + "/" + part1 + "-" + part2 + "/" + child2.get('id') + ".png"
+                    label = IAM_label_path + part1 + "-" + part2 + ".xml"
+                    IAM_dataset_words.append((image, label, child2.get('id')))
 
 for path in files_val_words:
     with open(path, 'r') as txtfile:
@@ -103,13 +102,24 @@ for path in files_val_words:
 
         tree = ET.parse(label)
         root = tree.getroot()
-        set = []
-        for child in root.iter("word"):
-            # if child.get('id') == filename:
-            image = IAM_word_path + part1 + "/" + part1 + "-" + part2 + "/" + child.get('id') + ".png"
-            label = IAM_label_path + part1 + "-" + part2 + ".xml"
-            set.append((image, label, child.get('id')))
-            IAM_dataset_val_words.append(set)
+
+        for child in root.iter("line"):
+            if child.get('id') == filename:
+                for child2 in child.iter("word"):
+                    image = IAM_word_path + part1 + "/" + part1 + "-" + part2 + "/" + child.get('id') + ".png"
+                    label = IAM_label_path + part1 + "-" + part2 + ".xml"
+                    IAM_dataset_val_words.append((image, label, child.get('id')))
+#
+# with open('test.txt', 'w') as file_handler:
+#     for item in IAM_dataset_words:
+#         file_handler.write("{}\n".format(item))
+
+
+# Randomize order of writers
+shuffle(IAM_dataset_train[0])
+shuffle(IAM_dataset_validate[0])
+shuffle(IAM_dataset_words)
+shuffle(IAM_dataset_val_words)
 
 IAM = [IAM_dataset_train, IAM_dataset_validate, IAM_dataset_words, IAM_dataset_val_words]
 
@@ -122,8 +132,9 @@ n_epochs_line = 20
 
 dataset_train, dataset_val, dataset_words, dataset_val_words = IAM
 
-# Randomize order of writers
-shuffle(dataset_train[0])
-shuffle(dataset_val[0])
-shuffle(dataset_words[0])
-shuffle(dataset_val_words[0])
+
+
+
+
+
+

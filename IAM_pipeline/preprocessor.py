@@ -201,8 +201,10 @@ class IAM_Preprocessor(PreprocessorTask):
         """
         batch = []
 
+        print("Batchsize: ", len(input))
+
         for input in input_tuple:
-            print ("Inputs: ", input)
+            # print ("Inputs: ", input)
             # 1. Load img and label
             img_raw, label_raw = load(input, is_line)
             # 2. Greyscale

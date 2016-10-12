@@ -18,7 +18,7 @@ class IAM_InputIterator(InputIteratorTask):
             for fold in data.dataset_words:
                 inputs = []
                 for input in fold:
-                    print("Train with: ", input)
+                    # print("Train with: ", input)
                     inputs.append(input)
                     if len(inputs)== n_batch_size:
                         input_batch = inputs
@@ -28,7 +28,7 @@ class IAM_InputIterator(InputIteratorTask):
             for fold in data.dataset_val_words:
                 inputs = []
                 for input in fold:
-                    print("Test:", input)
+                    # print("Test:", input)
                     inputs.append(input)
                     if len(inputs) == n_batch_size:
                         input_batch = inputs
@@ -42,7 +42,7 @@ class IAM_InputIterator(InputIteratorTask):
             for fold in data.dataset_train:
                 inputs = []
                 for input in fold:
-                    print("Train with: ", input)
+                    # print("Train with: ", input)
                     inputs.append(input)
                     if len(inputs) == n_batch_size:
                         input_batch = inputs
@@ -53,7 +53,7 @@ class IAM_InputIterator(InputIteratorTask):
             for fold in data.dataset_val:
                 inputs = []
                 for input in fold:
-                    print("Test:", input)
+                    # print("Test:", input)
                     inputs.append(input)
                     if len(inputs) == n_batch_size:
                         input_batch = inputs

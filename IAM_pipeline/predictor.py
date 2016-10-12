@@ -428,6 +428,9 @@ class IAM_Predictor(PredictorTask):
         # Define batchsize input shapes
         batch_size = 32  # TODO batchsize
 
+        import ipdb
+        ipdb.set_trace()  #
+
         if K.image_dim_ordering() == 'th':
             in1 = np.ones([batch_size, 1, self.img_h, self.img_w])
         else:

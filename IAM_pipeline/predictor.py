@@ -438,10 +438,8 @@ class IAM_Predictor(PredictorTask):
 
         out1 = np.zeros([batch_size])
 
+        # Pad all input to network size
         for idx, input in enumerate(input_tuple):
-            import ipdb
-            ipdb.set_trace()  #
-
             x_padded = pad_sequence_into_array(input[0], self.img_w)
             y_with_blank, y_len = pad_label_with_blank(np.asarray(input[1]), self.output_size,
                                                        self.absolute_max_string_len)

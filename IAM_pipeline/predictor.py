@@ -138,7 +138,7 @@ def decode_batch(test_func, word_batch):
         for il, l in enumerate(out_best):
             if (l != n_classes) and (il == 0 or l != out_best[il - 1]):
                 outstr.append(chars[l])
-        ret = outstr
+        ret.append(outstr)
     return ret
 
 
@@ -183,15 +183,16 @@ class MetricCallback(keras.callbacks.Callback):
         self.WER = wer("".join(decoded_res), self.true_string)
 
     def evaluate(self, word_batch):
-        import ipdb
-        ipdb.set_trace()  #
         print("Manuel Callback Aufruf")
         # Save weights
         # self.model.save_weights(os.path.join(self.output_dir, 'weights.h5'))  #TODO save weightss
 
         # Predict
         # word_batch = self.model.validation_data
-        decoded_res = decode_batch(self.test_func, word_batch[0])
+        decoded_res = decode_batch(self.test_func, word_batch[2])
+
+        import ipdb
+        ipdb.set_trace()  #
 
         # parse out string
         out_str = []

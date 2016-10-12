@@ -38,4 +38,4 @@ class IAM_InputIterator(InputIteratorTask):
 
     def __len__(self):
         fold_lens = map(lambda fold: len(fold), data.dataset_words)
-        return functools.reduce(lambda a,b: a+b, fold_lens)
+        return functools.reduce(lambda a,b: a+b, fold_lens)  #TODO

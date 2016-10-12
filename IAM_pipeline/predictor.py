@@ -182,7 +182,7 @@ class MetricCallback(keras.callbacks.Callback):
             self.word_error_rate = 1
         self.WER = wer("".join(decoded_res), self.true_string)
 
-    def evaluate(self):
+    def evaluate(self, word_batch):
         import ipdb
         ipdb.set_trace()  #
         print("Manuel Callback Aufruf")
@@ -190,8 +190,8 @@ class MetricCallback(keras.callbacks.Callback):
         self.model.save_weights(os.path.join(self.output_dir, 'weights.h5'))
 
         # Predict
-        word_batch = self.model.validation_data
-        decoded_res = decode_batch(self.test_func, word_batch[0])
+        # word_batch = self.model.validation_data
+        decoded_res = decode_batch(self.test_func, word_batch)
 
         # parse out string
         out_str = []
@@ -408,7 +408,7 @@ class IAM_Predictor(PredictorTask):
         """
         print('Test...')
         history_callback = self.model.test_on_batch(inputs[0], inputs[1])
-        self.metric_recorder.evaluate()
+        self.metric_recorder.evaluate(inputs[0][0])
         return history_callback
 
     def predict_rnn(self, inputs):

@@ -15,15 +15,15 @@ class IAM_InputIterator(InputIteratorTask):
         print("====== Word Training ======")
         for epoch in range(n_epochs_word):
             print("Epoche: ", epoch)
-            for fold in data.dataset_words:
-                inputs = []
-                for input in fold:
-                    # print("Train with: ", input)
-                    inputs.append(input)
-                    if len(inputs)== n_batch_size:
-                        input_batch = inputs
-                        inputs = []
-                        yield input_batch, 0, 0, epoch
+            # for fold in data.dataset_words:
+            #     inputs = []
+            #     for input in fold:
+            #         # print("Train with: ", input)
+            #         inputs.append(input)
+            #         if len(inputs)== n_batch_size:
+            #             input_batch = inputs
+            #             inputs = []
+            #             yield input_batch, 0, 0, epoch
 
             for fold in data.dataset_val_words:
                 inputs = []
@@ -33,7 +33,7 @@ class IAM_InputIterator(InputIteratorTask):
                     if len(inputs) == n_batch_size:
                         input_batch = inputs
                         inputs = []
-                        yield input_batch, 0, 0, epoch
+                        yield input_batch, 1, 0, epoch
                     # yield input, 1, 0, epoch
 
         print("====== Line Training ======")
@@ -47,7 +47,7 @@ class IAM_InputIterator(InputIteratorTask):
                     if len(inputs) == n_batch_size:
                         input_batch = inputs
                         inputs = []
-                        yield input_batch, 0, 0, epoch
+                        yield input_batch, 0, 1, epoch
                     # yield input, 0, 1, epoch
 
             for fold in data.dataset_val:
@@ -58,7 +58,7 @@ class IAM_InputIterator(InputIteratorTask):
                     if len(inputs) == n_batch_size:
                         input_batch = inputs
                         inputs = []
-                        yield input_batch, 0, 0, epoch
+                        yield input_batch, 1, 1, epoch
                     # yield input, 1, 1, epoch
 
     def __len__(self):

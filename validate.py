@@ -63,11 +63,7 @@ if __name__ == '__main__':
     print("Modules loaded.")
 
     index = 0
-    # len1, len2, len3, len4 = len(input_iterator) # TODO
-    len1 = 0
-    len2 = 0
-    len3 = 0
-    len4 = 0
+    total = len(input_iterator) # TODO
 
     for input_tuple, test_set, is_line, epoch in input_iterator.run():
         index += 1

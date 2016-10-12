@@ -17,6 +17,10 @@ def label_preproc(label_string):
     :param label_string: a string of the label
     :return: label_int: the string represented in integers
     """
+
+    import ipdb
+    ipdb.set_trace()
+
     chars = char_alpha.chars
 
     label_int = []

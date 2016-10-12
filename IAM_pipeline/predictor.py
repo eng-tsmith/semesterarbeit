@@ -146,7 +146,7 @@ class MetricCallback(keras.callbacks.Callback):
 
     def __init__(self, test_func):
         OUTPUT_DIR = 'output'
-        self.true_string = ''
+        self.true_string = []
         self.pred = ''
         self.WER = ''
         self.test_func = test_func
@@ -182,35 +182,43 @@ class MetricCallback(keras.callbacks.Callback):
             self.word_error_rate = 1
         self.WER = wer("".join(decoded_res), self.true_string)
 
-    def on_epoch_end(self, epoch, logs={}):
-        print("Callback Aufruf")
-        self.model.save_weights(os.path.join(self.output_dir, 'weights%02d.h5' % epoch))
-        self.show_edit_distance()
-
-        word_batch = self.model.validation_data
-        res = decode_batch(self.test_func, word_batch[0])
-
-        out_str = []
-        for c in res:
-            out_str.append(c)
-        dec_string = "".join(out_str)
-        self.pred = dec_string
-
-        print('Truth: ', self.true_string, '   ---   Decoded: ', dec_string)
-
     def evaluate(self):
+        import ipdb
+        ipdb.set_trace()  #
         print("Manuel Callback Aufruf")
+        # Save weights
         self.model.save_weights(os.path.join(self.output_dir, 'weights.h5'))
-        self.show_edit_distance()
 
+        # Predict
         word_batch = self.model.validation_data
-        res = decode_batch(self.test_func, word_batch[0])
+        decoded_res = decode_batch(self.test_func, word_batch[0])
 
+        # parse out string
         out_str = []
         for c in res:
             out_str.append(c)
         dec_string = "".join(out_str)
         self.pred = dec_string
+
+        # Calc metric
+        edit_dist = editdistance.eval(decoded_res, self.true_string)
+
+        mean_ed = float(edit_dist)
+        mean_norm_ed = float(edit_dist) / float(len(self.true_string))
+
+        self.char_error = mean_ed
+        self.char_error_rate = mean_norm_ed
+        if mean_ed == 0.0:
+            self.word_error_rate = 0
+        else:
+            self.word_error_rate = 1
+        self.WER = wer("".join(decoded_res), self.true_string)
+
+
+
+
+
+
 
         print('Truth: ', self.true_string, '   ---   Decoded: ', dec_string)
 
@@ -399,9 +407,6 @@ class IAM_Predictor(PredictorTask):
         :return:
         """
         print('Test...')
-        # history_callback = self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1, validation_data=inputs,
-        #                                   callbacks=[self.metric_recorder])  # TODO no training!!!
-        # history_callback = self.model.evaluate(inputs[0], inputs[1], batch_size=1)
         history_callback = self.model.test_on_batch(inputs[0], inputs[1])
         self.metric_recorder.evaluate()
         return history_callback
@@ -504,15 +509,17 @@ class IAM_Predictor(PredictorTask):
             cer_abs = -1
             wer_lib = -1
         else:
-            import ipdb
-            ipdb.set_trace()  #
             # Init true string
             in5 = []
-            for idx, input in enumerate(input_tuple):
-                for c in input[2]:
-                    in5.append(c)
-            string = "".join(in5)
-            self.metric_recorder.init_true_string(string)
+            for input in input_tuple:
+                    in5.append(input[2])
+            # in5 = []
+            # for idx, input in enumerate(input_tuple):
+            #     for c in input[2]:
+            #         in5.append(c)
+            # string = "".join(in5)
+            # self.metric_recorder.init_true_string(string)
+            self.metric_recorder.init_true_string(in5)
             # Test
             history = self.test_rnn((inputs, outputs))
             # Metrics

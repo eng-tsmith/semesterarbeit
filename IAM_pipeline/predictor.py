@@ -408,6 +408,9 @@ class IAM_Predictor(PredictorTask):
         """
         print('Test...')
         history_callback = self.model.test_on_batch(inputs[0], inputs[1])
+
+        import ipdb
+        ipdb.set_trace()
         self.metric_recorder.evaluate(inputs[0][0])
         return history_callback
 

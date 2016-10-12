@@ -40,6 +40,6 @@ class IAM_InputIterator(InputIteratorTask):
         fold_lens1 = len(data.dataset_words)  #map(lambda fold: len(fold), data.dataset_words)
         fold_lens2 = len(data.dataset_val_words)  #map(lambda fold: len(fold), data.dataset_val_words)
         fold_lens3 = len(data.dataset_train)  #map(lambda fold: len(fold), data.dataset_train)
-        fold_lens4 = len(data.dataset_val)  #map(lambda fold: len(fold), data.dataset_val)
+        fold_lens4 = len(data.dataset_val)  #map(lambda fold: len(fold), data.dataset_val)a
 
         return fold_lens1, fold_lens2, fold_lens3, fold_lens4

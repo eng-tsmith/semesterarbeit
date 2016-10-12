@@ -411,7 +411,7 @@ class IAM_Predictor(PredictorTask):
 
         import ipdb
         ipdb.set_trace()
-        self.metric_recorder.evaluate(inputs[0][0])
+        self.metric_recorder.evaluate(list(inputs[0].values())[0])
         return history_callback
 
     def predict_rnn(self, inputs):

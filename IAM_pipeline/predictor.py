@@ -488,8 +488,8 @@ class IAM_Predictor(PredictorTask):
         # Neural Net
 
 
-        import ipdb
-        ipdb.set_trace()  #
+        # import ipdb
+        # ipdb.set_trace()  #
 
         if test_set == 0:
             # Train

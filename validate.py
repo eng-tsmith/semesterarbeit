@@ -63,7 +63,7 @@ if __name__ == '__main__':
     print("Modules loaded.")
 
     index = 0
-    total = len(input_iterator) # TODO
+    len1, len2, len3, len4 = len(input_iterator) # TODO
 
     for input_tuple, test_set, is_line, epoch in input_iterator.run():
         index += 1
@@ -71,13 +71,13 @@ if __name__ == '__main__':
         start_timer("global")
         try:
             if test_set == 0 and is_line == 0:
-                progress_str = "Training words Epoch: " + epoch + "(" + str(index) + " / " + str(total) + ")"  #TODO nr epochs
+                progress_str = "Training words Epoch: " + str(epoch) + "(" + str(index) + " / " + str(10*(len1+len2)) + ")"  #TODO nr epochs
             if test_set == 1 and is_line == 0:
-                progress_str = "Testing words Epoch: " + epoch + "(" + str(index) + " / " + str(total) + ")"
+                progress_str = "Testing words Epoch: " + str(epoch) + "(" + str(index) + " / " + str(10*(len1+len2)) + ")"
             if test_set == 0 and is_line == 1:
-                progress_str = "Training lines Epoch: " + epoch + "(" + str(index) + " / " + str(total) + ")"
+                progress_str = "Training lines Epoch: " + str(epoch) + "(" + str(index) + " / " + str(10*(len1+len2)+20*(len3+len4)) + ")"
             if test_set == 1 and is_line == 1:
-                progress_str = "Testing lines Epoch: " + epoch + "(" + str(index) + " / " + str(total) + ")"
+                progress_str = "Testing lines Epoch: " + str(epoch) + "(" + str(index) + " / " + str(10*(len1+len2)+20*(len3+len4)) + ")"
             print("===========================")
             print("===========================")
 

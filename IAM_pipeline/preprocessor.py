@@ -199,6 +199,10 @@ class IAM_Preprocessor(PreprocessorTask):
         :param input_tuple: [path to img_file, path to xml]
         :return output_tuple: [normalized image of text line, label]
         """
+
+        import ipdb
+        ipdb.set_trace()
+
         print ("Inputs: ", input_tuple)
         # 1. Load img and label
         img_raw, label_raw = load(input_tuple, is_line)

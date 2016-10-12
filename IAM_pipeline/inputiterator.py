@@ -37,9 +37,9 @@ class IAM_InputIterator(InputIteratorTask):
                     yield input, 1, 1, epoch
 
     def __len__(self):
-        fold_lens1 = map(lambda fold: len(fold), data.dataset_words)
-        fold_lens2 = map(lambda fold: len(fold), data.dataset_val_words)
-        fold_lens3 = map(lambda fold: len(fold), data.dataset_train)
-        fold_lens4 = map(lambda fold: len(fold), data.dataset_val)
+        fold_lens1 = len(data.dataset_words)  #map(lambda fold: len(fold), data.dataset_words)
+        fold_lens2 = len(data.dataset_val_words)  #map(lambda fold: len(fold), data.dataset_val_words)
+        fold_lens3 = len(data.dataset_train)  #map(lambda fold: len(fold), data.dataset_train)
+        fold_lens4 = len(data.dataset_val)  #map(lambda fold: len(fold), data.dataset_val)
 
         return fold_lens1, fold_lens2, fold_lens3, fold_lens4

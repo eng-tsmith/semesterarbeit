@@ -73,6 +73,10 @@ def load(tupel_filenames, is_line):
     :param is_line:
     :return:
     """
+    import ipdb
+    ipdb.set_trace()  #
+
+
     img = cv.imread(tupel_filenames[0])
     if is_line == 0:
         label = XML_load_word(tupel_filenames[1], tupel_filenames[2])

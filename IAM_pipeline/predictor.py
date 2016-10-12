@@ -138,6 +138,7 @@ def decode_batch(test_func, word_batch):
         for il, l in enumerate(out_best):
             if (l != n_classes) and (il == 0 or l != out_best[il - 1]):
                 outstr.append(chars[l])
+
         ret.append(outstr)
     return ret
 
@@ -190,18 +191,21 @@ class MetricCallback(keras.callbacks.Callback):
         ipdb.set_trace()  #
         # Predict
         # word_batch = self.model.validation_data
-        decoded_res = decode_batch(self.test_func, word_batch[2])
+        decoded_res = decode_batch(self.test_func, word_batch[1])  # TODO check here what dimension the word batch does? randomm??
 
         import ipdb
         ipdb.set_trace()  #
 
         # parse out string
-        out_str = []
-        for c in res:
-            out_str.append(c)
-        dec_string = "".join(out_str)
+        dec_string = []
+        for res in decoded_res:
+            out_str = []
+            for c in res:
+                out_str.append(c)
+            dec_string.append("".join(out_str))
         self.pred = dec_string
 
+        # TODO after this have not implenmted batch
         # Calc metric
         edit_dist = editdistance.eval(decoded_res, self.true_string)
 

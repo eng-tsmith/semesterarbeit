@@ -87,6 +87,10 @@ def greyscale(img):
     :param img: colored image
     :return: img_grey: greyscale image
     """
+    import ipdb
+    ipdb.set_trace()  #
+
+
     img_grey = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
 
     return img_grey
@@ -203,8 +207,7 @@ class IAM_Preprocessor(PreprocessorTask):
 
         print("Batchsize: ", len(input_tuple))
 
-        import ipdb
-        ipdb.set_trace()  #
+
 
         for input in input_tuple:
             # print ("Inputs: ", input)

@@ -436,6 +436,7 @@ class IAM_Predictor(PredictorTask):
         in3 = np.zeros([batch_size, 1])
         in4 = np.zeros([batch_size, 1])
 
+
         out1 = np.zeros([batch_size])
 
         # Pad all input to network size
@@ -503,10 +504,13 @@ class IAM_Predictor(PredictorTask):
             cer_abs = -1
             wer_lib = -1
         else:
+            import ipdb
+            ipdb.set_trace()  #
             # Init true string
             in5 = []
-            for c in input_tuple[2]:
-                in5.append(c)
+            for idx, input in enumerate(input_tuple):
+                for c in input[2]:
+                    in5.append(c)
             string = "".join(in5)
             self.metric_recorder.init_true_string(string)
             # Test

@@ -108,7 +108,7 @@ for path in files_val_words:
                 for child2 in child.iter("word"):
                     image = IAM_word_path + part1 + "/" + part1 + "-" + part2 + "/" + child2.get('id') + ".png"
                     label = IAM_label_path + part1 + "-" + part2 + ".xml"
-                    IAM_dataset_val_words.append((image, label, child.get('id')))
+                    IAM_dataset_val_words.append((image, label, child2.get('id')))
 #
 # with open('test.txt', 'w') as file_handler:
 #     for item in IAM_dataset_words:

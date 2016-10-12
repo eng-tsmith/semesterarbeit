@@ -430,10 +430,10 @@ class IAM_Predictor(PredictorTask):
 
         # Prepare input for model
         if K.image_dim_ordering() == 'th':
-            # input_shape = (1, self.img_h, self.img_w)
+            # input_shape = (batchsize, 1, self.img_h, self.img_w)
             in1 = np.asarray(x_padded, dtype='float32')[np.newaxis, np.newaxis, :, :]
         else:
-            # input_shape = (self.img_h, self.img_w, 1)
+            # input_shape = (batchsize, self.img_h, self.img_w, 1)
             in1 = np.asarray(x_padded, dtype='float32')[np.newaxis, :, :, np.newaxis]
         in2 = np.asarray(y_with_blank, dtype='float32')[np.newaxis, :]
         in3 = np.array([self.downsampled_width], dtype='float32')[np.newaxis, :]

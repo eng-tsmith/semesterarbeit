@@ -16,12 +16,12 @@ class IAM_InputIterator(InputIteratorTask):
             for fold in data.dataset_words:
                 for input in fold:
                     print("Train with: ", input)
-                    yield input, 0, 0
+                    yield input, 0, 0, epoch
 
             for fold in data.dataset_val_words:
                 for input in fold:
                     print("Test:", input)
-                    yield input, 1, 0
+                    yield input, 1, 0, epoch
 
         print("====== Line Training ======")
         for epoch in range(n_epochs_line):
@@ -29,16 +29,17 @@ class IAM_InputIterator(InputIteratorTask):
             for fold in data.dataset_train:
                 for input in fold:
                     print("Train with: ", input)
-                    yield input, 0, 1
+                    yield input, 0, 1, epoch
 
             for fold in data.dataset_val:
                 for input in fold:
                     print("Test:", input)
-                    yield input, 1, 1
+                    yield input, 1, 1, epoch
 
     def __len__(self):
-        fold_lens1 = map(lambda fold: len(fold), data.dataset_train)
-        fold_lens2 = map(lambda fold: len(fold), data.dataset_val)
+        fold_lens1 = map(lambda fold: len(fold), data.dataset_words)
+        fold_lens2 = map(lambda fold: len(fold), data.dataset_val_words)
+        fold_lens3 = map(lambda fold: len(fold), data.dataset_train)
+        fold_lens4 = map(lambda fold: len(fold), data.dataset_val)
 
-        return (functools.reduce(lambda a, b: a + b, fold_lens1) + functools.reduce(lambda a, b: a + b,
-                                                                                    fold_lens2)) * 100  # TODO fix in config
+        return fold_lens1, fold_lens2, fold_lens3, fold_lens4

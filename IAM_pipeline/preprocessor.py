@@ -199,38 +199,31 @@ class IAM_Preprocessor(PreprocessorTask):
         :param input_tuple: [path to img_file, path to xml]
         :return output_tuple: [normalized image of text line, label]
         """
+        batch = []
 
-        import ipdb
-        ipdb.set_trace()
-
-        print ("Inputs: ", input_tuple)
-        # 1. Load img and label
-        img_raw, label_raw = load(input_tuple, is_line)
-
-        # 2. Greyscale
-        img_grey = greyscale(img_raw)
-
-        # 3. Thresholding
-        img_thresh = thresholding(img_grey)
-
-        # 4. Skew
-        img_skew = skew(img_thresh)
-
-        # 5. Slant
-        img_slant = slant(img_skew)
-
-        # 6. Positioning
-        img_pos = positioning(img_slant)
-
-        # 7. Scaling
-        img_norm = scaling(img_pos)
-
-        # # 8. Preprocessing of label
-        label = label_preproc(label_raw)
+        for input in input_tuple:
+            print ("Inputs: ", input)
+            # 1. Load img and label
+            img_raw, label_raw = load(input, is_line)
+            # 2. Greyscale
+            img_grey = greyscale(img_raw)
+            # 3. Thresholding
+            img_thresh = thresholding(img_grey)
+            # 4. Skew
+            img_skew = skew(img_thresh)
+            # 5. Slant
+            img_slant = slant(img_skew)
+            # 6. Positioning
+            img_pos = positioning(img_slant)
+            # 7. Scaling
+            img_norm = scaling(img_pos)
+            # 8. Preprocessing of label
+            label = label_preproc(label_raw)
+            # 9. Include to batch
+            batch.append([img_norm, label, label_raw])
 
         print("Preprocessing successful!")
-        # show_img(img_norm)
-        return [img_norm, label, label_raw]  # TODO tranpose?
+        return batch
 
     def save(self, directory):
         print ("Saving myPreprocessor to ", directory)

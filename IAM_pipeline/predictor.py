@@ -408,7 +408,7 @@ class IAM_Predictor(PredictorTask):
         """
         print('Test...')
         history_callback = self.model.test_on_batch(inputs[0], inputs[1])
-        self.metric_recorder.evaluate(list(inputs[0].values())[2])
+        self.metric_recorder.evaluate(list(inputs[0].values())[0])
         return history_callback
 
     def predict_rnn(self, inputs):

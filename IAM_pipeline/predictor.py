@@ -191,7 +191,7 @@ class MetricCallback(keras.callbacks.Callback):
 
         # Predict
         # word_batch = self.model.validation_data
-        decoded_res = decode_batch(self.test_func, word_batch)
+        decoded_res = decode_batch(self.test_func, word_batch[0])
 
         # parse out string
         out_str = []
@@ -408,7 +408,7 @@ class IAM_Predictor(PredictorTask):
         """
         print('Test...')
         history_callback = self.model.test_on_batch(inputs[0], inputs[1])
-        self.metric_recorder.evaluate(list(inputs[0].values())[0])
+        self.metric_recorder.evaluate(list(inputs[0].values()))
         return history_callback
 
     def predict_rnn(self, inputs):

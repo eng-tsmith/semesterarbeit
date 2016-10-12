@@ -203,6 +203,9 @@ class IAM_Preprocessor(PreprocessorTask):
 
         print("Batchsize: ", len(input_tuple))
 
+        import ipdb
+        ipdb.set_trace()  #
+
         for input in input_tuple:
             # print ("Inputs: ", input)
             # 1. Load img and label

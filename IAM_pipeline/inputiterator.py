@@ -7,13 +7,13 @@ class IAM_InputIterator(InputIteratorTask):
     def run(self):
         print("Welcome to Handwriting Recognizer")
         print("====== IAM  Pipeline ======")
+        # Init Epochs and Batchsize
         n_epochs_word = data.n_epochs_word
         n_epochs_line = data.n_epochs_line
         n_batch_size = data.n_batch_size
 
-
         print("====== Word Training ======")
-        for epoch in range(n_epochs_word):
+        for epoch in range(1, n_epochs_word + 1):
             print("Epoche: ", epoch)
             for fold in data.dataset_words:
                 inputs = []
@@ -36,7 +36,7 @@ class IAM_InputIterator(InputIteratorTask):
                         yield input_batch, 1, 0, epoch
 
         print("====== Line Training ======")
-        for epoch in range(n_epochs_line):
+        for epoch in range(1, n_epochs_line + 1):
             print("Epoche: ", epoch)
             for fold in data.dataset_train:
                 inputs = []
@@ -58,10 +58,13 @@ class IAM_InputIterator(InputIteratorTask):
                         inputs = []
                         yield input_batch, 1, 1, epoch
 
-    def __len__(self):
-        fold_lens1 = map(lambda fold: len(fold), data.dataset_words)
-        fold_lens2 = map(lambda fold: len(fold), data.dataset_val_words)
-        fold_lens3 = map(lambda fold: len(fold), data.dataset_train)
-        fold_lens4 = map(lambda fold: len(fold), data.dataset_val)
+    def __len__(self):  # TODO
+        fold_lens1 = data.dataset_words_size
+        fold_lens2 = data.dataset_val_words_size
+        fold_lens3 = data.dataset_train_size
+        fold_lens4 = data.dataset_val_size
 
-        return functools.reduce(lambda a,b: a+b, fold_lens1), functools.reduce(lambda a,b: a+b, fold_lens2), functools.reduce(lambda a,b: a+b, fold_lens3), functools.reduce(lambda a,b: a+b, fold_lens4)
+        n_epochs_word = data.n_epochs_word
+        n_epochs_line = data.n_epochs_line
+
+        return fold_lens1, fold_lens2, fold_lens3, fold_lens4, n_epochs_word, n_epochs_line

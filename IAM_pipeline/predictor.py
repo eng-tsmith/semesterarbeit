@@ -440,9 +440,10 @@ class IAM_Predictor(PredictorTask):
         :param  input_tuple [img_norm, label, label_raw] :
         :return:
         """
-        # Define batchsize input shapes
+        # Define batchsize
         batch_size = len(input_tuple)
 
+        # Define input shapes
         if K.image_dim_ordering() == 'th':
             in1 = np.ones([batch_size, 1, self.img_h, self.img_w])
         else:
@@ -451,10 +452,10 @@ class IAM_Predictor(PredictorTask):
         in3 = np.zeros([batch_size, 1])
         in4 = np.zeros([batch_size, 1])
 
-
+        # Define dummy output shape
         out1 = np.zeros([batch_size])
 
-        # Pad all input to network size
+        # Pad/Cut all input to network size
         for idx, input in enumerate(input_tuple):
             x_padded = pad_sequence_into_array(input[0], self.img_w)
             y_with_blank, y_len = pad_label_with_blank(np.asarray(input[1]), self.output_size,
@@ -471,65 +472,33 @@ class IAM_Predictor(PredictorTask):
             in3[idx, :] = np.array([self.downsampled_width], dtype='float32')
             in4[idx, :] = np.array([y_len], dtype='float32')
 
-            # out1[idx] = np.zeros([1])
-
+        # Dictionary for Keras Model Input
         inputs = {'the_input': in1,
                   'the_labels': in2,
                   'input_length': in3,
                   'label_length': in4}
         outputs = {'ctc': out1}
 
-        # x_padded = pad_sequence_into_array(input_tuple[0], self.img_w)
-        # y_with_blank, y_len = pad_label_with_blank(np.asarray(input_tuple[1]), self.output_size, self.absolute_max_string_len)
-        #
-        # # Prepare input for model
-        # if K.image_dim_ordering() == 'th':
-        #     # input_shape = (batchsize, 1, self.img_h, self.img_w)
-        #     in1 = np.asarray(x_padded, dtype='float32')[np.newaxis, np.newaxis, :, :]
-        # else:
-        #     # input_shape = (batchsize, self.img_h, self.img_w, 1)
-        #     in1 = np.asarray(x_padded, dtype='float32')[np.newaxis, :, :, np.newaxis]
-        # in2 = np.asarray(y_with_blank, dtype='float32')[np.newaxis, :]
-        # in3 = np.array([self.downsampled_width], dtype='float32')[np.newaxis, :]
-        # in4 = np.array([y_len], dtype='float32')[np.newaxis, :]
-        #
-        # out1 = np.zeros([1])
-        #
-        # inputs = {'the_input': in1,
-        #           'the_labels': in2,
-        #           'input_length': in3,
-        #           'label_length': in4}
-        # outputs = {'ctc': out1}
-
-        # Neural Net
-
-
-        # import ipdb
-        # ipdb.set_trace()  #
-
+        # Training
         if test_set == 0:
             # Train
             history = self.train_rnn((inputs, outputs))
-            # Metrics
-            loss = history  #history.history["loss"]
+            # Metrics dummy whilst training
+            loss = history
             cer = -1
             wer1 = -1
             pred = -1
             true = -1
             cer_abs = -1
             wer_lib = -1
+        # Testing
         else:
             # Init true string
             in5 = []
             for input in input_tuple:
                     in5.append(input[2])
-            # in5 = []
-            # for idx, input in enumerate(input_tuple):
-            #     for c in input[2]:
-            #         in5.append(c)
-            # string = "".join(in5)
-            # self.metric_recorder.init_true_string(string)
             self.metric_recorder.init_true_string(in5)
+
             # Test
             history = self.test_rnn((inputs, outputs))
             # Metrics

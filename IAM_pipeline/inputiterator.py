@@ -24,17 +24,16 @@ class IAM_InputIterator(InputIteratorTask):
             #             input_batch = inputs
             #             inputs = []
             #             yield input_batch, 0, 0, epoch
-
-            for fold in data.dataset_val_words:
-                inputs = []
-                for input in fold:
-                    # print("Test:", input)
-                    inputs.append(input)
-                    if len(inputs) == n_batch_size:
-                        input_batch = inputs
-                        inputs = []
-                        yield input_batch, 1, 0, epoch
-                    # yield input, 1, 0, epoch
+            #
+            # for fold in data.dataset_val_words:
+            #     inputs = []
+            #     for input in fold:
+            #         # print("Test:", input)
+            #         inputs.append(input)
+            #         if len(inputs) == n_batch_size:
+            #             input_batch = inputs
+            #             inputs = []
+            #             yield input_batch, 1, 0, epoch
 
         print("====== Line Training ======")
         for epoch in range(n_epochs_line):
@@ -48,7 +47,6 @@ class IAM_InputIterator(InputIteratorTask):
                         input_batch = inputs
                         inputs = []
                         yield input_batch, 0, 1, epoch
-                    # yield input, 0, 1, epoch
 
             for fold in data.dataset_val:
                 inputs = []
@@ -59,7 +57,6 @@ class IAM_InputIterator(InputIteratorTask):
                         input_batch = inputs
                         inputs = []
                         yield input_batch, 1, 1, epoch
-                    # yield input, 1, 1, epoch
 
     def __len__(self):
         fold_lens1 = map(lambda fold: len(fold), data.dataset_words)

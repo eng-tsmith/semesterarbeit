@@ -145,18 +145,19 @@ def decode_batch(test_func, word_batch):
 
 class MetricCallback(keras.callbacks.Callback):
 
-    def __init__(self, test_func):
+    def __init__(self, test_func, batch_size):
         OUTPUT_DIR = 'output'
         self.true_string = []
         self.pred = ''
-        self.WER = ''
         self.test_func = test_func
         self.output_dir = os.path.join(
             OUTPUT_DIR, datetime.datetime.now().strftime('%A, %d. %B %Y %I.%M%p'))
         os.makedirs(self.output_dir, exist_ok=True)
-        self.word_error_rate = 0
-        self.char_error = 0
-        self.char_error_rate = 0
+
+        self.WER = []
+        self.word_error_rate = []
+        self.char_error = []
+        self.char_error_rate = []
         print("Callback init")
 
     def init_testing(self):
@@ -165,6 +166,10 @@ class MetricCallback(keras.callbacks.Callback):
 
     def init_true_string(self, label):
         self.true_string = label
+        self.WER = []
+        self.word_error_rate = []
+        self.char_error = []
+        self.char_error_rate = []
 
     def show_edit_distance(self):
         word_batch = self.model.validation_data
@@ -204,26 +209,31 @@ class MetricCallback(keras.callbacks.Callback):
         import ipdb
         ipdb.set_trace()  #
         # Calc metric
-        edit_dist = editdistance.eval(decoded_res, self.true_string)
+        edit_dist = []
+        mean_ed = []
+        mean_norm_ed = []
+        for i in range(len(self.pred)):
+            edit_dist = editdistance.eval(self.pred[i], self.true_string[i])
+            mean_ed = float(edit_dist)
+            mean_norm_ed = float(edit_dist) / float(len(self.true_string[i]))
+        # mean_ed = float(edit_dist)
+        # mean_norm_ed = float(edit_dist) / float(len(self.true_string))
+            self.char_error.append(mean_ed)
+            self.char_error_rate.append(mean_norm_ed)
+            if mean_ed == 0.0:
+                self.word_error_rate.append(0)
+            else:
+                self.word_error_rate.append(1)
+            self.WER.append(wer("".join(self.pred[i]), self.true_string[i]))
+            print('Truth: ', self.true_string[i], '   <->   Decoded: ', self.pred[i])
+        # self.char_error = mean_ed
+        # self.char_error_rate = mean_norm_ed
+        # if mean_ed == 0.0:
+        #     self.word_error_rate = 0
+        # else:
+        #     self.word_error_rate = 1
+        # self.WER = wer("".join(decoded_res), self.true_string)
 
-        mean_ed = float(edit_dist)
-        mean_norm_ed = float(edit_dist) / float(len(self.true_string))
-
-        self.char_error = mean_ed
-        self.char_error_rate = mean_norm_ed
-        if mean_ed == 0.0:
-            self.word_error_rate = 0
-        else:
-            self.word_error_rate = 1
-        self.WER = wer("".join(decoded_res), self.true_string)
-
-
-
-
-
-
-
-        print('Truth: ', self.true_string, '   ---   Decoded: ', dec_string)
 
 
 def pad_sequence_into_array(image, maxlen):
@@ -411,6 +421,8 @@ class IAM_Predictor(PredictorTask):
         print('Test...')
         history_callback = self.model.test_on_batch(inputs[0], inputs[1])
         self.metric_recorder.evaluate(inputs[0]['the_input'])
+        import ipdb
+        ipdb.set_trace()
         return history_callback
 
     def predict_rnn(self, inputs):

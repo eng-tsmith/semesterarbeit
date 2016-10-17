@@ -15,25 +15,25 @@ class IAM_InputIterator(InputIteratorTask):
         print("====== Word Training ======")
         for epoch in range(n_epochs_word):
             print("Epoche: ", epoch)
-            # for fold in data.dataset_words:
-            #     inputs = []
-            #     for input in fold:
-            #         # print("Train with: ", input)
-            #         inputs.append(input)
-            #         if len(inputs)== n_batch_size:
-            #             input_batch = inputs
-            #             inputs = []
-            #             yield input_batch, 0, 0, epoch
-            #
-            # for fold in data.dataset_val_words:
-            #     inputs = []
-            #     for input in fold:
-            #         # print("Test:", input)
-            #         inputs.append(input)
-            #         if len(inputs) == n_batch_size:
-            #             input_batch = inputs
-            #             inputs = []
-            #             yield input_batch, 1, 0, epoch
+            for fold in data.dataset_words:
+                inputs = []
+                for input in fold:
+                    # print("Train with: ", input)
+                    inputs.append(input)
+                    if len(inputs)== n_batch_size:
+                        input_batch = inputs
+                        inputs = []
+                        yield input_batch, 0, 0, epoch
+
+            for fold in data.dataset_val_words:
+                inputs = []
+                for input in fold:
+                    # print("Test:", input)
+                    inputs.append(input)
+                    if len(inputs) == n_batch_size:
+                        input_batch = inputs
+                        inputs = []
+                        yield input_batch, 1, 0, epoch
 
         print("====== Line Training ======")
         for epoch in range(n_epochs_line):

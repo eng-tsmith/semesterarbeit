@@ -58,7 +58,7 @@ class IAM_InputIterator(InputIteratorTask):
                         inputs = []
                         yield input_batch, 1, 1, epoch
 
-    def __len__(self):  # TODO
+    def sizes(self):  # TODO
         fold_lens1 = data.dataset_words_size
         fold_lens2 = data.dataset_val_words_size
         fold_lens3 = data.dataset_train_size

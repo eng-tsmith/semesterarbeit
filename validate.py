@@ -63,7 +63,7 @@ if __name__ == '__main__':
     print("Modules loaded.")
 
     index = 0
-    len1, len2, len3, len4, n_ep_word, n_ep_line = len(input_iterator)
+    len1, len2, len3, len4, n_ep_word, n_ep_line = input_iterator.sizes()
     # len1 = 0
     # len2 = 0
     # len3 = 0

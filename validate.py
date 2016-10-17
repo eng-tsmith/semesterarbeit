@@ -75,13 +75,13 @@ if __name__ == '__main__':
         start_timer("global")
         try:
             if test_set == 0 and is_line == 0:
-                progress_str = "Training words Epoch: " + str(epoch) + "(" + str(index) + " / " + str(n_ep_word*(len1+len2)) + ")"
+                progress_str = "Training words Epoch: " + str(epoch) + " Batch (" + str(index) + " / " + str(n_ep_word*(len1+len2)) + ")"
             if test_set == 1 and is_line == 0:
-                progress_str = "Testing words Epoch: " + str(epoch) + "(" + str(index) + " / " + str(n_ep_word*(len1+len2)) + ")"
+                progress_str = "Testing words Epoch: " + str(epoch) + " Batch (" + str(index) + " / " + str(n_ep_word*(len1+len2)) + ")"
             if test_set == 0 and is_line == 1:
-                progress_str = "Training lines Epoch: " + str(epoch) + "(" + str(index) + " / " + str(n_ep_word*(len1+len2)+n_ep_line*(len3+len4)) + ")"
+                progress_str = "Training lines Epoch: " + str(epoch) + " Batch (" + str(index) + " / " + str(n_ep_word*(len1+len2)+n_ep_line*(len3+len4)) + ")"
             if test_set == 1 and is_line == 1:
-                progress_str = "Testing lines Epoch: " + str(epoch) + "(" + str(index) + " / " + str(n_ep_word*(len1+len2)+n_ep_line*(len3+len4)) + ")"
+                progress_str = "Testing lines Epoch: " + str(epoch) + " Batch (" + str(index) + " / " + str(n_ep_word*(len1+len2)+n_ep_line*(len3+len4)) + ")"
             print("===========================")
             print("===========================")
 

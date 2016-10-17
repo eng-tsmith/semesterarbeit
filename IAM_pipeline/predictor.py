@@ -407,22 +407,19 @@ class IAM_Predictor(PredictorTask):
 
     def test_rnn(self, inputs):
         """
-        Test neural network
-        :param img_feat_vec:
-        :param label:
+
+        :param inputs:
         :return:
         """
         print('Test...')
         history_callback = self.model.test_on_batch(inputs[0], inputs[1])
-        import ipdb
-        ipdb.set_trace()
-        self.metric_recorder.evaluate(list(inputs[0].values()))
+        self.metric_recorder.evaluate(inputs[0]['the_input'])
         return history_callback
 
     def predict_rnn(self, inputs):
         """
 
-        :param img_feat_vec:
+        :param inputs:
         """
         print('Evaluate...')
         pred = self.predict(inputs[0], batch_size=1, verbose=0)

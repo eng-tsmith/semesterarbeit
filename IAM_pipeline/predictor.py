@@ -191,9 +191,6 @@ class MetricCallback(keras.callbacks.Callback):
         # word_batch = self.model.validation_data
         decoded_res = decode_batch(self.test_func, word_batch)  # TODO check here what dimension the word batch does? randomm?? 1-2
 
-        import ipdb
-        ipdb.set_trace()  #
-
         # parse out string
         dec_string = []
         for res in decoded_res:
@@ -204,6 +201,8 @@ class MetricCallback(keras.callbacks.Callback):
         self.pred = dec_string
 
         # TODO after this have not implenmted batch
+        import ipdb
+        ipdb.set_trace()  #
         # Calc metric
         edit_dist = editdistance.eval(decoded_res, self.true_string)
 

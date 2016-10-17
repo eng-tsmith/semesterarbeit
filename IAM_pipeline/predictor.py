@@ -145,7 +145,7 @@ def decode_batch(test_func, word_batch):
 
 class MetricCallback(keras.callbacks.Callback):
 
-    def __init__(self, test_func, batch_size):
+    def __init__(self, test_func):
         OUTPUT_DIR = 'output'
         self.true_string = []
         self.pred = ''

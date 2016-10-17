@@ -205,9 +205,6 @@ class MetricCallback(keras.callbacks.Callback):
             dec_string.append("".join(out_str))
         self.pred = dec_string
 
-        # TODO after this have not implenmted batch
-        import ipdb
-        ipdb.set_trace()  #
         # Calc metric
         edit_dist = []
         mean_ed = []
@@ -421,8 +418,7 @@ class IAM_Predictor(PredictorTask):
         print('Test...')
         history_callback = self.model.test_on_batch(inputs[0], inputs[1])
         self.metric_recorder.evaluate(inputs[0]['the_input'])
-        import ipdb
-        ipdb.set_trace()
+
         return history_callback
 
     def predict_rnn(self, inputs):

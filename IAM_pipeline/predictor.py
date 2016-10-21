@@ -160,10 +160,6 @@ class MetricCallback(keras.callbacks.Callback):
         self.char_error_rate = []
         print("Callback init")
 
-    def init_testing(self):
-        self.word_error_rate = 0
-        self.char_error_rate = 0
-
     def init_true_string(self, label):
         self.true_string = label
         self.WER = []
@@ -171,30 +167,13 @@ class MetricCallback(keras.callbacks.Callback):
         self.char_error = []
         self.char_error_rate = []
 
-    def show_edit_distance(self):
-        word_batch = self.model.validation_data
-        decoded_res = decode_batch(self.test_func, word_batch[0])
-
-        edit_dist = editdistance.eval(decoded_res, self.true_string)
-
-        mean_ed = float(edit_dist)
-        mean_norm_ed = float(edit_dist) / float(len(self.true_string))
-
-        self.char_error = mean_ed
-        self.char_error_rate = mean_norm_ed
-        if mean_ed == 0.0:
-            self.word_error_rate = 0
-        else:
-            self.word_error_rate = 1
-        self.WER = wer("".join(decoded_res), self.true_string)
-
     def evaluate(self, word_batch):
         print("Manuel Callback Aufruf")
         # Save weights
         # self.model.save_weights(os.path.join(self.output_dir, 'weights.h5'))  #TODO save weightsss
         # Predict
         # word_batch = self.model.validation_data
-        decoded_res = decode_batch(self.test_func, word_batch)  # TODO check here what dimension the word batch does? randomm?? 1-2
+        decoded_res = decode_batch(self.test_func, word_batch)
 
         # parse out string
         dec_string = []
@@ -223,14 +202,6 @@ class MetricCallback(keras.callbacks.Callback):
                 self.word_error_rate.append(1)
             self.WER.append(wer("".join(self.pred[i]), self.true_string[i]))
             print('Truth: ', self.true_string[i], '   <->   Decoded: ', self.pred[i])
-        # self.char_error = mean_ed
-        # self.char_error_rate = mean_norm_ed
-        # if mean_ed == 0.0:
-        #     self.word_error_rate = 0
-        # else:
-        #     self.word_error_rate = 1
-        # self.WER = wer("".join(decoded_res), self.true_string)
-
 
 
 def pad_sequence_into_array(image, maxlen):
@@ -318,7 +289,7 @@ class IAM_Predictor(PredictorTask):
         time_dense_size = 32
         rnn_size = 512
         time_steps = self.img_w / (pool_size_1 * pool_size_2)
-        lr = 0.001
+        lr = 0.025
         # clipnorm seems to speeds up convergence
         clipnorm = 5
         self.downsampled_width = int(self.img_w / (pool_size_1 * pool_size_2) - 2)

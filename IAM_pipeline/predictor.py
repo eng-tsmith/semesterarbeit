@@ -367,7 +367,7 @@ class IAM_Predictor(PredictorTask):
         self.metric_recorder = MetricCallback(self.test_func)
 
         # Init TensorBoard
-        self.tsb = keras.callbacks.TensorBoard(log_dir='output/TF', histogram_freq=0, write_graph=True)  #TODO Path
+        self.tsb = keras.callbacks.TensorBoard(log_dir='output/TF', histogram_freq=10, write_graph=False)  #TODO Path
 
         # Init NN done
         print("Compiled Keras model successfully.")

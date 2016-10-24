@@ -12,8 +12,8 @@ from keras.optimizers import SGD
 from keras.utils import np_utils
 from keras.utils.data_utils import get_file
 from keras.preprocessing import image
-# import keras.callbacks
-from keras.callbacks import TensorBoard
+import keras.callbacks
+# from keras.callbacks import TensorBoard
 import datetime
 import itertools
 import editdistance
@@ -367,7 +367,7 @@ class IAM_Predictor(PredictorTask):
         self.metric_recorder = MetricCallback(self.test_func)
 
         # Init TensorBoard
-        self.tsb = TensorBoard(log_dir='output/TF', histogram_freq=0, write_graph=True)  #TODO Path
+        self.tsb = keras.callbacks.TensorBoard(log_dir='output/TF', histogram_freq=0, write_graph=True)  #TODO Path
 
         # Init NN done
         print("Compiled Keras model successfully.")

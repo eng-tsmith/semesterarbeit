@@ -12,7 +12,8 @@ from keras.optimizers import SGD
 from keras.utils import np_utils
 from keras.utils.data_utils import get_file
 from keras.preprocessing import image
-import keras.callbacks
+# import keras.callbacks
+from keras.callbacks import TensorBoard
 import datetime
 import itertools
 import editdistance
@@ -365,9 +366,11 @@ class IAM_Predictor(PredictorTask):
         self.test_func = K.function([input_data], [y_pred])
         self.metric_recorder = MetricCallback(self.test_func)
 
+        # Init TensorBoard
+        self.tsb = TensorBoard(log_dir='output/TF', histogram_freq=0, write_graph=True)  #TODO Path
+
         # Init NN done
         print("Compiled Keras model successfully.")
-
 
     def train_rnn(self, inputs):
         """
@@ -377,7 +380,8 @@ class IAM_Predictor(PredictorTask):
         """
         print('Train...')
         # history_callback = self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1)
-        history_callback = self.model.train_on_batch(inputs[0], inputs[1])
+        history_callback = self.model.fit(inputs[0], inputs[1], batch_size=32, nb_epoch=1, callbacks=[self.tsb])
+        # history_callback = self.model.train_on_batch(inputs[0], inputs[1])
         return history_callback
 
     def test_rnn(self, inputs):

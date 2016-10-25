@@ -127,4 +127,8 @@ inputs = {'the_input': in1,
           'label_length': in4}
 outputs = {'ctc': out1}
 
+import ipdb
+ipdb.set_trace()
+
+
 print(inputs[0]['the_input'])

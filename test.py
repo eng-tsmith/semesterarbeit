@@ -57,8 +57,6 @@ def pad_label_with_blank(label, blank_id, max_length):
     return label_out, label_len_1
 
 
-
-
 # load json and create model
 json_file = open('model.json', 'r')
 loaded_model_json = json_file.read()
@@ -69,7 +67,7 @@ loaded_model.load_weights("model.h5")
 print("Loaded model from disk")
 
 # Start Preprocessing
-preprocessor   = IAM_pipeline.Preprocessor()
+preprocessor = IAM_pipeline.preprocessor.IAM_Preprocessor()
 
 # Test image
 path_to_img_file = '../media/nas/01_Datasets/IAM/words/c06/c06-005/c06-005-06-01.png'

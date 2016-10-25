@@ -1,7 +1,7 @@
 from keras.models import Sequential
 from keras.layers import Dense
 from keras import backend as K
-from keras.models import model_from_yaml
+from keras.models import model_from_json
 import numpy as np
 import os
 import IAM_pipeline.char_alphabet as char_alpha
@@ -59,11 +59,11 @@ def pad_label_with_blank(label, blank_id, max_length):
 
 
 
-# load YAML and create model
-yaml_file = open('model.yaml', 'r')
-loaded_model_yaml = yaml_file.read()
-yaml_file.close()
-loaded_model = model_from_yaml(loaded_model_yaml)
+# load json and create model
+json_file = open('model.json', 'r')
+loaded_model_json = json_file.read()
+json_file.close()
+loaded_model = model_from_json(loaded_model_json)
 # load weights into new model
 loaded_model.load_weights("model.h5")
 print("Loaded model from disk")

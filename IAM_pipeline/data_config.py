@@ -127,7 +127,7 @@ IAM = [IAM_dataset_train, IAM_dataset_validate, [IAM_dataset_words], [IAM_datase
 # ______ SELECT DATASET ______
 # ____________________________
 
-n_epochs_word = 20
+n_epochs_word = 30
 n_epochs_line = 50
 n_batch_size = 32
 

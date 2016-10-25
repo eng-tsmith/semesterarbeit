@@ -7,6 +7,8 @@ from keras.layers.convolutional import Convolution2D, MaxPooling2D
 from keras.layers import Input, Layer, Dense, Activation, Flatten
 from keras.layers import Reshape, Lambda, merge, Permute, TimeDistributed
 from keras.models import Model
+from keras.models import Sequential
+from keras.models import model_from_json
 from keras.layers.recurrent import GRU
 from keras.optimizers import SGD
 from keras.utils import np_utils
@@ -276,6 +278,9 @@ class IAM_Predictor(PredictorTask):
         # Input Parameters
         chars = char_alpha.chars
 
+        # Save weights
+        self.test = 0
+
         # Input Parameters
         self.img_h = 64
         self.img_w = 512
@@ -453,6 +458,19 @@ class IAM_Predictor(PredictorTask):
                   'input_length': in3,
                   'label_length': in4}
         outputs = {'ctc': out1}
+
+        # Save after each training epoch
+        if test_set != self.test:
+            self.test = test_set
+            if test_set == 1:
+                # serialize model to JSON
+                model_json = self.model.to_json()
+                with open("model.json", "w") as json_file:
+                    json_file.write(model_json)
+                # serialize weights to HDF5
+                self.model.save_weights("model.h5")
+                print("Saved model to disk")
+
 
         # Training
         if test_set == 0:

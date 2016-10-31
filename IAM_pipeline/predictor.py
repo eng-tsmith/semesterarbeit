@@ -324,7 +324,7 @@ class IAM_Predictor(PredictorTask):
 
         # CNN to RNN convert
         conv_to_rnn_dims = (
-        (self.img_h / (pool_size_1 * pool_size_2)) * conv_num_filters, self.img_w / (pool_size_1 * pool_size_2))
+        (self.img_h / (pool_size_1 * pool_size_2)) * conv_num_filters, time_steps)
 
         a = conv_to_rnn_dims[0]
         b = conv_to_rnn_dims[1]

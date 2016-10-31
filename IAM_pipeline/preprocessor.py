@@ -26,6 +26,8 @@ def label_preproc(label_string):
 
     label_int_arr = np.resize(np.asarray(label_int), (1, len(label_int)))
 
+    print(len(label_int_arr))
+
     return label_int_arr
 
 def show_img(img):

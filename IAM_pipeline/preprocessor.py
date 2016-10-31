@@ -183,6 +183,8 @@ def scaling(img):
 
     img_scaled = cv.resize(img, dim, interpolation=cv.INTER_NEAREST)
 
+    print(img_scaled.shape)
+
     return img_scaled
 
 

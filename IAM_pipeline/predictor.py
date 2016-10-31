@@ -283,7 +283,7 @@ class IAM_Predictor(PredictorTask):
 
         # Input Parameters
         self.img_h = 64
-        self.img_w = 512
+        self.img_w = 2048
         self.absolute_max_string_len = 100
         self.output_size = len(chars)
 

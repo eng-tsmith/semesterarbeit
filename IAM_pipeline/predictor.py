@@ -420,7 +420,7 @@ class IAM_Predictor(PredictorTask):
             #         word_error_rate.append(1)
             #     WER.append(wer("".join(pred[i]), true_batch[i]))
             #     print('Truth: ', true_batch[i], '   <->   Decoded: ', pred[i])
-            a = len(y_true)
+            a = y_true.shape
             w = tf.Variable(a, name='test')  # w.assign(1.0) TODO fix metrics
         else:
             w = tf.Variable(0, name='test')  # w.assign(1.0) TODO fix metrics

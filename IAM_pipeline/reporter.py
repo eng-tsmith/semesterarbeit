@@ -37,7 +37,7 @@ class IAM_Reporter(ReporterTask):
         """
 
         if test_set == 0:
-            print("Filename: ", input_tuple)  # print("Filename: ", input_tuple[2])
+            print("Batch Filenames: ", input_tuple)  # print("Filename: ", input_tuple[2])
             print("loss: ", evaluator_output[2])
             # ["File", "Loss", "Test Set:"]
             fields_train = [input_tuple, evaluator_output[2], test_set]
@@ -47,7 +47,7 @@ class IAM_Reporter(ReporterTask):
                 writer.writerow(fields_train)
 
         if test_set == 1:
-            print("Filename: ", input_tuple[2])
+            print("Batch Filenames: ", input_tuple)
             print("True label: ", evaluator_output[0])
             print("Prediction: ", evaluator_output[1])
             print("loss: ", evaluator_output[2])
@@ -56,7 +56,7 @@ class IAM_Reporter(ReporterTask):
             print("WER: ", evaluator_output[5])
             print("WER_lib: ", evaluator_output[6])
             # ["File", "Label", "Pred", "Loss", "CE", "CER", "WER", "WER_LIB", "Test Set:"]
-            fields_test = [input_tuple[2], evaluator_output[0], evaluator_output[1], evaluator_output[2], evaluator_output[3], evaluator_output[4], evaluator_output[5],  evaluator_output[6], test_set]
+            fields_test = [input_tuple, evaluator_output[0], evaluator_output[1], evaluator_output[2], evaluator_output[3], evaluator_output[4], evaluator_output[5],  evaluator_output[6], test_set]
 
             import ipdb
             ipdb.set_trace()

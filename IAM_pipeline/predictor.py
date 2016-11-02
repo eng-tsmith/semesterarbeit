@@ -265,7 +265,10 @@ def ctc_lambda_func(args):
 
 
 def tim_metric(y_true, y_pred):
-    return 1.0
+    return {
+        'WER': 1,
+        'CER': 2,
+    }
 
 
 class IAM_Predictor(PredictorTask):

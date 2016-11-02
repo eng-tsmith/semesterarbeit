@@ -267,7 +267,7 @@ def ctc_lambda_func(args):
 def tim_metric(y_true, y_pred):
     length = tf.to_int32(y_true, name='ToInt32')
     w = tf.Variable(0, name='test')  #w.assign(1.0) TODO fix metrics
-    w.assign(length)
+    w.assign(w + 5)
     return w
 
 

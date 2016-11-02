@@ -36,10 +36,10 @@ class IAM_Reporter(ReporterTask):
         :return:
         """
         if test_set == 0:
-            print("Filename: ", input_tuple[2])
+            print("Filename: ", input_tuple)  # print("Filename: ", input_tuple[2])
             print("loss: ", evaluator_output[2])
             # ["File", "Loss", "Test Set:"]
-            fields_train = [input_tuple[2], evaluator_output[2], test_set]
+            fields_train = [input_tuple, evaluator_output[2], test_set]
             with open(self.out_dir_train, "a") as f:
                 writer = csv.writer(f)
                 writer.writerow(fields_train)

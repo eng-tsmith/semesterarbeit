@@ -265,7 +265,7 @@ def ctc_lambda_func(args):
 
 
 def tim_metric(y_true, y_pred):
-    predicted = set(y_pred.eval)
+    predicted = set(y_pred.eval())
     length = len(predicted)
 
     import ipdb

@@ -264,7 +264,7 @@ def ctc_lambda_func(args):
     return K.ctc_batch_cost(labels, y_pred, input_length, label_length)
 
 
-def tim_metric():
+def tim_metric(y_true, y_pred):
     return 0
 
 

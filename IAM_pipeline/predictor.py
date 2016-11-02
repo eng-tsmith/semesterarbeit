@@ -370,8 +370,7 @@ class IAM_Predictor(PredictorTask):
 
         # the loss calc occurs elsewhere, so use a dummy lambda func for the loss
         self.model.compile(optimizer=sgd,
-                           loss={'ctc': lambda y_true, y_pred: y_pred},
-                           metrics=[tim_metric])
+                           loss={'ctc': lambda y_true, y_pred: y_pred})#metrics=[tim_metric])
 
         # captures output of softmax so we can decode the output during visualization
         self.test_func = K.function([input_data], [y_pred])

@@ -424,7 +424,7 @@ class IAM_Predictor(PredictorTask):
             w = tf.Variable(a, name='test')  # w.assign(1.0) TODO fix metrics
         else:
             w = tf.Variable(5, name='test')  # w.assign(1.0) TODO fix metrics
-
+        self.init_met = 1
         return w
 
     def train_rnn(self, inputs):

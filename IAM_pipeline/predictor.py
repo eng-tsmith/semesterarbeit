@@ -20,7 +20,7 @@ import datetime
 import itertools
 import editdistance
 import IAM_pipeline.char_alphabet as char_alpha
-
+import tensorflow as tf
 
 def wer(ref, hyp, debug=False):
     """
@@ -265,9 +265,8 @@ def ctc_lambda_func(args):
 
 
 def tim_metric(y_true, y_pred):
-    WER = ...
-    CER = ...
-    return {'WER': WER, 'CER': CER}
+    w = tf.Variable(0, name='test')
+    return w
 
 
 class IAM_Predictor(PredictorTask):

@@ -42,9 +42,6 @@ class IAM_Reporter(ReporterTask):
             # ["File", "Loss", "Test Set:"]
             fields_train = [input_tuple, evaluator_output[2], test_set]
 
-            import ipdb
-            ipdb.set_trace()
-
             with open(self.out_dir_train, "a") as f:
                 writer = csv.writer(f)
                 writer.writerow(fields_train)

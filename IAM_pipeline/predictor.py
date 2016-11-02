@@ -264,32 +264,7 @@ def ctc_lambda_func(args):
     return K.ctc_batch_cost(labels, y_pred, input_length, label_length)
 
 
-def tim_metric(y_true, y_pred):
-    # pred_batch = tf.to_float(y_pred, name='ToInt32')
-    # true_batch = tf.to_float(y_true, name='ToInt32')
-    #
-    # # Calc metric
-    # edit_dist = []
-    # mean_ed = []
-    # mean_norm_ed = []
-    # for i in range(len(pred_batch)):
-    #     edit_dist = editdistance.eval(self.pred[i], self.true_string[i])
-    #     mean_ed = float(edit_dist)
-    #     mean_norm_ed = float(edit_dist) / float(len(self.true_string[i]))
-    #     # mean_ed = float(edit_dist)
-    #     # mean_norm_ed = float(edit_dist) / float(len(self.true_string))
-    #     self.char_error.append(mean_ed)
-    #     self.char_error_rate.append(mean_norm_ed)
-    #     if mean_ed == 0.0:
-    #         self.word_error_rate.append(0)
-    #     else:
-    #         self.word_error_rate.append(1)
-    #     self.WER.append(wer("".join(self.pred[i]), self.true_string[i]))
-    #     print('Truth: ', self.true_string[i], '   <->   Decoded: ', self.pred[i])
 
-    a = y_true[0]
-    w = tf.Variable(a, name='test')  #w.assign(1.0) TODO fix metrics
-    return w
 
 
 class IAM_Predictor(PredictorTask):
@@ -406,6 +381,33 @@ class IAM_Predictor(PredictorTask):
 
         # Init NN done
         print("Compiled Keras model successfully.")
+
+    def tim_metric(self, y_true, y_pred):
+        # pred_batch = tf.to_float(y_pred, name='ToInt32')
+        # true_batch = tf.to_float(y_true, name='ToInt32')
+        #
+        # # Calc metric
+        # edit_dist = []
+        # mean_ed = []
+        # mean_norm_ed = []
+        # for i in range(len(pred_batch)):
+        #     edit_dist = editdistance.eval(self.pred[i], self.true_string[i])
+        #     mean_ed = float(edit_dist)
+        #     mean_norm_ed = float(edit_dist) / float(len(self.true_string[i]))
+        #     # mean_ed = float(edit_dist)
+        #     # mean_norm_ed = float(edit_dist) / float(len(self.true_string))
+        #     self.char_error.append(mean_ed)
+        #     self.char_error_rate.append(mean_norm_ed)
+        #     if mean_ed == 0.0:
+        #         self.word_error_rate.append(0)
+        #     else:
+        #         self.word_error_rate.append(1)
+        #     self.WER.append(wer("".join(self.pred[i]), self.true_string[i]))
+        #     print('Truth: ', self.true_string[i], '   <->   Decoded: ', self.pred[i])
+
+        a = 5
+        w = tf.Variable(a, name='test')  # w.assign(1.0) TODO fix metrics
+        return w
 
     def train_rnn(self, inputs):
         """

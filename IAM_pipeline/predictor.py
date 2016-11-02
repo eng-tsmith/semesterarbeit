@@ -477,9 +477,7 @@ class IAM_Predictor(PredictorTask):
             # Train
             history = self.train_rnn((inputs, outputs))
             # Metrics dummy whilst training
-            import ipdb
-            ipdb.set_trace()
-            loss = history #history.history["loss"]
+            loss = history.history["loss"]  #history
             cer = -1
             wer1 = -1
             pred = -1

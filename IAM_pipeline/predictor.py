@@ -265,6 +265,8 @@ def ctc_lambda_func(args):
 
 
 def tim_metric(y_true, y_pred):
+    import ipdb
+    ipdb.set_trace()
     return y_true
 
 

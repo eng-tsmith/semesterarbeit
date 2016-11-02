@@ -264,6 +264,10 @@ def ctc_lambda_func(args):
     return K.ctc_batch_cost(labels, y_pred, input_length, label_length)
 
 
+def tim_metric():
+    return 0
+
+
 class IAM_Predictor(PredictorTask):
 
     def __init__(self):
@@ -365,7 +369,9 @@ class IAM_Predictor(PredictorTask):
         self.model = Model(input=[input_data, labels, input_length, label_length], output=[loss_out])
 
         # the loss calc occurs elsewhere, so use a dummy lambda func for the loss
-        self.model.compile(loss={'ctc': lambda y_true, y_pred: y_pred}, optimizer=sgd)
+        self.model.compile(optimizer=sgd,
+                           loss={'ctc': lambda y_true, y_pred: y_pred},
+                           metrics=tim_metric)
 
         # captures output of softmax so we can decode the output during visualization
         self.test_func = K.function([input_data], [y_pred])

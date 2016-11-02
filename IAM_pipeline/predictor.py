@@ -423,7 +423,7 @@ class IAM_Predictor(PredictorTask):
             a = y_true.shape
             w = tf.Variable(a, name='test')  # w.assign(1.0) TODO fix metrics
         else:
-            w = tf.Variable(0, name='test')  # w.assign(1.0) TODO fix metrics
+            w = tf.Variable(5, name='test')  # w.assign(1.0) TODO fix metrics
 
         return w
 

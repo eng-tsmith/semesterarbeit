@@ -303,6 +303,9 @@ class IAM_Predictor(PredictorTask):
         clipnorm = 5
         self.downsampled_width = int(self.img_w / (pool_size_1 * pool_size_2) - 2)
 
+        # Init Metric
+        self.init_met = 0
+
         # Optimizer
         sgd = SGD(lr=lr, decay=3e-7, momentum=0.9, nesterov=True, clipnorm=clipnorm)
         # Activition functrion
@@ -383,30 +386,45 @@ class IAM_Predictor(PredictorTask):
         print("Compiled Keras model successfully.")
 
     def tim_metric(self, y_true, y_pred):
-        # pred_batch = tf.to_float(y_pred, name='ToInt32')
-        # true_batch = tf.to_float(y_true, name='ToInt32')
-        #
-        # # Calc metric
-        # edit_dist = []
-        # mean_ed = []
-        # mean_norm_ed = []
-        # for i in range(len(pred_batch)):
-        #     edit_dist = editdistance.eval(self.pred[i], self.true_string[i])
-        #     mean_ed = float(edit_dist)
-        #     mean_norm_ed = float(edit_dist) / float(len(self.true_string[i]))
-        #     # mean_ed = float(edit_dist)
-        #     # mean_norm_ed = float(edit_dist) / float(len(self.true_string))
-        #     self.char_error.append(mean_ed)
-        #     self.char_error_rate.append(mean_norm_ed)
-        #     if mean_ed == 0.0:
-        #         self.word_error_rate.append(0)
-        #     else:
-        #         self.word_error_rate.append(1)
-        #     self.WER.append(wer("".join(self.pred[i]), self.true_string[i]))
-        #     print('Truth: ', self.true_string[i], '   <->   Decoded: ', self.pred[i])
+        # TODO
+        if self.init_met == 1 :
+            # word_batch = self.
+            # true_batch = self.
+            #
+            # decoded_res = decode_batch(self.test_func, word_batch)
+            #
+            # # parse out string
+            # dec_string = []
+            # for res in decoded_res:
+            #     out_str = []
+            #     for c in res:
+            #         out_str.append(c)
+            #     dec_string.append("".join(out_str))
+            # pred = dec_string
+            #
+            # # Calc metric
+            # edit_dist = []
+            # mean_ed = []
+            # mean_norm_ed = []
+            # for i in range(len(pred)):
+            #     edit_dist = editdistance.eval(pred[i], true_batch[i])
+            #     mean_ed = float(edit_dist)
+            #     mean_norm_ed = float(edit_dist) / float(len(true_batch[i]))
+            #     # mean_ed = float(edit_dist)
+            #     # mean_norm_ed = float(edit_dist) / float(len(self.true_string))
+            #     char_error.append(mean_ed)
+            #     char_error_rate.append(mean_norm_ed)
+            #     if mean_ed == 0.0:
+            #         word_error_rate.append(0)
+            #     else:
+            #         word_error_rate.append(1)
+            #     WER.append(wer("".join(pred[i]), true_batch[i]))
+            #     print('Truth: ', true_batch[i], '   <->   Decoded: ', pred[i])
+            a = len(y_true)
+            w = tf.Variable(a, name='test')  # w.assign(1.0) TODO fix metrics
+        else:
+            w = tf.Variable(0, name='test')  # w.assign(1.0) TODO fix metrics
 
-        a = 5
-        w = tf.Variable(a, name='test')  # w.assign(1.0) TODO fix metrics
         return w
 
     def train_rnn(self, inputs):

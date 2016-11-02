@@ -265,7 +265,7 @@ def ctc_lambda_func(args):
 
 
 def tim_metric(y_true, y_pred):
-    return np.zeros(1)
+    return y_true
 
 
 class IAM_Predictor(PredictorTask):

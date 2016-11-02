@@ -265,9 +265,12 @@ def ctc_lambda_func(args):
 
 
 def tim_metric(y_true, y_pred):
+    predicted = set(y_pred)
+    length = len(predicted)
+
     import ipdb
     ipdb.set_trace()
-    return y_true
+    return length
 
 
 class IAM_Predictor(PredictorTask):

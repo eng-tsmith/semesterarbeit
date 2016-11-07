@@ -394,7 +394,7 @@ class IAM_Predictor(PredictorTask):
         # a = y_true.shape
         # w = tf.Variable(a, name='test')  # w.assign(1.0) TODO fix metrics
         #
-        # w = tf.Variable(5, name='test')  # w.assign(1.0) TODO fix metrics
+        # w = tf.Variable(5, name='test')  # w.assign(1.0) TODO fix metrics d
         # self.init_met = 1
         #
         # K.edit_distance(test_string_sparse, ref_string_sparse, normalize=True)

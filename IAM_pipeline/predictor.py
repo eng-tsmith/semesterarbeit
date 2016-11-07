@@ -392,16 +392,17 @@ class IAM_Predictor(PredictorTask):
         # TODO
         #
         # a = y_true.shape
-        # w = tf.Variable(a, name='test')  # w.assign(1.0) TODO fix metrics
+        w = tf.Variable(0, name='test')  # w.assign(1.0) TODO fix metrics
         #
         # w = tf.Variable(5, name='test')  # w.assign(1.0) TODO fix metrics d
         # self.init_met = 1
         #
         # K.edit_distance(test_string_sparse, ref_string_sparse, normalize=True)
-        import ipdb
-        ipdb.set_trace()
-
-        return tf.edit_distance(y_true, y_pred, normalize=True)
+        # import ipdb
+        # ipdb.set_trace()
+        #
+        # return tf.edit_distance(y_true, y_pred, normalize=True)
+        return w
 
     def train_rnn(self, inputs):
         """

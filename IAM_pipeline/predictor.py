@@ -420,9 +420,9 @@ class IAM_Predictor(PredictorTask):
         feed_dict = {test_input: test_string_sparse,
                      ref_input: ref_string_sparse}
 
-        # print()
+        w = tf.constant(sess.run(edit_distances, feed_dict=feed_dict))
 
-        return sess.run(edit_distances, feed_dict=feed_dict)
+        return w
 
     def train_rnn(self, inputs):
         """

@@ -398,20 +398,31 @@ class IAM_Predictor(PredictorTask):
         print("Compiled Keras model successfully.")
 
     def tim_metric(self, y_true, y_pred):
-        # TODO
-        #
-        # a = y_true.shape
-        w = tf.Variable(0, name='test')  # w.assign(1.0) TODO fix metrics
-        #
-        # w = tf.Variable(5, name='test')  # w.assign(1.0) TODO fix metrics d
-        # self.init_met = 1
-        #
-        # K.edit_distance(test_string_sparse, ref_string_sparse, normalize=True)
-        # import ipdb
-        # ipdb.set_trace()
-        #
-        # return tf.edit_distance(y_true, y_pred, normalize=True)
-        return w
+        sess = tf.Session()
+        def create_sparse_vec(word_list):
+            num_words = len(word_list)
+            indices = [[xi, 0, yi] for xi, x in enumerate(word_list) for yi, y in enumerate(x)]
+            chars = list(''.join(word_list))
+            return tf.SparseTensorValue(indices, chars, [num_words, 1, 1])
+
+        # Create input data
+        test_string = ['hallo']
+        ref_strings = ['hello']
+
+        test_string_sparse = create_sparse_vec(test_string * len(ref_strings))
+        ref_string_sparse = create_sparse_vec(ref_strings)
+
+        test_input = tf.sparse_placeholder(dtype=tf.string)
+        ref_input = tf.sparse_placeholder(dtype=tf.string)
+
+        edit_distances = tf.edit_distance(test_input, ref_input, normalize=False)
+
+        feed_dict = {test_input: test_string_sparse,
+                     ref_input: ref_string_sparse}
+
+        # print()
+
+        return sess.run(edit_distances, feed_dict=feed_dict)
 
     def train_rnn(self, inputs):
         """

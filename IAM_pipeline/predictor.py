@@ -21,6 +21,8 @@ import itertools
 import editdistance
 import IAM_pipeline.char_alphabet as char_alpha
 import tensorflow as tf
+from keras.utils.visualize_util import plot
+
 
 def wer(ref, hyp, debug=False):
     """
@@ -383,6 +385,7 @@ class IAM_Predictor(PredictorTask):
         self.tsb = keras.callbacks.TensorBoard(log_dir='output/TF', histogram_freq=10, write_graph=False)  #TODO Path
 
         # Init NN done
+        plot(self.model, to_file='model.png')
         print("Compiled Keras model successfully.")
 
     def tim_metric(self, y_true, y_pred):

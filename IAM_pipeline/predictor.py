@@ -384,7 +384,7 @@ class IAM_Predictor(PredictorTask):
         mydir = os.path.join(os.getcwd(), "output/TF/", datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
         os.makedirs(mydir)
         print("Saving Tensorboard to: ", mydir)
-        self.tsb = keras.callbacks.TensorBoard(log_dir=mydir, histogram_freq=10, write_graph=False)  #TODO Path
+        self.tsb = keras.callbacks.TensorBoard(log_dir=mydir, histogram_freq=1, write_graph=False)
 
         # Init NN done
         plot(self.model, to_file='model.png')

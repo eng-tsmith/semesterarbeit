@@ -149,8 +149,6 @@ def decode_batch(test_func, word_batch):
 
 class cb_testtim(keras.callbacks.Callback):
     def on_epoch_end(self, epoch, logs={}):
-        import ipdb
-        ipdb.set_trace()
         print('testasdfasdfasdfaasdf')
 
 class MetricCallback(keras.callbacks.Callback):

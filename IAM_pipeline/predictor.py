@@ -383,6 +383,7 @@ class IAM_Predictor(PredictorTask):
         # Init TensorBoard
         mydir = os.path.join(os.getcwd(), datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
         os.makedirs(mydir)
+        print("Saving Tensorboard to: ", mydir)
         self.tsb = keras.callbacks.TensorBoard(log_dir=mydir, histogram_freq=10, write_graph=False)  #TODO Path
 
         # Init NN done

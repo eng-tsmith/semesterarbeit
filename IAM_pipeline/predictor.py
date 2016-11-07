@@ -1,6 +1,6 @@
 from validation_task import PredictorTask
 import sys
-import os
+import os, datetime
 import numpy as np
 from keras import backend as K
 from keras.layers.convolutional import Convolution2D, MaxPooling2D
@@ -381,7 +381,9 @@ class IAM_Predictor(PredictorTask):
         self.metric_recorder = MetricCallback(self.test_func)
 
         # Init TensorBoard
-        self.tsb = keras.callbacks.TensorBoard(log_dir='output/TF', histogram_freq=10, write_graph=False)  #TODO Path
+        mydir = os.path.join(os.getcwd(), datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
+        os.makedirs(mydir)
+        self.tsb = keras.callbacks.TensorBoard(log_dir=mydir, histogram_freq=10, write_graph=False)  #TODO Path
 
         # Init NN done
         plot(self.model, to_file='model.png')

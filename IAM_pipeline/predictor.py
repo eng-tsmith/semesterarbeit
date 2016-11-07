@@ -147,6 +147,9 @@ def decode_batch(test_func, word_batch):
         ret.append(outstr)
     return ret
 
+class cb_testtim(keras.callbacks.Callback):
+    def on_epoch_end(self, epoch, logs={}):
+        print('testasdfasdfasdfasdf')
 
 class MetricCallback(keras.callbacks.Callback):
 
@@ -386,6 +389,8 @@ class IAM_Predictor(PredictorTask):
         print("Saving Tensorboard to: ", mydir)
         self.tsb = keras.callbacks.TensorBoard(log_dir=mydir, histogram_freq=1, write_graph=False)
 
+        self.cb_test = cb_testtim()
+
         # Init NN done
         plot(self.model, to_file='model.png')
         print("Compiled Keras model successfully.")
@@ -414,7 +419,7 @@ class IAM_Predictor(PredictorTask):
         """
         print('Train...')
         # history_callback = self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1)
-        history_callback = self.model.fit(inputs[0], inputs[1], batch_size=32, nb_epoch=1, callbacks=[self.tsb])
+        history_callback = self.model.fit(inputs[0], inputs[1], batch_size=32, nb_epoch=1, callbacks=[self.cb_test, self.tsb])
         # history_callback = self.model.train_on_batch(inputs[0], inputs[1])
         return history_callback
 

@@ -155,9 +155,9 @@ class MetricCallback(keras.callbacks.Callback):
         self.true_string = []
         self.pred = ''
         self.test_func = test_func
-        self.output_dir = os.path.join(
-            OUTPUT_DIR, datetime.datetime.now().strftime('%A, %d. %B %Y %I.%M%p'))
-        os.makedirs(self.output_dir, exist_ok=True)
+        # self.output_dir = os.path.join(
+        #     OUTPUT_DIR, datetime.datetime.now().strftime('%A, %d. %B %Y %I.%M%p'))
+        # os.makedirs(self.output_dir, exist_ok=True)
 
         self.WER = []
         self.word_error_rate = []

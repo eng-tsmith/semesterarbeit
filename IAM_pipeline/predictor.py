@@ -412,7 +412,7 @@ class IAM_Predictor(PredictorTask):
         """
         print('Train...')
         # history_callback = self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1)
-        history_callback = self.model.fit(inputs[0], inputs[1], batch_size=32, nb_epoch=1, callbacks=[self.tsb])
+        history_callback = self.model.fit(inputs[0], inputs[1], batch_size=32, nb_epoch=1)  # TODO, callbacks=[self.tsb])
         # history_callback = self.model.train_on_batch(inputs[0], inputs[1])
         return history_callback
 

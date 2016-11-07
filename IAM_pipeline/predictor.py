@@ -387,45 +387,16 @@ class IAM_Predictor(PredictorTask):
 
     def tim_metric(self, y_true, y_pred):
         # TODO
-        if self.init_met == 1 :
-            # word_batch = self.
-            # true_batch = self.
-            #
-            # decoded_res = decode_batch(self.test_func, word_batch)
-            #
-            # # parse out string
-            # dec_string = []
-            # for res in decoded_res:
-            #     out_str = []
-            #     for c in res:
-            #         out_str.append(c)
-            #     dec_string.append("".join(out_str))
-            # pred = dec_string
-            #
-            # # Calc metric
-            # edit_dist = []
-            # mean_ed = []
-            # mean_norm_ed = []
-            # for i in range(len(pred)):
-            #     edit_dist = editdistance.eval(pred[i], true_batch[i])
-            #     mean_ed = float(edit_dist)
-            #     mean_norm_ed = float(edit_dist) / float(len(true_batch[i]))
-            #     # mean_ed = float(edit_dist)
-            #     # mean_norm_ed = float(edit_dist) / float(len(self.true_string))
-            #     char_error.append(mean_ed)
-            #     char_error_rate.append(mean_norm_ed)
-            #     if mean_ed == 0.0:
-            #         word_error_rate.append(0)
-            #     else:
-            #         word_error_rate.append(1)
-            #     WER.append(wer("".join(pred[i]), true_batch[i]))
-            #     print('Truth: ', true_batch[i], '   <->   Decoded: ', pred[i])
-            a = y_true.shape
-            w = tf.Variable(a, name='test')  # w.assign(1.0) TODO fix metrics
-        else:
-            w = tf.Variable(5, name='test')  # w.assign(1.0) TODO fix metrics
-        self.init_met = 1
-        return w
+        #
+        # a = y_true.shape
+        # w = tf.Variable(a, name='test')  # w.assign(1.0) TODO fix metrics
+        #
+        # w = tf.Variable(5, name='test')  # w.assign(1.0) TODO fix metrics
+        # self.init_met = 1
+        #
+        # K.edit_distance(test_string_sparse, ref_string_sparse, normalize=True)
+
+        return tf.edit_distance(y_true, y_pred, normalize=True)
 
     def train_rnn(self, inputs):
         """

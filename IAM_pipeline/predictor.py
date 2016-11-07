@@ -398,6 +398,8 @@ class IAM_Predictor(PredictorTask):
         # self.init_met = 1
         #
         # K.edit_distance(test_string_sparse, ref_string_sparse, normalize=True)
+        import ipdb
+        ipdb.set_trace()
 
         return tf.edit_distance(y_true, y_pred, normalize=True)
 

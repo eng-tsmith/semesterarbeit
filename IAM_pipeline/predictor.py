@@ -381,8 +381,8 @@ class IAM_Predictor(PredictorTask):
         self.metric_recorder = MetricCallback(self.test_func)
 
         # Init TensorBoard
-        mydir = os.path.join("/output/TF/", datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
-        # os.makedirs(mydir)
+        mydir = os.path.join(os.getcwd(), "output/TF/", datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
+        os.makedirs(mydir)
         print("Saving Tensorboard to: ", mydir)
         self.tsb = keras.callbacks.TensorBoard(log_dir=mydir, histogram_freq=10, write_graph=False)  #TODO Path
 

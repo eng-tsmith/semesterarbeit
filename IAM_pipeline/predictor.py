@@ -151,7 +151,7 @@ class cb_testtim(keras.callbacks.Callback):
     def on_epoch_end(self, epoch, logs={}):
         import ipdb
         ipdb.set_trace()
-        print('testasdfasdfasdfasdf')
+        print('testasdfasdfasdfaasdf')
 
 class MetricCallback(keras.callbacks.Callback):
 

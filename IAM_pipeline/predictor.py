@@ -374,7 +374,7 @@ class IAM_Predictor(PredictorTask):
         # Keras Model of NN
         # Model(input=[input_data, labels, input_length, label_length], output=[loss_out]).summary()
         # self.model_test = Model(input=[input_data], output=y_pred)
-        self.model = Model(input=[input_data, labels, input_length, label_length], output=[y_pred, loss_out])  # TODO y_pred
+        self.model = Model(input=[input_data, labels, input_length, label_length], output=[loss_out])  # TODO y_pred
 
         # the loss calc occurs elsewhere, so use a dummy lambda func for the loss
         self.model.compile(optimizer=sgd,
@@ -405,8 +405,8 @@ class IAM_Predictor(PredictorTask):
             return tf.SparseTensorValue(indices, chars, [num_words, 1, 1])
 
         # Create input data
-        test_string = ['hallo']
-        ref_strings = ['hello']
+        test_string = sess.run(y_true)  #['hallo']
+        ref_strings = sess.run(y_pred)  #['hello']
 
         test_string_sparse = create_sparse_vec(test_string * len(ref_strings))
         ref_string_sparse = create_sparse_vec(ref_strings)

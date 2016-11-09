@@ -178,7 +178,7 @@ class MetricCallback(keras.callbacks.Callback):
     def evaluate(self, word_batch):
         print("Manuel Callback Aufruf")
         # Save weights
-        # self.model.save_weights(os.path.join(self.output_dir, 'weights.h5'))  #TODO save weightsss
+        # self.model.save_weights(os.path.join(self.output_dir, 'weights.h5'))  #TODO save weightsssf
         # Predict
         # word_batch = self.model.validation_data
         decoded_res = decode_batch(self.test_func, word_batch)

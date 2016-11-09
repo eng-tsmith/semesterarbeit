@@ -392,7 +392,7 @@ class IAM_Predictor(PredictorTask):
         self.cb_test = cb_testtim()
 
         # Init NN done
-        plot(self.model, to_file='model.png')
+        plot(self.model, to_file=os.path.join(os.getcwd(), "output/model.png"))
         print("Compiled Keras model successfully.")
 
     def tim_metric(self, y_true, y_pred):

@@ -303,7 +303,7 @@ class IAM_Predictor(PredictorTask):
         time_dense_size = 32
         rnn_size = 512
         time_steps = self.img_w / (pool_size_1 * pool_size_2)
-        lr = 0.015
+        lr = 0.001
         # clipnorm seems to speeds up convergence
         clipnorm = 5
         self.downsampled_width = int(self.img_w / (pool_size_1 * pool_size_2) - 2)
@@ -534,6 +534,9 @@ class IAM_Predictor(PredictorTask):
             wer_lib = -1
         # Testing
         else:
+            import ipdb
+            ipdb.set_trace()
+
             # Init true string
             in5 = []
             for input in input_tuple:

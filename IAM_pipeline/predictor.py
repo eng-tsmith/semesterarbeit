@@ -373,7 +373,7 @@ class IAM_Predictor(PredictorTask):
 
         # Keras Model of NN
         Model(input=[input_data, labels, input_length, label_length], output=[loss_out]).summary()
-        self.model = Model(input=[input_data, labels, input_length, label_length], output=[loss_out])
+        self.model = Model(input=[input_data, labels, input_length, label_length], output=[loss_out, y_pred])  # TODO y_pred
 
         # the loss calc occurs elsewhere, so use a dummy lambda func for the loss
         self.model.compile(optimizer=sgd,

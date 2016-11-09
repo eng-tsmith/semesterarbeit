@@ -404,6 +404,10 @@ class IAM_Predictor(PredictorTask):
             chars = list(''.join(word_list))
             return tf.SparseTensorValue(indices, chars, [num_words, 1, 1])
 
+        import ipdb
+        ipdb.set_trace()
+
+
         # Create input data
         test_string = y_true #['hallo']#sess.run(y_true)  #['hallo']
         ref_strings = y_pred #['hallo']#sess.run(y_pred)  #['hello']
@@ -411,18 +415,18 @@ class IAM_Predictor(PredictorTask):
         test_string_sparse = create_sparse_vec(test_string * len(ref_strings))
         ref_string_sparse = create_sparse_vec(ref_strings)
 
-        test_input = tf.sparse_placeholder(dtype=tf.string)
-        ref_input = tf.sparse_placeholder(dtype=tf.string)
+        # test_input = tf.sparse_placeholder(dtype=tf.string)
+        # ref_input = tf.sparse_placeholder(dtype=tf.string)
 
-        edit_distances = tf.edit_distance(test_input, ref_input, normalize=False)
+        # edit_distances = tf.edit_distance(test_input, ref_input, normalize=False)
 
-        feed_dict = {test_input: test_string_sparse,
-                     ref_input: ref_string_sparse}
+        # feed_dict = {test_input: test_string_sparse,
+        #              ref_input: ref_string_sparse}
+        #
+        # w = tf.constant(sess.run(edit_distances, feed_dict=feed_dict))
 
-        w = tf.constant(sess.run(edit_distances, feed_dict=feed_dict))
-
-        return w
-
+        # return w
+        return tf.edit_distance(test_string_sparse, ref_string_sparse, normalize=False)
     def train_rnn(self, inputs):
         """
         Train neural network on train data

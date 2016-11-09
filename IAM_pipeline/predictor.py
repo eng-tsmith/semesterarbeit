@@ -359,7 +359,7 @@ class IAM_Predictor(PredictorTask):
         # transforms RNN output to character activations:
         inner = TimeDistributed(Dense(self.output_size+1, name='dense2'))(merge([gru_2, gru_2b], mode='concat'))
         y_pred = Activation('softmax', name='softmax')(inner)
-        # Model(input=[input_data], output=y_pred).summary()
+        Model(input=[input_data], output=y_pred).summary()
 
         # LABELS
         labels = Input(name='the_labels', shape=[self.absolute_max_string_len], dtype='float32')
@@ -372,8 +372,9 @@ class IAM_Predictor(PredictorTask):
         loss_out = Lambda(ctc_lambda_func, output_shape=(1,), name="ctc")([y_pred, labels, input_length, label_length])
 
         # Keras Model of NN
-        Model(input=[input_data, labels, input_length, label_length], output=[loss_out]).summary()
-        self.model = Model(input=[input_data, labels, input_length, label_length], output=[loss_out])  # TODO y_pred
+        # Model(input=[input_data, labels, input_length, label_length], output=[loss_out]).summary()
+        # self.model_test = Model(input=[input_data], output=y_pred)
+        self.model = Model(input=[input_data, labels, input_length, label_length], output=[y_pred, loss_out])  # TODO y_pred
 
         # the loss calc occurs elsewhere, so use a dummy lambda func for the loss
         self.model.compile(optimizer=sgd,

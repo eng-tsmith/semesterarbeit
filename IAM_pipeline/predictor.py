@@ -435,9 +435,6 @@ class IAM_Predictor(PredictorTask):
         history_callback = self.model.fit(inputs[0], inputs[1], batch_size=32, nb_epoch=1, callbacks=[self.cb_test, self.tsb])
         # history_callback = self.model.train_on_batch(inputs[0], inputs[1])
 
-        import ipdb
-        ipdb.set_trace()
-
         return history_callback
 
     def test_rnn(self, inputs):

@@ -405,8 +405,8 @@ class IAM_Predictor(PredictorTask):
             return tf.SparseTensorValue(indices, chars, [num_words, 1, 1])
 
         # Create input data
-        test_string = ['hallo']#sess.run(y_true)  #['hallo']
-        ref_strings = ['hallo']#sess.run(y_pred)  #['hello']
+        test_string = y_true #['hallo']#sess.run(y_true)  #['hallo']
+        ref_strings = y_pred #['hallo']#sess.run(y_pred)  #['hello']
 
         test_string_sparse = create_sparse_vec(test_string * len(ref_strings))
         ref_string_sparse = create_sparse_vec(ref_strings)

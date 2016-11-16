@@ -534,8 +534,8 @@ class IAM_Predictor(PredictorTask):
             wer_lib = -1
         # Testing
         else:
-            import ipdb
-            ipdb.set_trace()
+            # import ipdb
+            # ipdb.set_trace()
 
             # Init true string
             in5 = []

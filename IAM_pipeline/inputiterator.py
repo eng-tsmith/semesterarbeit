@@ -39,32 +39,32 @@ class IAM_InputIterator(InputIteratorTask):
                         line = 0
                         yield input_batch, train, line, epoch
 
-        print("====== Line Training ======")
-        for epoch in range(1, n_epochs_line + 1):
-            print("Epoche: ", epoch)
-            for fold in data.dataset_train:
-                inputs = []
-                for input in fold:
-                    # print("Train with: ", input)
-                    inputs.append(input)
-                    if len(inputs) == n_batch_size:
-                        input_batch = inputs
-                        inputs = []
-                        train = 0
-                        line = 1
-                        yield input_batch, train, line, epoch
-
-            for fold in data.dataset_val:
-                inputs = []
-                for input in fold:
-                    # print("Test:", input)
-                    inputs.append(input)
-                    if len(inputs) == n_batch_size:
-                        input_batch = inputs
-                        inputs = []
-                        train = 1
-                        line = 1
-                        yield input_batch, train, line, epoch
+        # print("====== Line Training ======")
+        # for epoch in range(1, n_epochs_line + 1):
+        #     print("Epoche: ", epoch)
+        #     for fold in data.dataset_train:
+        #         inputs = []
+        #         for input in fold:
+        #             # print("Train with: ", input)
+        #             inputs.append(input)
+        #             if len(inputs) == n_batch_size:
+        #                 input_batch = inputs
+        #                 inputs = []
+        #                 train = 0
+        #                 line = 1
+        #                 yield input_batch, train, line, epoch
+        #
+        #     for fold in data.dataset_val:
+        #         inputs = []
+        #         for input in fold:
+        #             # print("Test:", input)
+        #             inputs.append(input)
+        #             if len(inputs) == n_batch_size:
+        #                 input_batch = inputs
+        #                 inputs = []
+        #                 train = 1
+        #                 line = 1
+        #                 yield input_batch, train, line, epoch
 
     def sizes(self):  # TODO
         fold_lens1 = data.dataset_words_size

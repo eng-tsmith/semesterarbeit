@@ -3,7 +3,7 @@ import numpy as np
 from scipy import misc
 import matplotlib.pyplot as plt
 import cv2 as cv
-import xml.etree.cElementTree as ET
+import lxml.etree as ET  #import xml.etree.cElementTree as ET
 from skimage import transform as tf
 import IAM_pipeline.data_config as data_config
 import IAM_pipeline.char_alphabet as char_alpha

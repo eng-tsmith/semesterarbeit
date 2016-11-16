@@ -42,7 +42,7 @@ def show_img(img):
 def XML_load_word(filepath, filename):
     """
     This funtion is used for loading labels out of corresponding xml file
-    :param filepath: location of xml file
+    :param filepath: location of xml fidle
     :param filename: the name of the current image
     :return: the label of the image
     """

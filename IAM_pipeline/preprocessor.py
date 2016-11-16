@@ -46,14 +46,21 @@ def XML_load_word(filepath, filename):
     :param filename: the name of the current image
     :return: the label of the image
     """
-    with open(filepath, 'rb') as xml_file:
-        tree = ET.parse(xml_file)
-        # tree = ET.parse(filepath)
-        root = tree.getroot()
+    # with open(filepath, 'rb') as xml_file:
+    #     tree = ET.parse(xml_file)
+    #     # tree = ET.parse(filepath)
+    #     root = tree.getroot()
+
+    source = open(filepath)
+    tree = ET.parse(source)
+    root = tree.getroot()
 
     for child in root.iter('word'):
         if child.get('id') == filename:
             return child.get('text')
+
+    source.close()
+
 
 def XML_load_line(filepath, filename):
     """
@@ -62,14 +69,20 @@ def XML_load_line(filepath, filename):
     :param filename: the name of the current image
     :return: the label of the image
     """
-    with open(filepath, 'rb') as xml_file:
-        tree = ET.parse(xml_file)
-        # tree = ET.parse(filepath)
-        root = tree.getroot()
+    # with open(filepath, 'rb') as xml_file:
+    #     tree = ET.parse(xml_file)
+    #     # tree = ET.parse(filepath)
+    #     root = tree.getroot()
+
+    source = open(filepath)
+    tree = ET.parse(source)
+    root = tree.getroot()
 
     for child in root.findall('./handwritten-part/'):
         if child.get('id') == filename:
             return child.get('text')
+
+    source.close()
 
 
 def load(tupel_filenames, is_line):

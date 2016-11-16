@@ -3,7 +3,7 @@ import numpy as np
 from scipy import misc
 import matplotlib.pyplot as plt
 import cv2 as cv
-import xml.etree.ElementTree as ET
+import xml.etree.cElementTree as ET
 from skimage import transform as tf
 import IAM_pipeline.data_config as data_config
 import IAM_pipeline.char_alphabet as char_alpha
@@ -46,20 +46,19 @@ def XML_load_word(filepath, filename):
     :param filename: the name of the current image
     :return: the label of the image
     """
-    # with open(filepath, 'rb') as xml_file:
-    #     tree = ET.parse(xml_file)
-    #     # tree = ET.parse(filepath)
-    #     root = tree.getroot()
+    with open(filepath, 'rb') as xml_file:
+        tree = ET.parse(xml_file)
+        # tree = ET.parse(filepath)
+        root = tree.getroot()
 
-    source = open(filepath)
-    tree = ET.parse(source)
-    root = tree.getroot()
+    # source = open(filepath)
+    # tree = ET.parse(source)
+    # root = tree.getroot()
 
     for child in root.iter('word'):
         if child.get('id') == filename:
             return child.get('text')
-
-    source.close()
+    # source.close()
 
 
 def XML_load_line(filepath, filename):
@@ -69,20 +68,19 @@ def XML_load_line(filepath, filename):
     :param filename: the name of the current image
     :return: the label of the image
     """
-    # with open(filepath, 'rb') as xml_file:
-    #     tree = ET.parse(xml_file)
-    #     # tree = ET.parse(filepath)
-    #     root = tree.getroot()
+    with open(filepath, 'rb') as xml_file:
+        tree = ET.parse(xml_file)
+        # tree = ET.parse(filepath)
+        root = tree.getroot()
 
-    source = open(filepath)
-    tree = ET.parse(source)
-    root = tree.getroot()
+    # source = open(filepath)
+    # tree = ET.parse(source)
+    # root = tree.getroot()
 
     for child in root.findall('./handwritten-part/'):
         if child.get('id') == filename:
             return child.get('text')
-
-    source.close()
+    # source.close()
 
 
 def load(tupel_filenames, is_line):

@@ -11,6 +11,7 @@ from keras.models import Sequential
 from keras.models import model_from_json
 from keras.layers.recurrent import GRU
 from keras.optimizers import SGD
+from keras.optimizers import RMSprop
 from keras.utils import np_utils
 from keras.utils.data_utils import get_file
 from keras.preprocessing import image
@@ -291,7 +292,7 @@ class IAM_Predictor(PredictorTask):
 
         # Input Parameters
         self.img_h = 64
-        self.img_w = 2048
+        self.img_w = 512
         self.absolute_max_string_len = 100
         self.output_size = len(chars)
 
@@ -313,6 +314,11 @@ class IAM_Predictor(PredictorTask):
 
         # Optimizer
         sgd = SGD(lr=lr, decay=3e-7, momentum=0.9, nesterov=True, clipnorm=clipnorm)
+        rms = RMSprop(lr=0.001, rho=0.9, epsilon=1e-08, decay=0.0)
+        # sgd = SGD(lr=lr, decay=3e-7, momentum=0.9, nesterov=True, clipnorm=clipnorm)
+        # sgd = SGD(lr=lr, decay=3e-7, momentum=0.9, nesterov=True, clipnorm=clipnorm)
+        # sgd = SGD(lr=lr, decay=3e-7, momentum=0.9, nesterov=True, clipnorm=clipnorm)
+
         # Activition functrion
         act = 'relu'
 
@@ -377,7 +383,7 @@ class IAM_Predictor(PredictorTask):
         self.model = Model(input=[input_data, labels, input_length, label_length], output=[loss_out])  # TODO y_pred
 
         # the loss calc occurs elsewhere, so use a dummy lambda func for the loss
-        self.model.compile(optimizer=sgd,
+        self.model.compile(optimizer=rms,
                            loss={'ctc': lambda y_true, y_pred: y_pred}, metrics=[self.tim_metric])
 
         # captures output of softmax so we can decode the output during visualization

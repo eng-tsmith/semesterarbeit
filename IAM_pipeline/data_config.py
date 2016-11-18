@@ -133,10 +133,10 @@ n_batch_size = 8  #TODO
 
 dataset_train, dataset_val, dataset_words, dataset_val_words = IAM
 
-dataset_train_size = len(dataset_train[0])//32
-dataset_val_size = len(dataset_val[0])//32
-dataset_words_size = len(dataset_words[0])//32
-dataset_val_words_size = len(dataset_val_words[0])//32
+dataset_train_size = len(dataset_train[0])//n_batch_size
+dataset_val_size = len(dataset_val[0])//n_batch_size
+dataset_words_size = len(dataset_words[0])//n_batch_size
+dataset_val_words_size = len(dataset_val_words[0])//n_batch_size
 
 
 

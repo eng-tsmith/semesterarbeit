@@ -129,7 +129,7 @@ IAM = [IAM_dataset_train, IAM_dataset_validate, [IAM_dataset_words], [IAM_datase
 
 n_epochs_word = 30
 n_epochs_line = 50
-n_batch_size = 8  #TODO
+n_batch_size = 32  #TODO
 
 dataset_train, dataset_val, dataset_words, dataset_val_words = IAM
 

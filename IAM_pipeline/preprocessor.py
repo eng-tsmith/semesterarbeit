@@ -26,7 +26,7 @@ def label_preproc(label_string):
 
     label_int_arr = np.resize(np.asarray(label_int), (1, len(label_int)))
 
-    print(label_int_arr.shape)
+    # print(label_int_arr.shape)
 
     return label_int_arr
 
@@ -200,7 +200,7 @@ def scaling(img):
 
     img_scaled = cv.resize(img, dim, interpolation=cv.INTER_NEAREST)
 
-    print(img_scaled.shape)
+    # print(img_scaled.shape)
 
     return img_scaled
 

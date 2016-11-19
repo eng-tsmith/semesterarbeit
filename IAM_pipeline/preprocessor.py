@@ -222,7 +222,7 @@ class IAM_Preprocessor(PreprocessorTask):
         """
         batch = []
 
-        print("Batchsize: ", len(input_tuple))
+        # print("Batchsize: ", len(input_tuple))
 
 
 

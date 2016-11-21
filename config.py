@@ -62,7 +62,7 @@ class IAM_pipeline:
     Preprocessor_save_directory = 'preprocessor_output_directory'
 
     Predictor = IAM_Predictor
-    Predictor_save_to_disk = True
+    Predictor_save_to_disk = False
     Predictor_save_directory = 'predictor_output_directory'
 
     Postprocessor = IAM_Postprocessor

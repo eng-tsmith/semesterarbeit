@@ -437,9 +437,11 @@ class IAM_Predictor(PredictorTask):
         :param label:
         """
         print('Train...')
+        #OLD
         # history_callback = self.model.fit(inputs[0], inputs[1], batch_size=1, nb_epoch=1)
-        history_callback = self.model.fit(inputs[0], inputs[1], batch_size=32, nb_epoch=1, callbacks=[self.cb_test, self.tsb])
         # history_callback = self.model.train_on_batch(inputs[0], inputs[1])
+
+        history_callback = 0 #TODO dummy#self.model.fit(inputs[0], inputs[1], batch_size=32, nb_epoch=1, callbacks=[self.cb_test, self.tsb])
 
         return history_callback
 
@@ -531,7 +533,7 @@ class IAM_Predictor(PredictorTask):
             # Train
             history = self.train_rnn((inputs, outputs))
             # Metrics dummy whilst training
-            loss = history.history["loss"]  #history
+            loss = 0 # history.history["loss"]  #history #TODO dummy
             cer = -1
             wer1 = -1
             pred = -1
